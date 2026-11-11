@@ -22,11 +22,13 @@ export const routes: Routes = [
         path: 'inicio',
         loadComponent: () => import('./features/inicio/pages/inicio.page').then((m) => m.InicioPage),
       },
-      { path: 'empresas1', pathMatch: 'full', redirectTo: 'empresas1/entel' },
+      { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemasFacturadores/entel' },
       {
-        path: 'empresas1/:empresaId',
+        path: 'sistemasFacturadores/:empresaId',
         loadComponent: () =>
-          import('./features/empresas1/pages/empresas1.page').then((m) => m.Empresas1Page),
+          import('./features/sistemasFacturadores/pages/sistemasFacturadores.page').then(
+            (m) => m.SistemasFacturadoresPage,
+          ),
       },
       {
         path: 'servicios',

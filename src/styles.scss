@@ -500,7 +500,7 @@ select:focus-visible {
 }
 
 .sheet {
-  min-width: 900px;
+  min-width: 1040px;
   background: white;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -542,7 +542,7 @@ select:focus-visible {
 }
 
 .cols-sistemas {
-  grid-template-columns: minmax(140px, 0.7fr) minmax(220px, 1.6fr) minmax(210px, 0.9fr) 96px;
+  grid-template-columns: minmax(120px, 0.7fr) minmax(180px, 1.4fr) minmax(170px, 0.9fr) minmax(170px, 0.9fr) 96px;
 }
 
 .code {

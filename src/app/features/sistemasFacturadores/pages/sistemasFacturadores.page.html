@@ -26,15 +26,18 @@
             <span>Sistema</span>
             <span>Descripción</span>
             <span>Sucursales</span>
+            <span>Productos</span>
             <span>Acciones</span>
           </div>
           @for (sistema of filtered(); track sistema.id) {
             <article class="data-row cols-sistemas">
               <strong class="code">{{ sistema.codigo }}</strong>
               <span>{{ sistema.descripcion }}</span>
-              <button type="button" class="proc" (click)="openHomologar()">
+              <button type="button" class="proc" (click)="openHomologar('sucursales')">
                 Homologar sucursales
-                <span class="material-icons">arrow_forward</span>
+              </button>
+              <button type="button" class="proc" (click)="openHomologar('productos')">
+                Homologar productos
               </button>
               <div class="actions inline">
                 <app-icon-button icon="edit" label="Editar sistema" (pressed)="openEdit(sistema)" />
@@ -56,9 +59,9 @@
     }
   } @else {
     <app-page-header title="Empresa no encontrada" subtitle="Esa empresa no fue encontrada." />
-    <a class="back" routerLink="/empresas1">
+    <a class="back" routerLink="/sistemasFacturadores">
       <span class="material-icons">arrow_back</span>
-      Volver a empresas
+      Volver a sistemas facturadores
     </a>
   }
 
@@ -92,7 +95,9 @@
     }
     @if (current.kind === 'homologar') {
       <app-modal title="Homologar" [plain]="true" (closed)="close()">
-        <span class="modal-word">Homologar</span>
+        <span class="modal-word">
+          {{ current.target === 'productos' ? 'Homologar productos' : 'Homologar sucursales' }}
+        </span>
       </app-modal>
     }
     @if (current.kind === 'delete' && active(); as sistema) {

@@ -22,10 +22,10 @@ import { ToastService } from '../../../shared/ui/toast.service';
 type SistemaDialog =
   | { kind: 'form'; id: string | null }
   | { kind: 'delete'; id: string }
-  | { kind: 'homologar' };
+  | { kind: 'homologar'; target: 'sucursales' | 'productos' };
 
 @Component({
-  selector: 'app-empresas1-page',
+  selector: 'app-sistemasFacturadores-page',
   imports: [
     RouterLink,
     PageHeaderComponent,
@@ -35,11 +35,11 @@ type SistemaDialog =
     ModalComponent,
     CompanyContextComponent,
   ],
-  templateUrl: './empresas1.page.html',
+  templateUrl: './sistemasFacturadores.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: ':host { display: block; }',
 })
-export class Empresas1Page {
+export class SistemasFacturadoresPage {
   private readonly state = inject(GammaState);
   private readonly toast = inject(ToastService);
 
@@ -60,7 +60,7 @@ export class Empresas1Page {
   });
 
   readonly crumbs = computed<Crumb[]>(() => [
-    { label: 'Empresas', link: '/empresas1' },
+    { label: 'Sistemas Facturadores', link: '/sistemasFacturadores' },
     { label: this.empresa()?.codigo ?? 'Empresa' },
   ]);
 
@@ -127,8 +127,8 @@ export class Empresas1Page {
     this.dialog.set({ kind: 'delete', id: sistema.id });
   }
 
-  openHomologar(): void {
-    this.dialog.set({ kind: 'homologar' });
+  openHomologar(target: 'sucursales' | 'productos'): void {
+    this.dialog.set({ kind: 'homologar', target });
   }
 
   close(): void {
