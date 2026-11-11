@@ -1,0 +1,67 @@
+<div class="shell">
+  <header class="topbar">
+    <button
+      type="button"
+      class="menu-toggle"
+      [attr.aria-expanded]="menuOpen()"
+      [attr.aria-label]="menuOpen() ? 'Cerrar menú' : 'Abrir menú'"
+      (click)="toggleMenu()"
+    >
+      <span class="material-icons-outlined">{{ menuOpen() ? 'close' : 'menu' }}</span>
+    </button>
+    <a class="brand" routerLink="/inicio" (click)="closeMenu()">GAMMA</a>
+    <span class="brand-divider" aria-hidden="true"></span>
+    @if (menuOpen()) {
+      <button type="button" class="menu-backdrop" aria-label="Cerrar menú" (click)="closeMenu()"></button>
+    }
+    <nav [class.open]="menuOpen()">
+      <button type="button" class="menu-back" (click)="closeMenu()">
+        <span class="material-icons-outlined">arrow_back</span>
+        Volver
+      </button>
+      <a
+        routerLink="/inicio"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
+      >
+        <span class="material-icons-outlined">home</span>
+        Inicio
+      </a>
+      <a routerLink="/empresas1" routerLinkActive="active" (click)="closeMenu()">
+        <span class="material-icons-outlined">account_balance</span>
+        Empresas1
+      </a>
+      <a
+        routerLink="/servicios"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
+      >
+        <span class="material-icons-outlined">apps</span>
+        Servicios
+      </a>
+    </nav>
+    <div class="tools">
+      <button type="button" class="avatar" aria-label="Sesión de RC" (click)="toggleProfile()">
+        MC
+      </button>
+      @if (profileOpen()) {
+        <button type="button" class="popover-backdrop" aria-label="Cerrar sesión" (click)="profileOpen.set(false)"></button>
+        <div class="popover">
+          <div class="notice">
+            <strong>MC</strong>
+            <p>Profesional Desarrollo de aplicaciones.</p>
+          </div>
+          <a class="logout" routerLink="/login" (click)="closeMenu()">Salir</a>
+        </div>
+      }
+    </div>
+  </header>
+
+  <main>
+    <router-outlet />
+  </main>
+  <footer class="app-footer">GAMMA · Sistema Base de Facturación Electrónica</footer>
+  <app-toast-host />
+</div>

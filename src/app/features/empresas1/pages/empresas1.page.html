@@ -1,0 +1,108 @@
+<section class="page">
+  @if (empresa(); as empresa) {
+    <app-page-header
+      title="Sistemas internos"
+      [subtitle]="subtitle()"
+      [crumbs]="crumbs()"
+      actionLabel="Crear sistema"
+      (action)="openCreate()"
+    />
+
+    <app-company-context [codigo]="empresa.codigo" />
+
+    <div class="toolbar">
+      <div class="toolbar-meta">
+        <span>{{ countText() }}</span>
+      </div>
+      <app-search-field placeholder="Buscar sistema..." [value]="query()" (valueChange)="onQuery($event)" />
+    </div>
+
+    @if (filtered().length === 0) {
+      <app-empty-state [message]="emptyMessage()" />
+    } @else {
+      <div class="table-wrap">
+        <div class="sheet">
+          <div class="list-head cols-sistemas">
+            <span>Sistema</span>
+            <span>Descripción</span>
+            <span>Sucursales</span>
+            <span>Acciones</span>
+          </div>
+          @for (sistema of filtered(); track sistema.id) {
+            <article class="data-row cols-sistemas">
+              <strong class="code">{{ sistema.codigo }}</strong>
+              <span>{{ sistema.descripcion }}</span>
+              <button type="button" class="proc" (click)="openHomologar()">
+                Homologar sucursales
+                <span class="material-icons">arrow_forward</span>
+              </button>
+              <div class="actions inline">
+                <app-icon-button icon="edit" label="Editar sistema" (pressed)="openEdit(sistema)" />
+                <app-icon-button
+                  icon="delete"
+                  label="Eliminar sistema"
+                  tone="danger"
+                  (pressed)="openDelete(sistema)"
+                />
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    }
+
+    @if (filtered().length > 0) {
+      <p class="footnote">{{ registeredLabel() }}</p>
+    }
+  } @else {
+    <app-page-header title="Empresa no encontrada" subtitle="Esa empresa no fue encontrada." />
+    <a class="back" routerLink="/empresas1">
+      <span class="material-icons">arrow_back</span>
+      Volver a empresas
+    </a>
+  }
+
+  @if (dialog(); as current) {
+    @if (current.kind === 'form') {
+      <app-modal [title]="current.id ? 'Editar sistema' : 'Crear sistema'" (closed)="close()">
+        <form (submit)="save($event)" novalidate>
+          <div class="fields">
+            <label class="field">
+              Código
+              <input [value]="form().codigo" maxlength="20" (input)="onField('codigo', $event)" />
+            </label>
+            <label class="field">
+              Descripción
+              <input
+                [value]="form().descripcion"
+                maxlength="160"
+                (input)="onField('descripcion', $event)"
+              />
+            </label>
+          </div>
+          @if (formError()) {
+            <p class="form-error">{{ formError() }}</p>
+          }
+          <div class="modal-actions">
+            <button type="button" class="btn-ghost" (click)="close()">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
+        </form>
+      </app-modal>
+    }
+    @if (current.kind === 'homologar') {
+      <app-modal title="Homologar" [plain]="true" (closed)="close()">
+        <span class="modal-word">Homologar</span>
+      </app-modal>
+    }
+    @if (current.kind === 'delete' && active(); as sistema) {
+      <app-modal title="Eliminar sistema" (closed)="close()">
+        <p class="muted">Esta seguro que desea eliminar {{ sistema.codigo }}.</p>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" (click)="close()">Cancelar</button>
+          <button type="button" class="btn-danger" (click)="confirmDelete()">Eliminar</button>
+        </div>
+      </app-modal>
+    }
+  }
+</section>

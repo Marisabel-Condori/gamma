@@ -1,0 +1,148 @@
+<main class="login-wrapper">
+  <div class="login-mesh-bg" aria-hidden="true"></div>
+
+  <section class="login-card ui-card" aria-label="Acceso a Gamma">
+    <section class="brand-panel" aria-label="Gamma, facturación electrónica de ENTEL S.A.">
+      <div class="brand-decoration" aria-hidden="true">
+        <span class="decoration-ring ring-one"></span>
+        <span class="decoration-ring ring-two"></span>
+      </div>
+
+      <div class="brand-content">
+        <img class="brand-logo" src="brand-logo.svg" alt="Entel" />
+        <strong class="brand-product">Gamma</strong>
+
+        <div class="brand-message">
+          <span class="brand-kicker">SISTEMA DE GESTIÓN</span>
+          <h2>Sistema de administración y seguimiento de la facturación electrónica</h2>
+          <p>ENTEL S.A.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-panel">
+      <header class="form-header">
+        <span class="form-kicker">ACCESO SEGURO</span>
+        <h1>Inicia sesión</h1>
+        <p>Facturación electrónica de ENTEL S.A.</p>
+      </header>
+
+      <form class="login-form" (ngSubmit)="submitLogin()" autocomplete="on">
+        <div class="field-group">
+          <label for="username">Usuario Corporativo</label>
+          <div class="input-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m8-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <input
+              class="ui-input"
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Ingrese su usuario"
+              [(ngModel)]="username"
+              autocomplete="username"
+              required
+              autofocus
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="password">Contraseña</label>
+          <div class="input-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect
+                x="3.5"
+                y="10"
+                width="17"
+                height="11"
+                rx="2"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+            <input
+              class="ui-input"
+              id="password"
+              name="password"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Ingrese su contraseña"
+              [(ngModel)]="password"
+              autocomplete="current-password"
+              required
+            />
+            <button
+              class="password-toggle"
+              type="button"
+              (click)="togglePassword()"
+              [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              @if (showPassword) {
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8m-7.7 3.2C3.4 14.1 2.5 12 2.5 12S6 5 12 5c1.2 0 2.3.3 3.3.7m2.1 1.5C20.3 9.1 21.5 12 21.5 12s-3.5 7-9.5 7c-1 0-2-.2-2.9-.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              } @else {
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                  />
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        @if (notice) {
+          <p class="form-notice" role="status">{{ notice }}</p>
+        }
+
+        <button
+          class="submit-button ui-button ui-button--primary"
+          type="submit"
+          [disabled]="!username || !password || loading"
+        >
+          <span>{{ loading ? 'Ingresando…' : 'Iniciar sesión' }}</span>
+          @if (!loading) {
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M5 12h14m-6-6 6 6-6 6"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          }
+        </button>
+      </form>
+
+      <footer class="form-footer">
+        <span class="system-tag">Facturación electrónica</span>
+        <p>Acceso exclusivo para personal autorizado de ENTEL S.A.</p>
+      </footer>
+    </section>
+  </section>
+</main>
