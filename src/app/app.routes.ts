@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
+import { authGuard } from './core/state/auth.guard';
 
 export const routes: Routes = [
   {
@@ -13,9 +14,11 @@ export const routes: Routes = [
       },
     ],
   },
+  { path: '', pathMatch: 'full', redirectTo: 'login' },
   {
     path: '',
     component: MainLayoutComponent,
+    canActivateChild: [authGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       {
@@ -23,6 +26,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/inicio/pages/inicio.page').then((m) => m.InicioPage),
       },
       { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemasFacturadores/entel' },
+      {
+        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales/:sucursalId/puntos-venta',
+        loadComponent: () =>
+          import('./features/sucursales/pages/puntos-venta.page').then((m) => m.PuntosVentaPage),
+      },
+      {
+        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales',
+        loadComponent: () =>
+          import('./features/sucursales/pages/homologar-sucursales.page').then(
+            (m) => m.HomologarSucursalesPage,
+          ),
+      },
       {
         path: 'sistemasFacturadores/:empresaId/:sistemaId/productos',
         loadComponent: () =>
@@ -51,5 +66,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: 'inicio' },
+  { path: '**', redirectTo: 'login' },
 ];

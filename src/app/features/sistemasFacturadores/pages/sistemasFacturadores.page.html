@@ -30,20 +30,10 @@
             <article class="data-row cols-sistemas">
               <strong class="code">{{ sistema.codigo }}</strong>
               <span>{{ sistema.descripcion }}</span>
-<<<<<<< HEAD
-              <a
-                class="proc"
-                [routerLink]="['/sistemasFacturadores', empresaId(), sistema.id, 'sucursales']"
-              >
-                Homologar sucursales
-              </a>
-              <button type="button" class="proc" (click)="openHomologar('productos')">
-=======
-              <button type="button" class="proc" (click)="openHomologar()">
+              <button type="button" class="proc" (click)="openHomologar(sistema)">
                 Homologar sucursales
               </button>
               <button type="button" class="proc" (click)="openProductos(sistema)">
->>>>>>> e04692a (feat:productos)
                 Homologar productos
               </button>
               <div class="actions inline">
