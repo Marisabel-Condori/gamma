@@ -1,44 +1,89 @@
 import { HomologacionProductoResponse, SistemaResponse } from '../models/gamma.models';
 
-const SISTEMAS: ReadonlyArray<readonly [string, string]> = [
-  ['ZSMART', 'ZSMART'],
-  ['TTVENTAS', 'TTVENTAS'],
-  ['SICO', 'Sistema de Cobranza Entel'],
-  ['SIADIN', 'SIADIN'],
-  ['SEES', 'Servicios Especiales'],
-  ['RECINT', 'Recarga Internacional'],
-  ['MASIVO', 'Proceso Masivo de Facturas Postpago'],
-  ['GARAN', 'GARAN'],
-  ['BANCA', 'Transacciones desde el WS de la Banca'],
-];
+const SISTEMAS = [
+  { codigo: 'ZSMART', descripcion: 'ZSMART' },
+  { codigo: 'TTVENTAS', descripcion: 'TTVENTAS' },
+  { codigo: 'SICO', descripcion: 'Sistema de Cobranza Entel' },
+  { codigo: 'SIADIN', descripcion: 'SIADIN' },
+  { codigo: 'SEES', descripcion: 'Servicios Especiales' },
+  { codigo: 'RECINT', descripcion: 'Recarga Internacional' },
+  { codigo: 'MASIVO', descripcion: 'Proceso Masivo de Facturas Postpago' },
+  { codigo: 'GARAN', descripcion: 'GARAN' },
+  { codigo: 'BANCA', descripcion: 'Transacciones desde el WS de la Banca' },
+] as const;
 
-export interface GammaData {
-  sistemas: SistemaResponse[];
-  homologaciones: HomologacionProductoResponse[];
-}
-
-export function createSeed(): GammaData {
-  const sistemas: SistemaResponse[] = SISTEMAS.map(([codigo, descripcion]) => ({
-    id: codigo,
-    codigo,
-    descripcion,
-  }));
-
-  return { sistemas, homologaciones: createHomologaciones() };
-}
-
-const MUESTRA_ZSMART: Array<[string, string, string, string, string]> = [
-  ['13:37:55', '1', 'CELULARES', '99100', 'Otros productos o servicios alcanzados por el IVA'],
-  ['13:38:58', '10', 'MANUALES', '99100', 'Otros productos o servicios alcanzados por el IVA'],
-  ['13:39:06', '9', 'ANTENAS', '99100', 'Otros productos o servicios alcanzados por el IVA'],
-  ['13:39:13', '8', 'BATERÍAS', '99100', 'Otros productos o servicios alcanzados por el IVA'],
-  ['13:40:12', '7', 'CARGADORES', '99100', 'Otros productos o servicios alcanzados por el IVA'],
-  ['13:40:26', '67', 'IPTV', '84190', 'Otros servicios de telecomunicaciones'],
-  ['13:40:38', '66', 'EQUIPOS INTERNET', '99100', 'Otros productos o servicios alcanzados por el IVA'],
-  ['13:40:46', '65', 'MATERIAL PAPELBOL', '99100', 'Otros productos o servicios alcanzados por el IVA'],
-  ['13:40:55', '64', 'EQUIPOS QUIPUS', '99100', 'Otros productos o servicios alcanzados por el IVA'],
-  ['13:41:03', '63', 'SIM CARD ÚNICO', '99100', 'Otros productos o servicios alcanzados por el IVA'],
-];
+const MUESTRA_ZSMART = [
+  {
+    hora: '13:37:55',
+    codigoEntel: '1',
+    productoEntel: 'CELULARES',
+    codigoSin: '99100',
+    productoSin: 'Otros productos o servicios alcanzados por el IVA',
+  },
+  {
+    hora: '13:38:58',
+    codigoEntel: '10',
+    productoEntel: 'MANUALES',
+    codigoSin: '99100',
+    productoSin: 'Otros productos o servicios alcanzados por el IVA',
+  },
+  {
+    hora: '13:39:06',
+    codigoEntel: '9',
+    productoEntel: 'ANTENAS',
+    codigoSin: '99100',
+    productoSin: 'Otros productos o servicios alcanzados por el IVA',
+  },
+  {
+    hora: '13:39:13',
+    codigoEntel: '8',
+    productoEntel: 'BATERÍAS',
+    codigoSin: '99100',
+    productoSin: 'Otros productos o servicios alcanzados por el IVA',
+  },
+  {
+    hora: '13:40:12',
+    codigoEntel: '7',
+    productoEntel: 'CARGADORES',
+    codigoSin: '99100',
+    productoSin: 'Otros productos o servicios alcanzados por el IVA',
+  },
+  {
+    hora: '13:40:26',
+    codigoEntel: '67',
+    productoEntel: 'IPTV',
+    codigoSin: '84190',
+    productoSin: 'Otros servicios de telecomunicaciones',
+  },
+  {
+    hora: '13:40:38',
+    codigoEntel: '66',
+    productoEntel: 'EQUIPOS INTERNET',
+    codigoSin: '99100',
+    productoSin: 'Otros productos o servicios alcanzados por el IVA',
+  },
+  {
+    hora: '13:40:46',
+    codigoEntel: '65',
+    productoEntel: 'MATERIAL PAPELBOL',
+    codigoSin: '99100',
+    productoSin: 'Otros productos o servicios alcanzados por el IVA',
+  },
+  {
+    hora: '13:40:55',
+    codigoEntel: '64',
+    productoEntel: 'EQUIPOS QUIPUS',
+    codigoSin: '99100',
+    productoSin: 'Otros productos o servicios alcanzados por el IVA',
+  },
+  {
+    hora: '13:41:03',
+    codigoEntel: '63',
+    productoEntel: 'SIM CARD ÚNICO',
+    codigoSin: '99100',
+    productoSin: 'Otros productos o servicios alcanzados por el IVA',
+  },
+] as const;
 
 const PRODUCTOS_EXTRA = [
   'ROUTER',
@@ -51,11 +96,33 @@ const PRODUCTOS_EXTRA = [
   'CHIP',
   'RECARGAS',
   'PLAN POSTPAGO',
-];
+] as const;
+
+export interface GammaData {
+  sistemas: SistemaResponse[];
+  homologaciones: HomologacionProductoResponse[];
+}
+
+export function createSeed(): GammaData {
+  const sistemas: SistemaResponse[] = SISTEMAS.map((sistema) => ({
+    ...sistema,
+    id: sistema.codigo,
+  }));
+
+  return {
+    sistemas,
+    homologaciones: createHomologaciones(),
+  };
+}
 
 function createHomologaciones(): HomologacionProductoResponse[] {
-  const rows: HomologacionProductoResponse[] = MUESTRA_ZSMART.map((item, index) =>
-    homologacion('ZSMART', index, '08/03/2022', item[0], item[1], item[2], item[3], item[4]),
+  const rows = MUESTRA_ZSMART.map((item, index) =>
+    homologacion({
+      sistemaId: 'ZSMART',
+      index,
+      fecha: '08/03/2022',
+      ...item,
+    }),
   );
 
   for (let index = 0; index < 84; index += 1) {
@@ -64,44 +131,45 @@ function createHomologaciones(): HomologacionProductoResponse[] {
     const minute = String(index % 60).padStart(2, '0');
     const second = String((index * 3) % 60).padStart(2, '0');
     rows.push(
-      homologacion(
-        'ZSMART',
-        MUESTRA_ZSMART.length + index,
-        `${day}/03/2022`,
-        `14:${minute}:${second}`,
-        String(120 + index),
-        producto,
-        index % 7 === 0 ? '84190' : '99100',
-        index % 7 === 0
-          ? 'Otros servicios de telecomunicaciones'
-          : 'Otros productos o servicios alcanzados por el IVA',
-      ),
+      homologacion({
+        sistemaId: 'ZSMART',
+        index: MUESTRA_ZSMART.length + index,
+        fecha: `${day}/03/2022`,
+        hora: `14:${minute}:${second}`,
+        codigoEntel: String(120 + index),
+        productoEntel: producto,
+        codigoSin: index % 7 === 0 ? '84190' : '99100',
+        productoSin:
+          index % 7 === 0
+            ? 'Otros servicios de telecomunicaciones'
+            : 'Otros productos o servicios alcanzados por el IVA',
+      }),
     );
   }
 
   return rows;
 }
 
-function homologacion(
-  sistemaId: string,
-  index: number,
-  fecha: string,
-  hora: string,
-  codigoEntel: string,
-  productoEntel: string,
-  codigoSin: string,
-  productoSin: string,
-): HomologacionProductoResponse {
+function homologacion(data: {
+  sistemaId: string;
+  index: number;
+  fecha: string;
+  hora: string;
+  codigoEntel: string;
+  productoEntel: string;
+  codigoSin: string;
+  productoSin: string;
+}): HomologacionProductoResponse {
   return {
-    id: `${sistemaId}-homo-${index + 1}`,
-    sistemaId,
-    fecha,
-    hora,
-    codigoEntel,
-    productoEntel,
+    id: `${data.sistemaId}-homo-${data.index + 1}`,
+    sistemaId: data.sistemaId,
+    fecha: data.fecha,
+    hora: data.hora,
+    codigoEntel: data.codigoEntel,
+    productoEntel: data.productoEntel,
     actividadCodigo: '610000',
     actividadNombre: 'Telecomunicaciones',
-    codigoSin,
-    productoSin,
+    codigoSin: data.codigoSin,
+    productoSin: data.productoSin,
   };
 }
