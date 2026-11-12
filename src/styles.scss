@@ -1107,6 +1107,11 @@ select:focus-visible {
     margin: 14px 0 0;
   }
 
+  .homo-page app-empty-state {
+    order: 6;
+    margin-top: 14px;
+  }
+
   .homo-cards {
     display: flex;
     flex-direction: column;
