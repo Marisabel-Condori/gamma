@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { GammaState } from '../../../core/state/gamma-state';
-import { Sistema } from '../../../core/models/gamma.models';
+import { SistemaResponse } from '../../../core/models/gamma.models';
 import { countLabel } from '../../../shared/utils/labels';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state.component';
 import { IconButtonComponent } from '../../../shared/ui/icon-button.component';
@@ -85,13 +85,13 @@ export class SistemasFacturadoresPage {
     this.dialog.set({ kind: 'form', id: null });
   }
 
-  openEdit(sistema: Sistema): void {
+  openEdit(sistema: SistemaResponse): void {
     this.form.set({ codigo: sistema.codigo, descripcion: sistema.descripcion });
     this.formError.set(null);
     this.dialog.set({ kind: 'form', id: sistema.id });
   }
 
-  openDelete(sistema: Sistema): void {
+  openDelete(sistema: SistemaResponse): void {
     this.dialog.set({ kind: 'delete', id: sistema.id });
   }
 
@@ -99,7 +99,7 @@ export class SistemasFacturadoresPage {
     this.dialog.set({ kind: 'homologar' });
   }
 
-  openProductos(sistema: Sistema): void {
+  openProductos(sistema: SistemaResponse): void {
     void this.router.navigate(['/sistemasFacturadores', sistema.id, 'productos']);
   }
 

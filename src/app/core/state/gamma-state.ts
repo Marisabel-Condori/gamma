@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { HomologacionProducto, HomologacionProductoInput, Sistema, SistemaInput } from '../models/gamma.models';
+import { HomologacionProducto, HomologacionProductoInput, SistemaRequest, SistemaResponse } from '../models/gamma.models';
 import { GammaData, createSeed } from './seed';
 
 const STORAGE_KEY = 'gamma.demo.v2';
@@ -11,7 +11,7 @@ export class GammaState {
   readonly sistemas = computed(() => this.state().sistemas);
   readonly homologaciones = computed(() => this.state().homologaciones);
 
-  createSistema(input: SistemaInput): string | null {
+  createSistema(input: SistemaRequest): string | null {
     const codigo = cleanUpper(input.codigo);
     const descripcion = input.descripcion.trim();
     if (!codigo || !descripcion) {
@@ -29,7 +29,7 @@ export class GammaState {
     return null;
   }
 
-  updateSistema(id: string, input: Pick<SistemaInput, 'codigo' | 'descripcion'>): string | null {
+  updateSistema(id: string, input: SistemaRequest): string | null {
     const codigo = cleanUpper(input.codigo);
     const descripcion = input.descripcion.trim();
     if (!codigo || !descripcion) {
@@ -104,7 +104,7 @@ export class GammaState {
       }
       const parsed = JSON.parse(raw) as {
         empresas?: unknown;
-        sistemas?: Array<Sistema & { empresaId?: string }>;
+        sistemas?: Array<SistemaResponse & { empresaId?: string }>;
         homologaciones?: HomologacionProducto[];
       };
       if (!Array.isArray(parsed.sistemas)) {

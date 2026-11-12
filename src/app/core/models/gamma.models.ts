@@ -1,10 +1,10 @@
-export interface Sistema {
+export interface SistemaResponse {
   id: string;
   codigo: string;
   descripcion: string;
 }
 
-export interface SistemaInput {
+export interface SistemaRequest {
   codigo: string;
   descripcion: string;
 }

@@ -1,4 +1,4 @@
-import { HomologacionProducto, Sistema } from '../models/gamma.models';
+import { HomologacionProducto, SistemaResponse } from '../models/gamma.models';
 
 const SISTEMAS: ReadonlyArray<readonly [string, string]> = [
   ['ZSMART', 'ZSMART'],
@@ -13,12 +13,12 @@ const SISTEMAS: ReadonlyArray<readonly [string, string]> = [
 ];
 
 export interface GammaData {
-  sistemas: Sistema[];
+  sistemas: SistemaResponse[];
   homologaciones: HomologacionProducto[];
 }
 
 export function createSeed(): GammaData {
-  const sistemas: Sistema[] = SISTEMAS.map(([codigo, descripcion]) => ({
+  const sistemas: SistemaResponse[] = SISTEMAS.map(([codigo, descripcion]) => ({
     id: codigo,
     codigo,
     descripcion,
