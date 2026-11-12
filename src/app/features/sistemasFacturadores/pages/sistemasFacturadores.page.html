@@ -1,6 +1,5 @@
 <section class="page systems-page">
-  @if (empresa(); as empresa) {
-    <app-page-header title="Sistemas internos" [subtitle]="subtitle()" [crumbs]="crumbs()" />
+    <app-page-header title="Sistemas internos" [subtitle]="subtitle" [crumbs]="crumbs()" />
 
     <button type="button" class="btn-primary create-system" (click)="openCreate()">
       <span class="material-icons">add</span>
@@ -54,13 +53,6 @@
     @if (filtered().length > 0) {
       <p class="footnote">{{ registeredLabel() }}</p>
     }
-  } @else {
-    <app-page-header title="Empresa no encontrada" subtitle="Esa empresa no fue encontrada." />
-    <a class="back" routerLink="/sistemasFacturadores">
-      <span class="material-icons">arrow_back</span>
-      Volver a sistemas facturadores
-    </a>
-  }
 
   @if (dialog(); as current) {
     @if (current.kind === 'form') {

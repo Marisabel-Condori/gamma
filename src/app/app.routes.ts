@@ -22,20 +22,28 @@ export const routes: Routes = [
         path: 'inicio',
         loadComponent: () => import('./features/inicio/pages/inicio.page').then((m) => m.InicioPage),
       },
-      { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemasFacturadores/entel' },
       {
-        path: 'sistemasFacturadores/:empresaId/:sistemaId/productos',
+        path: 'sistemasFacturadores',
+        loadComponent: () =>
+          import('./features/sistemasFacturadores/pages/sistemasFacturadores.page').then(
+            (m) => m.SistemasFacturadoresPage,
+          ),
+      },
+      {
+        path: 'sistemasFacturadores/:sistemaId/productos',
         loadComponent: () =>
           import('./features/sistemasFacturadores/pages/productosHomologados.page').then(
             (m) => m.ProductosHomologadosPage,
           ),
       },
+      { path: 'sistemasFacturadores/entel', pathMatch: 'full', redirectTo: 'sistemasFacturadores' },
       {
-        path: 'sistemasFacturadores/:empresaId',
-        loadComponent: () =>
-          import('./features/sistemasFacturadores/pages/sistemasFacturadores.page').then(
-            (m) => m.SistemasFacturadoresPage,
-          ),
+        path: 'sistemasFacturadores/:origen/:sistemaId/productos',
+        redirectTo: ({ params }) => {
+          const raw = params['sistemaId'] ?? '';
+          const sistemaId = raw.replace(/^entel-/, '');
+          return `/sistemasFacturadores/${sistemaId}/productos`;
+        },
       },
       {
         path: 'servicios',

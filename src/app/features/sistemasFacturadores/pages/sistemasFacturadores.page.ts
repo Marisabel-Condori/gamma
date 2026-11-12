@@ -1,13 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { GammaState } from '../../../core/state/gamma-state';
 import { Sistema } from '../../../core/models/gamma.models';
 import { countLabel } from '../../../shared/utils/labels';
@@ -26,7 +18,6 @@ type SistemaDialog =
 @Component({
   selector: 'app-sistemasFacturadores-page',
   imports: [
-    RouterLink,
     PageHeaderComponent,
     SearchFieldComponent,
     IconButtonComponent,
@@ -42,21 +33,11 @@ export class SistemasFacturadoresPage {
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
 
-  readonly empresaId = input('entel');
-
+  readonly subtitle = 'Gestiona los sistemas de ENTEL y su homologación por sucursal.';
   readonly query = signal('');
   readonly dialog = signal<SistemaDialog | null>(null);
   readonly formError = signal<string | null>(null);
   readonly form = signal({ codigo: '', descripcion: '' });
-
-  readonly empresa = computed(
-    () => this.state.empresas().find((item) => item.id === this.empresaId()) ?? null,
-  );
-
-  readonly subtitle = computed(() => {
-    const codigo = this.empresa()?.codigo ?? 'la empresa';
-    return `Gestiona los sistemas de ${codigo} y su homologación por sucursal.`;
-  });
 
   readonly crumbs = computed<Crumb[]>(() => [{ label: 'Sistemas Facturadores', link: '/sistemasFacturadores' }]);
 
@@ -64,7 +45,6 @@ export class SistemasFacturadoresPage {
     const query = this.query().trim().toLowerCase();
     return this.state
       .sistemas()
-      .filter((sistema) => sistema.empresaId === this.empresaId())
       .filter(
         (sistema) =>
           !query ||
@@ -84,7 +64,7 @@ export class SistemasFacturadoresPage {
     if (this.query().trim()) {
       return 'No hay resultados para la búsqueda.';
     }
-    return 'Esta empresa todavía no tiene sistemas internos.';
+    return 'Todavía no hay sistemas internos.';
   });
 
   readonly active = computed(() => {
@@ -94,14 +74,6 @@ export class SistemasFacturadoresPage {
     }
     return this.state.sistemas().find((sistema) => sistema.id === dialog.id) ?? null;
   });
-
-  constructor() {
-    effect(() => {
-      this.empresaId();
-      this.query.set('');
-      this.dialog.set(null);
-    });
-  }
 
   onQuery(value: string): void {
     this.query.set(value);
@@ -128,7 +100,7 @@ export class SistemasFacturadoresPage {
   }
 
   openProductos(sistema: Sistema): void {
-    void this.router.navigate(['/sistemasFacturadores', this.empresaId(), sistema.id, 'productos']);
+    void this.router.navigate(['/sistemasFacturadores', sistema.id, 'productos']);
   }
 
   close(): void {
@@ -147,7 +119,7 @@ export class SistemasFacturadoresPage {
     if (!dialog || dialog.kind !== 'form') {
       return;
     }
-    const payload = { ...this.form(), empresaId: this.empresaId() };
+    const payload = this.form();
     const error = dialog.id
       ? this.state.updateSistema(dialog.id, payload)
       : this.state.createSistema(payload);

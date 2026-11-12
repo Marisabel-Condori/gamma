@@ -7,7 +7,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { GammaState } from '../../../core/state/gamma-state';
 import { HomologacionProducto } from '../../../core/models/gamma.models';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state.component';
@@ -59,8 +59,8 @@ const EMPTY_FORM: HomoForm = {
 export class ProductosHomologadosPage {
   private readonly state = inject(GammaState);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
-  readonly empresaId = input.required<string>();
   readonly sistemaId = input.required<string>();
 
   readonly query = signal('');
@@ -70,22 +70,25 @@ export class ProductosHomologadosPage {
   readonly formError = signal<string | null>(null);
   readonly form = signal<HomoForm>({ ...EMPTY_FORM });
 
-  readonly sistema = computed(
-    () => this.state.sistemas().find((item) => item.id === this.sistemaId()) ?? null,
-  );
+  readonly sistema = computed(() => {
+    const requested = this.sistemaId();
+    const canonical = requested.replace(/^entel-/, '');
+    return this.state.sistemas().find((item) => item.id === requested || item.id === canonical) ?? null;
+  });
 
-  readonly backLink = computed(() => `/sistemasFacturadores/${this.empresaId()}`);
+  readonly backLink = computed(() => '/sistemasFacturadores');
 
   readonly crumbs = computed<Crumb[]>(() => [
     { label: 'Sistemas Facturadores', link: '/sistemasFacturadores' },
-    { label: 'Sistemas internos', link: `/sistemasFacturadores/${this.empresaId()}` },
+    { label: 'Sistemas internos', link: '/sistemasFacturadores' },
     { label: this.sistema()?.codigo ?? 'Sistema' },
   ]);
 
   readonly filtered = computed(() => {
     const query = this.query().trim().toLowerCase();
+    const sistemaId = this.sistema()?.id;
     return this.state.homologaciones().filter((item) => {
-      if (item.sistemaId !== this.sistemaId()) {
+      if (!sistemaId || item.sistemaId !== sistemaId) {
         return false;
       }
       if (!query) {
@@ -142,7 +145,11 @@ export class ProductosHomologadosPage {
 
   constructor() {
     effect(() => {
-      this.sistemaId();
+      const sistema = this.sistema();
+      const requested = this.sistemaId();
+      if (sistema && sistema.id !== requested) {
+        void this.router.navigate(['/sistemasFacturadores', sistema.id, 'productos'], { replaceUrl: true });
+      }
       this.query.set('');
       this.page.set(1);
       this.dialog.set(null);

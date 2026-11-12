@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { HomologacionProductoInput, SistemaInput } from '../models/gamma.models';
+import { HomologacionProducto, HomologacionProductoInput, Sistema, SistemaInput } from '../models/gamma.models';
 import { GammaData, createSeed } from './seed';
 
 const STORAGE_KEY = 'gamma.demo.v2';
@@ -8,7 +8,6 @@ const STORAGE_KEY = 'gamma.demo.v2';
 export class GammaState {
   private readonly state = signal<GammaData>(this.restore());
 
-  readonly empresas = computed(() => this.state().empresas);
   readonly sistemas = computed(() => this.state().sistemas);
   readonly homologaciones = computed(() => this.state().homologaciones);
 
@@ -19,25 +18,13 @@ export class GammaState {
       return 'Completa código y descripción.';
     }
 
-    if (
-      this.state().sistemas.some(
-        (sistema) => sistema.empresaId === input.empresaId && sistema.codigo === codigo,
-      )
-    ) {
+    if (this.state().sistemas.some((sistema) => sistema.codigo === codigo)) {
       return 'Ya existe un sistema con ese código.';
     }
 
     this.commit((current) => ({
       ...current,
-      sistemas: [
-        ...current.sistemas,
-        {
-          id: `${input.empresaId}-${codigo}`,
-          empresaId: input.empresaId,
-          codigo,
-          descripcion,
-        },
-      ],
+      sistemas: [...current.sistemas, { id: codigo, codigo, descripcion }],
     }));
     return null;
   }
@@ -49,13 +36,7 @@ export class GammaState {
       return 'Completa código y descripción.';
     }
 
-    const empresaId = this.state().sistemas.find((sistema) => sistema.id === id)?.empresaId;
-    if (
-      this.state().sistemas.some(
-        (sistema) =>
-          sistema.id !== id && sistema.empresaId === empresaId && sistema.codigo === codigo,
-      )
-    ) {
+    if (this.state().sistemas.some((sistema) => sistema.id !== id && sistema.codigo === codigo)) {
       return 'Ya existe un sistema con ese código.';
     }
 
@@ -121,16 +102,34 @@ export class GammaState {
       if (!raw) {
         return createSeed();
       }
-      const parsed = JSON.parse(raw) as Partial<GammaData>;
-      if (!Array.isArray(parsed.empresas) || !Array.isArray(parsed.sistemas)) {
+      const parsed = JSON.parse(raw) as {
+        empresas?: unknown;
+        sistemas?: Array<Sistema & { empresaId?: string }>;
+        homologaciones?: HomologacionProducto[];
+      };
+      if (!Array.isArray(parsed.sistemas)) {
         return createSeed();
       }
       const seed = createSeed();
-      return {
-        empresas: parsed.empresas,
-        sistemas: parsed.sistemas,
-        homologaciones: Array.isArray(parsed.homologaciones) ? parsed.homologaciones : seed.homologaciones,
+      const sistemas = parsed.sistemas
+        .filter((sistema) => sistema.empresaId === undefined || sistema.empresaId === 'entel')
+        .map((sistema) => ({
+          id: sistema.id.replace(/^entel-/, ''),
+          codigo: sistema.codigo,
+          descripcion: sistema.descripcion,
+        }));
+      const stored = Array.isArray(parsed.homologaciones) ? parsed.homologaciones : seed.homologaciones;
+      const data: GammaData = {
+        sistemas,
+        homologaciones: stored.map((item) => ({
+          ...item,
+          sistemaId: item.sistemaId.replace(/^entel-/, ''),
+        })),
       };
+      if (parsed.empresas !== undefined || parsed.sistemas.some((sistema) => 'empresaId' in sistema)) {
+        this.persist(data);
+      }
+      return data;
     } catch {
       return createSeed();
     }
