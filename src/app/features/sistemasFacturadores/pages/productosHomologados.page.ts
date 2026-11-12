@@ -76,12 +76,11 @@ export class ProductosHomologadosPage {
     return this.state.sistemas().find((item) => item.id === requested || item.id === canonical) ?? null;
   });
 
-  readonly backLink = computed(() => '/sistemasFacturadores');
+  readonly backLink = computed(() => '/sistemas-facturadores');
 
   readonly crumbs = computed<Crumb[]>(() => [
-    { label: 'Sistemas Facturadores', link: '/sistemasFacturadores' },
-    { label: 'Sistemas internos', link: '/sistemasFacturadores' },
-    { label: this.sistema()?.codigo ?? 'Sistema' },
+    { label: 'Sistemas Facturadores', link: '/sistemas-facturadores' },
+    { label: `Homologación de productos de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);
 
   readonly filtered = computed(() => {
@@ -148,7 +147,7 @@ export class ProductosHomologadosPage {
       const sistema = this.sistema();
       const requested = this.sistemaId();
       if (sistema && sistema.id !== requested) {
-        void this.router.navigate(['/sistemasFacturadores', sistema.id, 'productos'], { replaceUrl: true });
+        void this.router.navigate(['/sistemas-facturadores', sistema.id, 'productos'], { replaceUrl: true });
       }
       this.query.set('');
       this.page.set(1);

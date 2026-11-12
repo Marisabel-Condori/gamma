@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { GammaDataService } from '../../../core/data/gamma-data.service';
 import { SistemaResponse } from '../../../core/models/gamma.models';
@@ -6,14 +6,17 @@ import { countLabel } from '../../../shared/utils/labels';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state.component';
 import { IconButtonComponent } from '../../../shared/ui/icon-button.component';
 import { ModalComponent } from '../../../shared/ui/modal.component';
-import { PageHeaderComponent, Crumb } from '../../../shared/ui/page-header.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header.component';
 import { SearchFieldComponent } from '../../../shared/ui/search-field.component';
 import { ToastService } from '../../../shared/ui/toast.service';
 
-type SistemaDialog =
-  | { kind: 'form'; id: string | null }
-  | { kind: 'delete'; id: string }
-  | { kind: 'homologar' };
+type SistemaDialog = { kind: 'form'; id: string | null } | { kind: 'delete'; id: string };
+
+interface OpenMenu {
+  id: string;
+  top: number;
+  left: number;
+}
 
 @Component({
   selector: 'app-sistemasFacturadores-page',
@@ -33,13 +36,19 @@ export class SistemasFacturadoresPage {
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
 
-  readonly subtitle = 'Gestiona los sistemas de ENTEL y su homologación por sucursal.';
   readonly query = signal('');
   readonly dialog = signal<SistemaDialog | null>(null);
+  readonly menu = signal<OpenMenu | null>(null);
   readonly formError = signal<string | null>(null);
   readonly form = signal({ codigo: '', descripcion: '' });
-
-  readonly crumbs = computed<Crumb[]>(() => [{ label: 'Sistemas Facturadores', link: '/sistemasFacturadores' }]);
+  readonly homologarMenu = [
+    { id: 'productos', label: 'Productos' },
+    { id: 'sucursales', label: 'Sucursales' },
+    { id: 'unidades', label: 'Unidades de medida' },
+    { id: 'moneda', label: 'Tipos de moneda' },
+    { id: 'pago', label: 'Tipo de método de pago' },
+    { id: 'anulacion', label: 'Motivo de anulación' },
+  ] as const;
 
   readonly filtered = computed(() => {
     const query = this.query().trim().toLowerCase();
@@ -55,21 +64,16 @@ export class SistemasFacturadoresPage {
 
   readonly countText = computed(() => countLabel(this.filtered().length, 'sistema', 'sistemas'));
 
-  readonly registeredLabel = computed(() => {
-    const total = this.filtered().length;
-    return `${countLabel(total, 'sistema', 'sistemas')} registrado${total === 1 ? '' : 's'}`;
-  });
-
   readonly emptyMessage = computed(() => {
     if (this.query().trim()) {
       return 'No hay resultados para la búsqueda.';
     }
-    return 'Todavía no hay sistemas internos.';
+    return 'Todavía no hay sistemas facturadores.';
   });
 
   readonly active = computed(() => {
     const dialog = this.dialog();
-    if (!dialog || dialog.kind === 'homologar' || !dialog.id) {
+    if (!dialog || !dialog.id) {
       return null;
     }
     return this.state.sistemas().find((sistema) => sistema.id === dialog.id) ?? null;
@@ -95,12 +99,39 @@ export class SistemasFacturadoresPage {
     this.dialog.set({ kind: 'delete', id: sistema.id });
   }
 
-  openHomologar(): void {
-    this.dialog.set({ kind: 'homologar' });
+  toggleMenu(sistema: SistemaResponse, event: Event): void {
+    if (this.menu()?.id === sistema.id) {
+      this.menu.set(null);
+      return;
+    }
+    const button = event.currentTarget as HTMLElement;
+    const rect = button.getBoundingClientRect();
+    const width = 240;
+    const height = 248;
+    const left = Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12));
+    const top =
+      rect.bottom + 6 + height > window.innerHeight
+        ? Math.max(8, rect.top - 6 - height)
+        : rect.bottom + 6;
+    this.menu.set({ id: sistema.id, top, left });
   }
 
-  openProductos(sistema: SistemaResponse): void {
-    void this.router.navigate(['/sistemasFacturadores', sistema.id, 'productos']);
+  chooseHomologar(sistemaId: string, option: string): void {
+    this.menu.set(null);
+    if (option === 'productos') {
+      void this.router.navigate(['/sistemas-facturadores', sistemaId, 'productos']);
+      return;
+    }
+    this.toast.show('Esta opción todavía no está disponible.');
+  }
+
+  closeMenu(): void {
+    this.menu.set(null);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.menu.set(null);
   }
 
   close(): void {

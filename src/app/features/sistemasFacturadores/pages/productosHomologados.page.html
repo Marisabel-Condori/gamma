@@ -2,31 +2,52 @@
   @if (sistema(); as sistema) {
     <a class="back homo-mobile-back" [routerLink]="backLink()">
       <span class="material-icons">chevron_left</span>
-      Sistemas internos
+      Homologaciones
     </a>
 
-    <app-page-header
-      title="Productos y servicios homologados"
-      [crumbs]="crumbs()"
-      [backLink]="backLink()"
-      backLabel="Volver a sistemas internos"
-    />
+    <p class="crumbs homo-route">
+      @for (crumb of crumbs(); track crumb.label; let last = $last) {
+        @if (crumb.link && !last) {
+          <a [routerLink]="crumb.link">{{ crumb.label }}</a>
+        } @else {
+          <span>{{ crumb.label }}</span>
+        }
+        @if (!last) {
+          <span>/</span>
+        }
+      }
+    </p>
 
-    <button type="button" class="btn-primary homo-create" (click)="openCreate()">
-      <span class="material-icons">add</span>
-      Nueva homologación
-    </button>
-
-    <div class="toolbar homo-toolbar">
+    <div class="homo-heading">
+      <app-page-header
+        title="Productos y servicios homologados"
+        [backLink]="backLink()"
+        backLabel="Volver a sistemas facturadores"
+      />
       <div class="system-chip">
-        <span>Sistema:</span>
         <strong>{{ sistema.codigo }}</strong>
       </div>
-      <app-search-field
-        placeholder="Buscar por código, producto o actividad..."
-        [value]="query()"
-        (valueChange)="onQuery($event)"
-      />
+    </div>
+
+    <div class="homo-tools">
+      <div class="homo-mobile-search">
+        <app-search-field
+          placeholder="Buscar homologaciones..."
+          [value]="query()"
+          (valueChange)="onQuery($event)"
+        />
+      </div>
+      <div class="homo-desktop-search">
+        <app-search-field
+          placeholder="Buscar por código, producto o actividad..."
+          [value]="query()"
+          (valueChange)="onQuery($event)"
+        />
+      </div>
+      <button type="button" class="btn-primary homo-create" (click)="openCreate()">
+        <span class="material-icons">add</span>
+        <span class="homo-create-label">Nueva homologación</span>
+      </button>
     </div>
 
     @if (filtered().length === 0) {
@@ -43,13 +64,12 @@
           <table class="homo-table">
             <thead>
               <tr>
-                <th rowspan="2">Fecha de homologación</th>
-                <th class="group" colspan="3">ENTEL</th>
+                <th rowspan="2">Fecha</th>
+                <th class="group" colspan="2">ENTEL</th>
                 <th class="group" colspan="3">SIN</th>
                 <th rowspan="2">Acciones</th>
               </tr>
               <tr>
-                <th>Sistema</th>
                 <th>Código</th>
                 <th>Producto o servicio</th>
                 <th>Actividad</th>
@@ -60,11 +80,7 @@
             <tbody>
               @for (item of pageItems(); track item.id) {
                 <tr>
-                  <td class="when">
-                    <span>{{ item.fecha }}</span>
-                    <small>{{ item.hora }}</small>
-                  </td>
-                  <td>{{ sistema.codigo }}</td>
+                  <td class="when">{{ item.fecha }} · {{ item.hora }}</td>
                   <td>{{ item.codigoEntel }}</td>
                   <td class="product">{{ item.productoEntel }}</td>
                   <td>{{ item.actividadCodigo }} · {{ item.actividadNombre }}</td>
@@ -100,8 +116,8 @@
             <p>Actividad: {{ item.actividadCodigo }} · {{ item.actividadNombre }}</p>
             <div class="homo-card-foot">
               <p>
-                Homologado el {{ item.fecha }}
-                <small>{{ item.hora }}</small>
+                <span>Homologado</span>
+                <strong>{{ item.fecha }} · {{ item.hora }}</strong>
               </p>
               <div class="actions inline">
                 <app-icon-button icon="edit" label="Editar homologación" (pressed)="openEdit(item)" />
@@ -152,7 +168,7 @@
     }
   } @else {
     <app-page-header title="Sistema no encontrado" subtitle="Ese sistema no fue encontrado." />
-    <a class="back" routerLink="/sistemasFacturadores">
+    <a class="back" routerLink="/sistemas-facturadores">
       <span class="material-icons">arrow_back</span>
       Volver a sistemas facturadores
     </a>

@@ -23,26 +23,31 @@ export const routes: Routes = [
         loadComponent: () => import('./features/inicio/pages/inicio.page').then((m) => m.InicioPage),
       },
       {
-        path: 'sistemasFacturadores',
+        path: 'sistemas-facturadores',
         loadComponent: () =>
           import('./features/sistemasFacturadores/pages/sistemasFacturadores.page').then(
             (m) => m.SistemasFacturadoresPage,
           ),
       },
       {
-        path: 'sistemasFacturadores/:sistemaId/productos',
+        path: 'sistemas-facturadores/:sistemaId/productos',
         loadComponent: () =>
           import('./features/sistemasFacturadores/pages/productosHomologados.page').then(
             (m) => m.ProductosHomologadosPage,
           ),
       },
-      { path: 'sistemasFacturadores/entel', pathMatch: 'full', redirectTo: 'sistemasFacturadores' },
+      { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
+      { path: 'sistemasFacturadores/entel', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
+      {
+        path: 'sistemasFacturadores/:sistemaId/productos',
+        redirectTo: ({ params }) => `/sistemas-facturadores/${params['sistemaId']}/productos`,
+      },
       {
         path: 'sistemasFacturadores/:origen/:sistemaId/productos',
         redirectTo: ({ params }) => {
           const raw = params['sistemaId'] ?? '';
           const sistemaId = raw.replace(/^entel-/, '');
-          return `/sistemasFacturadores/${sistemaId}/productos`;
+          return `/sistemas-facturadores/${sistemaId}/productos`;
         },
       },
       {

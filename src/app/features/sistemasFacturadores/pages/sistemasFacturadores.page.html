@@ -1,16 +1,15 @@
 <section class="page systems-page">
-    <app-page-header title="Sistemas internos" [subtitle]="subtitle" [crumbs]="crumbs()" />
+    <div class="systems-heading">
+      <app-page-header title="Sistemas Facturadores" />
+      <span class="systems-count">{{ countText() }}</span>
+    </div>
 
-    <button type="button" class="btn-primary create-system" (click)="openCreate()">
-      <span class="material-icons">add</span>
-      Crear sistema
-    </button>
-
-    <div class="toolbar">
-      <div class="toolbar-meta">
-        <span>{{ countText() }}</span>
-      </div>
+    <div class="systems-tools">
       <app-search-field placeholder="Buscar sistema..." [value]="query()" (valueChange)="onQuery($event)" />
+      <button type="button" class="btn-primary create-system" (click)="openCreate()">
+        <span class="material-icons">add</span>
+        <span class="create-system-label">Crear sistema</span>
+      </button>
     </div>
 
     @if (filtered().length === 0) {
@@ -21,19 +20,24 @@
           <div class="list-head cols-sistemas">
             <span>Sistema</span>
             <span>Descripción</span>
-            <span>Sucursales</span>
-            <span>Productos</span>
+            <span>Homologar</span>
             <span>Acciones</span>
           </div>
           @for (sistema of filtered(); track sistema.id) {
             <article class="data-row cols-sistemas">
               <strong class="code">{{ sistema.codigo }}</strong>
               <span>{{ sistema.descripcion }}</span>
-              <button type="button" class="proc" (click)="openHomologar()">
-                Homologar sucursales
-              </button>
-              <button type="button" class="proc" (click)="openProductos(sistema)">
-                Homologar productos
+              <button
+                type="button"
+                class="homo-menu"
+                aria-label="Homologar"
+                [attr.aria-expanded]="menu()?.id === sistema.id"
+                (click)="toggleMenu(sistema, $event)"
+              >
+                <span class="homo-menu-label">Homologar</span>
+                <span class="menu-trigger" aria-hidden="true">
+                  <span class="material-icons">more_vert</span>
+                </span>
               </button>
               <div class="actions inline">
                 <app-icon-button icon="edit" label="Editar sistema" (pressed)="openEdit(sistema)" />
@@ -50,8 +54,15 @@
       </div>
     }
 
-    @if (filtered().length > 0) {
-      <p class="footnote">{{ registeredLabel() }}</p>
+    @if (menu(); as current) {
+      <button type="button" class="row-menu-backdrop" aria-label="Cerrar menú" (click)="closeMenu()"></button>
+      <div class="row-menu" role="menu" [style.top.px]="current.top" [style.left.px]="current.left">
+        @for (item of homologarMenu; track item.id) {
+          <button type="button" role="menuitem" (click)="chooseHomologar(current.id, item.id)">
+            {{ item.label }}
+          </button>
+        }
+      </div>
     }
 
   @if (dialog(); as current) {
@@ -80,11 +91,6 @@
             <button type="submit" class="btn-primary">Guardar</button>
           </div>
         </form>
-      </app-modal>
-    }
-    @if (current.kind === 'homologar') {
-      <app-modal title="Homologar" [plain]="true" (closed)="close()">
-        <span class="modal-word">Homologar sucursales</span>
       </app-modal>
     }
     @if (current.kind === 'delete' && active(); as sistema) {
