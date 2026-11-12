@@ -31,6 +31,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales',
+        loadComponent: () =>
+          import('./features/homologacion-sucursales/pages/homologacion-sucursales.page').then(
+            (m) => m.HomologacionSucursalesPage,
+          ),
+      },
+      {
         path: 'servicios',
         loadComponent: () =>
           import('./features/servicios/pages/servicios.page').then((m) => m.ServiciosPage),

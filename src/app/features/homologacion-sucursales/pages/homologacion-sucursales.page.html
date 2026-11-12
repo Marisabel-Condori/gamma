@@ -1,0 +1,72 @@
+<section class="page">
+  <app-page-header
+    title="Puntos de venta SIN"
+    subtitle="Homologación de sucursales para {{ empresa()?.codigo ?? 'la empresa' }} · {{ sistema()?.codigo ?? 'el sistema' }}."
+    [crumbs]="crumbs()"
+    [backLink]="'/sistemasFacturadores/' + (empresa()?.id ?? '')"
+    backLabel="Volver a sistemas"
+  />
+
+  @if (empresa() && sistema()) {
+    <section class="branch-card" aria-label="Sucursal seleccionada">
+      <h2>- PUNTOS DE VENTA SIN -</h2>
+      <p class="branch-company">EMPRESA: {{ empresa()?.codigo }}</p>
+      <p>CODIGO SUC: 0</p>
+      <p class="address">SUCURSAL: CALLE FEDERICO ZUAZO Nro. 1771 Edif.: TOWER Piso: 10 Depto.: - Zona/Barrio: CENTRAL La Paz</p>
+    </section>
+
+    <div class="toolbar">
+      <span class="results">{{ puntosVenta().length }} puntos de venta</span>
+      <app-search-field
+        placeholder="Buscar en todos los datos..."
+        [value]="query()"
+        (valueChange)="onQuery($event)"
+      />
+    </div>
+
+    <div class="table-wrap">
+      <table class="sales-table">
+        <thead>
+          <tr>
+            <th>Código<br />Punto Venta SIN</th>
+            <th>Descripción</th>
+            <th>Cuis</th>
+            <th>Reprocesar<br />Cuis</th>
+            <th>Fecha Vigencia<br />Cuis</th>
+            <th>Cufd</th>
+            <th>Reprocesar<br />Cufd</th>
+            <th>Fecha Vigencia<br />Cufd</th>
+            <th>Tipo Punto Venta</th>
+            <th>Sincroniza</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (point of puntosVenta(); track point.codigo) {
+            <tr>
+              <td>{{ point.codigo }}</td>
+              <td class="description">{{ point.descripcion }}</td>
+              <td>{{ point.cuis }}</td>
+              <td>—</td>
+              <td>{{ point.vigenciaCuis }}</td>
+              <td>{{ point.cufd }}</td>
+              <td>—</td>
+              <td>{{ point.vigenciaCufd }}</td>
+              <td class="type">{{ point.tipo }}</td>
+              <td class="status-no">{{ point.sincroniza }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty-row" colspan="10">No hay puntos de venta que coincidan con la búsqueda.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <section class="empty">
+      <span class="material-icons" aria-hidden="true">info</span>
+      <p>No se encontró el sistema seleccionado.</p>
+      <a class="back" routerLink="/sistemasFacturadores">Volver a sistemas facturadores</a>
+    </section>
+  }
+</section>
