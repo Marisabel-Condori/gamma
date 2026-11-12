@@ -1,4 +1,4 @@
-import { HomologacionProducto, SistemaResponse } from '../models/gamma.models';
+import { HomologacionProductoResponse, SistemaResponse } from '../models/gamma.models';
 
 const SISTEMAS: ReadonlyArray<readonly [string, string]> = [
   ['ZSMART', 'ZSMART'],
@@ -14,7 +14,7 @@ const SISTEMAS: ReadonlyArray<readonly [string, string]> = [
 
 export interface GammaData {
   sistemas: SistemaResponse[];
-  homologaciones: HomologacionProducto[];
+  homologaciones: HomologacionProductoResponse[];
 }
 
 export function createSeed(): GammaData {
@@ -53,8 +53,8 @@ const PRODUCTOS_EXTRA = [
   'PLAN POSTPAGO',
 ];
 
-function createHomologaciones(): HomologacionProducto[] {
-  const rows: HomologacionProducto[] = MUESTRA_ZSMART.map((item, index) =>
+function createHomologaciones(): HomologacionProductoResponse[] {
+  const rows: HomologacionProductoResponse[] = MUESTRA_ZSMART.map((item, index) =>
     homologacion('ZSMART', index, '08/03/2022', item[0], item[1], item[2], item[3], item[4]),
   );
 
@@ -91,7 +91,7 @@ function homologacion(
   productoEntel: string,
   codigoSin: string,
   productoSin: string,
-): HomologacionProducto {
+): HomologacionProductoResponse {
   return {
     id: `${sistemaId}-homo-${index + 1}`,
     sistemaId,

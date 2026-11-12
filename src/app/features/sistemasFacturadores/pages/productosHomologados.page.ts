@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { GammaState } from '../../../core/state/gamma-state';
-import { HomologacionProducto } from '../../../core/models/gamma.models';
+import { HomologacionProductoResponse } from '../../../core/models/gamma.models';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state.component';
 import { IconButtonComponent } from '../../../shared/ui/icon-button.component';
 import { ModalComponent } from '../../../shared/ui/modal.component';
@@ -189,7 +189,7 @@ export class ProductosHomologadosPage {
     this.dialog.set({ kind: 'form', id: null });
   }
 
-  openEdit(item: HomologacionProducto): void {
+  openEdit(item: HomologacionProductoResponse): void {
     this.form.set({
       fecha: item.fecha,
       hora: item.hora,
@@ -204,7 +204,7 @@ export class ProductosHomologadosPage {
     this.dialog.set({ kind: 'form', id: item.id });
   }
 
-  openDelete(item: HomologacionProducto): void {
+  openDelete(item: HomologacionProductoResponse): void {
     this.dialog.set({ kind: 'delete', id: item.id });
   }
 

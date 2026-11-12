@@ -9,7 +9,7 @@ export interface SistemaRequest {
   descripcion: string;
 }
 
-export interface HomologacionProducto {
+export interface HomologacionProductoResponse {
   id: string;
   sistemaId: string;
   fecha: string;
@@ -22,7 +22,7 @@ export interface HomologacionProducto {
   productoSin: string;
 }
 
-export interface HomologacionProductoInput {
+export interface HomologacionProductoRequest {
   sistemaId: string;
   fecha: string;
   hora: string;

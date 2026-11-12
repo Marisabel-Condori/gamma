@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { HomologacionProducto, HomologacionProductoInput, SistemaRequest, SistemaResponse } from '../models/gamma.models';
+import { HomologacionProductoResponse, HomologacionProductoRequest, SistemaRequest, SistemaResponse } from '../models/gamma.models';
 import { GammaData, createSeed } from './seed';
 
 const STORAGE_KEY = 'gamma.demo.v2';
@@ -57,7 +57,7 @@ export class GammaState {
     }));
   }
 
-  createHomologacion(input: HomologacionProductoInput): string | null {
+  createHomologacion(input: HomologacionProductoRequest): string | null {
     const payload = cleanHomologacion(input);
     if (!payload) {
       return 'Completa todos los campos de la homologación.';
@@ -69,7 +69,7 @@ export class GammaState {
     return null;
   }
 
-  updateHomologacion(id: string, input: HomologacionProductoInput): string | null {
+  updateHomologacion(id: string, input: HomologacionProductoRequest): string | null {
     const payload = cleanHomologacion(input);
     if (!payload) {
       return 'Completa todos los campos de la homologación.';
@@ -105,7 +105,7 @@ export class GammaState {
       const parsed = JSON.parse(raw) as {
         empresas?: unknown;
         sistemas?: Array<SistemaResponse & { empresaId?: string }>;
-        homologaciones?: HomologacionProducto[];
+        homologaciones?: HomologacionProductoResponse[];
       };
       if (!Array.isArray(parsed.sistemas)) {
         return createSeed();
@@ -148,7 +148,7 @@ function cleanUpper(value: string): string {
   return value.trim().toUpperCase();
 }
 
-function cleanHomologacion(input: HomologacionProductoInput): Omit<HomologacionProductoInput, 'sistemaId'> & {
+function cleanHomologacion(input: HomologacionProductoRequest): Omit<HomologacionProductoRequest, 'sistemaId'> & {
   sistemaId: string;
 } | null {
   const payload = {
