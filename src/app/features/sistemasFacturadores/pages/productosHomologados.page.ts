@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { GammaState } from '../../../core/state/gamma-state';
+import { GammaDataService } from '../../../core/data/gamma-data.service';
 import { HomologacionProductoResponse } from '../../../core/models/gamma.models';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state.component';
 import { IconButtonComponent } from '../../../shared/ui/icon-button.component';
@@ -57,7 +57,7 @@ const EMPTY_FORM: HomoForm = {
   styles: ':host { display: block; }',
 })
 export class ProductosHomologadosPage {
-  private readonly state = inject(GammaState);
+  private readonly state = inject(GammaDataService);
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
 

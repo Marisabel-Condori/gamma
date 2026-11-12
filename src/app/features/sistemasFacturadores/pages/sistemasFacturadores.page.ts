@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { GammaState } from '../../../core/state/gamma-state';
+import { GammaDataService } from '../../../core/data/gamma-data.service';
 import { SistemaResponse } from '../../../core/models/gamma.models';
 import { countLabel } from '../../../shared/utils/labels';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state.component';
@@ -29,7 +29,7 @@ type SistemaDialog =
   styles: ':host { display: block; }',
 })
 export class SistemasFacturadoresPage {
-  private readonly state = inject(GammaState);
+  private readonly state = inject(GammaDataService);
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
 

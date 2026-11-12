@@ -1,11 +1,16 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { HomologacionProductoResponse, HomologacionProductoRequest, SistemaRequest, SistemaResponse } from '../models/gamma.models';
+import {
+  HomologacionProductoRequest,
+  HomologacionProductoResponse,
+  SistemaRequest,
+  SistemaResponse,
+} from '../models/gamma.models';
 import { GammaData, createSeed } from './seed';
 
 const STORAGE_KEY = 'gamma.demo.v2';
 
 @Injectable({ providedIn: 'root' })
-export class GammaState {
+export class GammaDataService {
   private readonly state = signal<GammaData>(this.restore());
 
   readonly sistemas = computed(() => this.state().sistemas);
@@ -179,6 +184,24 @@ function cleanUpper(value: string): string {
   return value.trim().toUpperCase();
 }
 
+function cleanHomologacion(input: HomologacionProductoRequest): HomologacionProductoRequest | null {
+  const payload = {
+    sistemaId: input.sistemaId,
+    fecha: input.fecha.trim(),
+    hora: input.hora.trim(),
+    codigoEntel: input.codigoEntel.trim(),
+    productoEntel: input.productoEntel.trim(),
+    actividadCodigo: input.actividadCodigo.trim(),
+    actividadNombre: input.actividadNombre.trim(),
+    codigoSin: input.codigoSin.trim(),
+    productoSin: input.productoSin.trim(),
+  };
+  if (Object.values(payload).some((value) => !value)) {
+    return null;
+  }
+  return payload;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -277,22 +300,4 @@ function storedDataChanged(parsed: Record<string, unknown>, data: GammaData): bo
     (item) => isRecord(item) && text(item['sistemaId']).startsWith('entel-'),
   );
   return legacySistema || legacyHomologacion;
-}
-
-function cleanHomologacion(input: HomologacionProductoRequest): HomologacionProductoRequest | null {
-  const payload = {
-    sistemaId: input.sistemaId,
-    fecha: input.fecha.trim(),
-    hora: input.hora.trim(),
-    codigoEntel: input.codigoEntel.trim(),
-    productoEntel: input.productoEntel.trim(),
-    actividadCodigo: input.actividadCodigo.trim(),
-    actividadNombre: input.actividadNombre.trim(),
-    codigoSin: input.codigoSin.trim(),
-    productoSin: input.productoSin.trim(),
-  };
-  if (Object.values(payload).some((value) => !value)) {
-    return null;
-  }
-  return payload;
 }
