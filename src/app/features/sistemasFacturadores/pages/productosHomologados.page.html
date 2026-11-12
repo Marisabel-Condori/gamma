@@ -1,0 +1,219 @@
+<section class="page homo-page">
+  @if (sistema(); as sistema) {
+    <a class="back homo-mobile-back" [routerLink]="backLink()">
+      <span class="material-icons">chevron_left</span>
+      Sistemas internos
+    </a>
+
+    <app-page-header
+      title="Productos y servicios homologados"
+      [crumbs]="crumbs()"
+      [backLink]="backLink()"
+      backLabel="Volver a sistemas internos"
+    />
+
+    <button type="button" class="btn-primary homo-create" (click)="openCreate()">
+      <span class="material-icons">add</span>
+      Nueva homologación
+    </button>
+
+    <div class="toolbar homo-toolbar">
+      <div class="system-chip">
+        <span>Sistema:</span>
+        <strong>{{ sistema.codigo }}</strong>
+      </div>
+      <app-search-field
+        placeholder="Buscar por código, producto o actividad..."
+        [value]="query()"
+        (valueChange)="onQuery($event)"
+      />
+    </div>
+
+    @if (filtered().length === 0) {
+      <app-empty-state
+        [message]="
+          query()
+            ? 'No hay resultados para la búsqueda.'
+            : 'Este sistema todavía no tiene productos homologados.'
+        "
+      />
+    } @else {
+      <div class="table-wrap">
+        <div class="homo-sheet">
+          <table class="homo-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Fecha de homologación</th>
+                <th class="group" colspan="3">{{ sistema.codigo }}</th>
+                <th class="group" colspan="3">SIN</th>
+                <th rowspan="2">Acciones</th>
+              </tr>
+              <tr>
+                <th>Sistema</th>
+                <th>Código</th>
+                <th>Producto o servicio</th>
+                <th>Actividad</th>
+                <th>Código</th>
+                <th>Producto o servicio</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of pageItems(); track item.id) {
+                <tr>
+                  <td class="when">
+                    <span>{{ item.fecha }}</span>
+                    <small>{{ item.hora }}</small>
+                  </td>
+                  <td>{{ sistema.codigo }}</td>
+                  <td>{{ item.codigoEntel }}</td>
+                  <td class="product">{{ item.productoEntel }}</td>
+                  <td>{{ item.actividadCodigo }} · {{ item.actividadNombre }}</td>
+                  <td>{{ item.codigoSin }}</td>
+                  <td>{{ item.productoSin }}</td>
+                  <td>
+                    <div class="actions inline">
+                      <app-icon-button icon="edit" label="Editar homologación" (pressed)="openEdit(item)" />
+                      <app-icon-button
+                        icon="delete"
+                        label="Eliminar homologación"
+                        tone="danger"
+                        (pressed)="openDelete(item)"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="homo-cards">
+        <p class="homo-range">{{ rangeLabel() }}</p>
+        @for (item of pageItems(); track item.id) {
+          <article class="homo-card">
+            <p class="homo-kicker">ENTEL</p>
+            <h3>{{ sentence(item.productoEntel) }}</h3>
+            <p>Código ENTEL: {{ item.codigoEntel }}</p>
+            <p class="homo-kicker">SIN</p>
+            <h3>{{ sentence(item.productoSin) }}</h3>
+            <p>Código SIN: {{ item.codigoSin }}</p>
+            <p>Actividad: {{ item.actividadCodigo }} · {{ item.actividadNombre }}</p>
+            <div class="homo-card-foot">
+              <p>
+                Homologado el {{ item.fecha }}
+                <small>{{ item.hora }}</small>
+              </p>
+              <div class="actions inline">
+                <app-icon-button icon="edit" label="Editar homologación" (pressed)="openEdit(item)" />
+                <app-icon-button
+                  icon="delete"
+                  label="Eliminar homologación"
+                  tone="danger"
+                  (pressed)="openDelete(item)"
+                />
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+      <div class="pager">
+        <span>{{ rangeLabel() }}</span>
+        <div class="pager-pages">
+          <button type="button" class="pager-btn" [disabled]="safePage() === 1" (click)="previous()">
+            <span class="material-icons">chevron_left</span>
+          </button>
+          @for (item of pageList(); track $index) {
+            @if (item === '…') {
+              <span class="pager-gap">…</span>
+            } @else {
+              <button
+                type="button"
+                class="pager-btn"
+                [class.current]="item === safePage()"
+                (click)="goTo(item)"
+              >
+                {{ item }}
+              </button>
+            }
+          }
+          <button type="button" class="pager-btn" [disabled]="safePage() === totalPages()" (click)="next()">
+            <span class="material-icons">chevron_right</span>
+          </button>
+        </div>
+        <label class="pager-size">
+          Por página:
+          <select [value]="pageSize()" (change)="onPageSize($event)">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </label>
+      </div>
+    }
+  } @else {
+    <app-page-header title="Sistema no encontrado" subtitle="Ese sistema no fue encontrado." />
+    <a class="back" routerLink="/sistemasFacturadores">
+      <span class="material-icons">arrow_back</span>
+      Volver a sistemas facturadores
+    </a>
+  }
+
+  @if (dialog(); as current) {
+    @if (current.kind === 'form') {
+      <app-modal [title]="current.id ? 'Editar homologación' : 'Nueva homologación'" (closed)="close()">
+        <form (submit)="save($event)" novalidate>
+          <div class="fields homo-fields">
+            <label class="field">
+              Fecha
+              <input [value]="form().fecha" placeholder="08/03/2022" (input)="onField('fecha', $event)" />
+            </label>
+            <label class="field">
+              Hora
+              <input [value]="form().hora" placeholder="13:37:55" (input)="onField('hora', $event)" />
+            </label>
+            <label class="field">
+              Código
+              <input [value]="form().codigoEntel" (input)="onField('codigoEntel', $event)" />
+            </label>
+            <label class="field">
+              Producto o servicio
+              <input [value]="form().productoEntel" (input)="onField('productoEntel', $event)" />
+            </label>
+            <label class="field">
+              Actividad
+              <input [value]="form().actividadCodigo" (input)="onField('actividadCodigo', $event)" />
+            </label>
+            <label class="field">
+              Nombre de la actividad
+              <input [value]="form().actividadNombre" (input)="onField('actividadNombre', $event)" />
+            </label>
+            <label class="field">
+              Código SIN
+              <input [value]="form().codigoSin" (input)="onField('codigoSin', $event)" />
+            </label>
+            <label class="field">
+              Producto o servicio SIN
+              <input [value]="form().productoSin" (input)="onField('productoSin', $event)" />
+            </label>
+          </div>
+          @if (formError()) {
+            <p class="form-error">{{ formError() }}</p>
+          }
+          <div class="modal-actions">
+            <button type="button" class="btn-ghost" (click)="close()">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
+        </form>
+      </app-modal>
+    }
+    @if (current.kind === 'delete' && active(); as item) {
+      <app-modal title="Eliminar homologación" (closed)="close()">
+        <p class="muted">Esta seguro que desea eliminar {{ item.productoEntel }}.</p>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" (click)="close()">Cancelar</button>
+          <button type="button" class="btn-danger" (click)="confirmDelete()">Eliminar</button>
+        </div>
+      </app-modal>
+    }
+  }
+</section>

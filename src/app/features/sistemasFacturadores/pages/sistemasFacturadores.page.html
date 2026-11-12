@@ -1,14 +1,11 @@
-<section class="page">
+<section class="page systems-page">
   @if (empresa(); as empresa) {
-    <app-page-header
-      title="Sistemas internos"
-      [subtitle]="subtitle()"
-      [crumbs]="crumbs()"
-      actionLabel="Crear sistema"
-      (action)="openCreate()"
-    />
+    <app-page-header title="Sistemas internos" [subtitle]="subtitle()" [crumbs]="crumbs()" />
 
-    <app-company-context [codigo]="empresa.codigo" />
+    <button type="button" class="btn-primary create-system" (click)="openCreate()">
+      <span class="material-icons">add</span>
+      Crear sistema
+    </button>
 
     <div class="toolbar">
       <div class="toolbar-meta">
@@ -33,10 +30,10 @@
             <article class="data-row cols-sistemas">
               <strong class="code">{{ sistema.codigo }}</strong>
               <span>{{ sistema.descripcion }}</span>
-              <button type="button" class="proc" (click)="openHomologar('sucursales')">
+              <button type="button" class="proc" (click)="openHomologar()">
                 Homologar sucursales
               </button>
-              <button type="button" class="proc" (click)="openHomologar('productos')">
+              <button type="button" class="proc" (click)="openProductos(sistema)">
                 Homologar productos
               </button>
               <div class="actions inline">
@@ -95,9 +92,7 @@
     }
     @if (current.kind === 'homologar') {
       <app-modal title="Homologar" [plain]="true" (closed)="close()">
-        <span class="modal-word">
-          {{ current.target === 'productos' ? 'Homologar productos' : 'Homologar sucursales' }}
-        </span>
+        <span class="modal-word">Homologar sucursales</span>
       </app-modal>
     }
     @if (current.kind === 'delete' && active(); as sistema) {

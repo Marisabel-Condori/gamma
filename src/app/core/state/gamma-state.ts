@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { SistemaInput } from '../models/gamma.models';
+import { HomologacionProductoInput, SistemaInput } from '../models/gamma.models';
 import { GammaData, createSeed } from './seed';
 
 const STORAGE_KEY = 'gamma.demo.v2';
@@ -10,6 +10,7 @@ export class GammaState {
 
   readonly empresas = computed(() => this.state().empresas);
   readonly sistemas = computed(() => this.state().sistemas);
+  readonly homologaciones = computed(() => this.state().homologaciones);
 
   createSistema(input: SistemaInput): string | null {
     const codigo = cleanUpper(input.codigo);
@@ -71,6 +72,38 @@ export class GammaState {
     this.commit((current) => ({
       ...current,
       sistemas: current.sistemas.filter((sistema) => sistema.id !== id),
+      homologaciones: current.homologaciones.filter((item) => item.sistemaId !== id),
+    }));
+  }
+
+  createHomologacion(input: HomologacionProductoInput): string | null {
+    const payload = cleanHomologacion(input);
+    if (!payload) {
+      return 'Completa todos los campos de la homologación.';
+    }
+    this.commit((current) => ({
+      ...current,
+      homologaciones: [...current.homologaciones, { ...payload, id: `${input.sistemaId}-homo-${Date.now()}` }],
+    }));
+    return null;
+  }
+
+  updateHomologacion(id: string, input: HomologacionProductoInput): string | null {
+    const payload = cleanHomologacion(input);
+    if (!payload) {
+      return 'Completa todos los campos de la homologación.';
+    }
+    this.commit((current) => ({
+      ...current,
+      homologaciones: current.homologaciones.map((item) => (item.id === id ? { ...item, ...payload } : item)),
+    }));
+    return null;
+  }
+
+  deleteHomologacion(id: string): void {
+    this.commit((current) => ({
+      ...current,
+      homologaciones: current.homologaciones.filter((item) => item.id !== id),
     }));
   }
 
@@ -92,7 +125,12 @@ export class GammaState {
       if (!Array.isArray(parsed.empresas) || !Array.isArray(parsed.sistemas)) {
         return createSeed();
       }
-      return { empresas: parsed.empresas, sistemas: parsed.sistemas };
+      const seed = createSeed();
+      return {
+        empresas: parsed.empresas,
+        sistemas: parsed.sistemas,
+        homologaciones: Array.isArray(parsed.homologaciones) ? parsed.homologaciones : seed.homologaciones,
+      };
     } catch {
       return createSeed();
     }
@@ -109,4 +147,24 @@ export class GammaState {
 
 function cleanUpper(value: string): string {
   return value.trim().toUpperCase();
+}
+
+function cleanHomologacion(input: HomologacionProductoInput): Omit<HomologacionProductoInput, 'sistemaId'> & {
+  sistemaId: string;
+} | null {
+  const payload = {
+    sistemaId: input.sistemaId,
+    fecha: input.fecha.trim(),
+    hora: input.hora.trim(),
+    codigoEntel: input.codigoEntel.trim(),
+    productoEntel: input.productoEntel.trim(),
+    actividadCodigo: input.actividadCodigo.trim(),
+    actividadNombre: input.actividadNombre.trim(),
+    codigoSin: input.codigoSin.trim(),
+    productoSin: input.productoSin.trim(),
+  };
+  if (Object.values(payload).some((value) => !value)) {
+    return null;
+  }
+  return payload;
 }

@@ -7,11 +7,10 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { GammaState } from '../../../core/state/gamma-state';
 import { Sistema } from '../../../core/models/gamma.models';
 import { countLabel } from '../../../shared/utils/labels';
-import { CompanyContextComponent } from '../../../shared/ui/company.components';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state.component';
 import { IconButtonComponent } from '../../../shared/ui/icon-button.component';
 import { ModalComponent } from '../../../shared/ui/modal.component';
@@ -22,7 +21,7 @@ import { ToastService } from '../../../shared/ui/toast.service';
 type SistemaDialog =
   | { kind: 'form'; id: string | null }
   | { kind: 'delete'; id: string }
-  | { kind: 'homologar'; target: 'sucursales' | 'productos' };
+  | { kind: 'homologar' };
 
 @Component({
   selector: 'app-sistemasFacturadores-page',
@@ -33,7 +32,6 @@ type SistemaDialog =
     IconButtonComponent,
     EmptyStateComponent,
     ModalComponent,
-    CompanyContextComponent,
   ],
   templateUrl: './sistemasFacturadores.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +40,7 @@ type SistemaDialog =
 export class SistemasFacturadoresPage {
   private readonly state = inject(GammaState);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
   readonly empresaId = input('entel');
 
@@ -59,10 +58,7 @@ export class SistemasFacturadoresPage {
     return `Gestiona los sistemas de ${codigo} y su homologación por sucursal.`;
   });
 
-  readonly crumbs = computed<Crumb[]>(() => [
-    { label: 'Sistemas Facturadores', link: '/sistemasFacturadores' },
-    { label: this.empresa()?.codigo ?? 'Empresa' },
-  ]);
+  readonly crumbs = computed<Crumb[]>(() => [{ label: 'Sistemas Facturadores', link: '/sistemasFacturadores' }]);
 
   readonly filtered = computed(() => {
     const query = this.query().trim().toLowerCase();
@@ -127,8 +123,12 @@ export class SistemasFacturadoresPage {
     this.dialog.set({ kind: 'delete', id: sistema.id });
   }
 
-  openHomologar(target: 'sucursales' | 'productos'): void {
-    this.dialog.set({ kind: 'homologar', target });
+  openHomologar(): void {
+    this.dialog.set({ kind: 'homologar' });
+  }
+
+  openProductos(sistema: Sistema): void {
+    void this.router.navigate(['/sistemasFacturadores', this.empresaId(), sistema.id, 'productos']);
   }
 
   close(): void {

@@ -24,6 +24,13 @@ export const routes: Routes = [
       },
       { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemasFacturadores/entel' },
       {
+        path: 'sistemasFacturadores/:empresaId/:sistemaId/productos',
+        loadComponent: () =>
+          import('./features/sistemasFacturadores/pages/productosHomologados.page').then(
+            (m) => m.ProductosHomologadosPage,
+          ),
+      },
+      {
         path: 'sistemasFacturadores/:empresaId',
         loadComponent: () =>
           import('./features/sistemasFacturadores/pages/sistemasFacturadores.page').then(
