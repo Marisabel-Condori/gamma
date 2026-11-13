@@ -1,0 +1,37 @@
+<gm-encabezado titulo="Sistemas Facturadores" [etiqueta]="conteo()">
+  <gm-buscar placeholder="Buscar sistema..." [(valor)]="query" />
+  <button gmBoton="primario" type="button" icono="agregar" etiqueta="Crear sistema" compacto (click)="abrir()"></button>
+</gm-encabezado>
+
+<gm-tabla [datos]="filtrados()" [columnas]="columnas" anchoMinimo="720px" [vacio]="vacio()">
+  <ng-template gmCelda="homologar" let-sistema>
+    <gm-menu-fila etiqueta="Homologar" [opciones]="opcionesHomologar" (elegir)="homologar(sistema, $event)" />
+  </ng-template>
+  <ng-template gmCelda="acciones" let-sistema>
+    <gm-acciones-fila que="sistema" (editar)="abrir(sistema)" (eliminar)="eliminar(sistema)" />
+  </ng-template>
+</gm-tabla>
+
+@if (editando() !== null) {
+  <gm-modal [titulo]="editando() ? 'Editar sistema' : 'Crear sistema'" (cerrar)="editando.set(null)">
+    <form (submit)="guardar($event)" novalidate>
+      <div class="gm-campos">
+        <label class="gm-campo">
+          Código
+          <input [value]="form().codigo" maxlength="20" (input)="campo('codigo', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">
+          Descripción
+          <input [value]="form().descripcion" maxlength="160" (input)="campo('descripcion', $any($event.target).value)" />
+        </label>
+      </div>
+      @if (error()) {
+        <p class="gm-error">{{ error() }}</p>
+      }
+      <div class="gm-acciones">
+        <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="editando.set(null)"></button>
+        <button gmBoton="primario" type="submit" etiqueta="Guardar"></button>
+      </div>
+    </form>
+  </gm-modal>
+}

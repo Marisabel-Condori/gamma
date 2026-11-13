@@ -1,1 +1,3 @@
-$bp: 800px;
+// Ancho a partir del cual la app pasa a vista móvil.
+// Si cambias este valor, cambia también GM_MOVIL en shared/ui/pantalla.ts.
+$movil: 800px;

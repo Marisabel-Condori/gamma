@@ -1,0 +1,55 @@
+<header class="barra">
+  <button
+    type="button"
+    class="menu-boton"
+    [attr.aria-expanded]="menuAbierto()"
+    [attr.aria-label]="menuAbierto() ? 'Cerrar menú' : 'Abrir menú'"
+    (click)="alternarMenu()"
+  >
+    <span class="material-icons-outlined">{{ menuAbierto() ? 'close' : 'menu' }}</span>
+  </button>
+  <a class="marca" routerLink="/inicio" (click)="cerrar()">GAMMA</a>
+  <span class="divisor" aria-hidden="true"></span>
+  @if (menuAbierto()) {
+    <button type="button" class="velo" aria-label="Cerrar menú" (click)="cerrar()"></button>
+  }
+  <nav [class.abierto]="menuAbierto()">
+    <button type="button" class="menu-volver" (click)="cerrar()">
+      <span class="material-icons-outlined">arrow_back</span>
+      Volver
+    </button>
+    <a routerLink="/inicio" routerLinkActive="activo" (click)="cerrar()">
+      <span class="material-icons-outlined">home</span>
+      Inicio
+    </a>
+    <a routerLink="/sistemas-facturadores" routerLinkActive="activo" (click)="cerrar()">
+      <span class="material-icons-outlined">account_balance</span>
+      Sistemas Facturadores
+    </a>
+    <a routerLink="/servicios" routerLinkActive="activo" (click)="cerrar()">
+      <span class="material-icons-outlined">apps</span>
+      Servicios
+    </a>
+  </nav>
+  <div class="perfil">
+    <button type="button" class="avatar" aria-label="Sesión de MC" (click)="alternarPerfil()">MC</button>
+    @if (perfilAbierto()) {
+      <button type="button" class="velo-transparente" aria-label="Cerrar" (click)="perfilAbierto.set(false)"></button>
+      <div class="popover">
+        <div class="aviso">
+          <strong>MC</strong>
+          <p>Profesional Desarrollo de aplicaciones.</p>
+        </div>
+        <a class="salir" routerLink="/login" (click)="cerrar()">Salir</a>
+      </div>
+    }
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+<footer class="pie">GAMMA · Sistema Base de Facturación Electrónica</footer>
+
+<gm-toast />
+<gm-confirmar />

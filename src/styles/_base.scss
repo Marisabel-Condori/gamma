@@ -4,15 +4,25 @@
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
   min-height: 100%;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-sans);
-  font-size: var(--text-md);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-body);
+  background: var(--fondo);
+  color: var(--tinta);
+  font-family: var(--fuente);
+  font-size: var(--texto-md);
+  line-height: var(--interlineado);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
 }
 
 button,
@@ -30,17 +40,21 @@ button:disabled {
   cursor: default;
 }
 
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--brand);
+:focus-visible {
+  outline: 2px solid var(--marca);
   outline-offset: 2px;
 }
 
 .material-icons,
 .material-icons-outlined {
-  font-size: var(--icon-md);
+  font-size: var(--icono-md);
   line-height: 1;
   user-select: none;
+}
+
+// Contenedor de cada pantalla: el componente página agrega host: { class: 'gm-pagina' }.
+.gm-pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

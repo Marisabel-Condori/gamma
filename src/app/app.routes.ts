@@ -1,41 +1,38 @@
 import { Routes } from '@angular/router';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
+import { LayoutAcceso } from './core/layout/acceso/layout-acceso';
+import { LayoutPrincipal } from './core/layout/principal/layout-principal';
 
 export const routes: Routes = [
   {
     path: 'login',
-    component: AuthLayoutComponent,
+    component: LayoutAcceso,
     children: [
       {
         path: '',
-        loadComponent: () => import('./features/login/pages/login.component').then((m) => m.LoginComponent),
+        loadComponent: () => import('./features/acceso/login/login.page').then((m) => m.LoginPage),
       },
     ],
   },
   {
     path: '',
-    component: MainLayoutComponent,
+    component: LayoutPrincipal,
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       {
         path: 'inicio',
-        loadComponent: () => import('./features/inicio/pages/inicio.page').then((m) => m.InicioPage),
+        loadComponent: () => import('./features/inicio/inicio.page').then((m) => m.InicioPage),
       },
       {
         path: 'sistemas-facturadores',
-        loadComponent: () =>
-          import('./features/sistemasFacturadores/pages/sistemasFacturadores.page').then(
-            (m) => m.SistemasFacturadoresPage,
-          ),
+        loadChildren: () =>
+          import('./features/sistemas-facturadores/sistemas-facturadores.routes').then((m) => m.SISTEMAS_ROUTES),
       },
       {
-        path: 'sistemas-facturadores/:sistemaId/productos',
-        loadComponent: () =>
-          import('./features/sistemasFacturadores/pages/productosHomologados.page').then(
-            (m) => m.ProductosHomologadosPage,
-          ),
+        path: 'servicios',
+        loadComponent: () => import('./features/servicios/servicios.page').then((m) => m.ServiciosPage),
       },
+
+      // Direcciones antiguas que siguen funcionando.
       { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
       { path: 'sistemasFacturadores/entel', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
       {
@@ -45,15 +42,9 @@ export const routes: Routes = [
       {
         path: 'sistemasFacturadores/:origen/:sistemaId/productos',
         redirectTo: ({ params }) => {
-          const raw = params['sistemaId'] ?? '';
-          const sistemaId = raw.replace(/^entel-/, '');
+          const sistemaId = (params['sistemaId'] ?? '').replace(/^entel-/, '');
           return `/sistemas-facturadores/${sistemaId}/productos`;
         },
-      },
-      {
-        path: 'servicios',
-        loadComponent: () =>
-          import('./features/servicios/pages/servicios.page').then((m) => m.ServiciosPage),
       },
     ],
   },

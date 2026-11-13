@@ -1,20 +1,5 @@
-@use '@angular/material' as mat;
+// Estilos globales: solo tokens, base y formularios.
+// Todo lo demás vive en el .scss de cada componente.
 @use 'styles/tokens';
 @use 'styles/base';
 @use 'styles/formularios';
-@use 'styles/botones';
-@use 'styles/pagina';
-
-html {
-  height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$violet-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
-}

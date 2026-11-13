@@ -1,0 +1,60 @@
+@use '../../../../styles/breakpoint' as *;
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 0 4px;
+  color: var(--tinta-3);
+  font-size: var(--texto-sm);
+}
+
+.paginas {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+button {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--control-sm);
+  height: var(--control-sm);
+  border: 0;
+  border-radius: var(--radio-sm);
+  background: transparent;
+  color: var(--tinta-3);
+  font-size: var(--icono-sm);
+  font-weight: var(--peso-negrita);
+}
+
+button.actual {
+  background: var(--marca);
+  color: var(--superficie);
+}
+
+button:disabled {
+  opacity: 0.35;
+}
+
+.tamano {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+select {
+  height: var(--control-sm);
+  padding: 0 8px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-sm);
+  background: var(--superficie);
+}
+
+@media (max-width: $movil) {
+  .rango {
+    display: none;
+  }
+}

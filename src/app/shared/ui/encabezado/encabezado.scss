@@ -1,0 +1,106 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.migas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--tinta-3);
+}
+
+.migas a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.migas a:hover {
+  color: var(--marca);
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 20px;
+}
+
+.cabeza {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+h1 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--texto-4xl);
+  font-weight: var(--peso-negrita);
+  line-height: var(--interlineado-titulo);
+  letter-spacing: -0.03em;
+}
+
+.etiqueta {
+  flex: none;
+  padding: 4px 12px;
+  border-radius: var(--radio-pill);
+  background: var(--apagado);
+  color: var(--tinta-3);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+}
+
+.etiqueta.chip {
+  color: var(--tinta-2);
+  font-weight: var(--peso-negrita);
+}
+
+.herramientas {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.volver {
+  display: inline-grid;
+  margin-left: -6px;
+  color: var(--marca);
+  font-size: var(--icono-xl);
+  text-decoration: none;
+}
+
+.conteo {
+  color: var(--tinta-3);
+  font-size: var(--texto-sm);
+}
+
+// ── Móvil (clase puesta por el componente) ──
+:host(.movil) .fila {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+:host(.movil) .cabeza {
+  gap: 6px;
+}
+
+:host(.movil) h1 {
+  flex: 1;
+  font-size: var(--texto-3xl);
+  font-weight: var(--peso-extra);
+}
+
+:host(.movil) .chip {
+  padding: 8px 14px;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-xl);
+  color: var(--tinta);
+  font-size: var(--texto-md);
+  font-weight: var(--peso-extra);
+}

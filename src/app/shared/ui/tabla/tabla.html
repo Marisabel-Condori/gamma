@@ -1,0 +1,118 @@
+<!-- Contenido de una celda: plantilla personalizada o texto. -->
+<ng-template #celda let-columna let-fila="fila" let-movil="movil">
+  @if (plantillas().get(columna.id); as plantilla) {
+    <ng-container *ngTemplateOutlet="plantilla; context: { $implicit: fila }" />
+  } @else {
+    {{ texto(columna, fila, movil) }}
+  }
+</ng-template>
+
+@if (datos().length === 0) {
+  <gm-estado-vacio [mensaje]="vacio()" />
+} @else if (!esMovil()) {
+  <!-- ── Escritorio ── -->
+  <div class="marco" [class]="cabecera()">
+    <table [style.min-width]="anchoMinimo()">
+      <colgroup>
+        @for (columna of columnas(); track columna.id) {
+          <col [style.width]="columna.ancho" />
+        }
+      </colgroup>
+      <thead>
+        <tr>
+          @for (bloque of cabeceras().arriba; track $index; let ultimo = $last) {
+            <th
+              [attr.colspan]="bloque.columnas > 1 ? bloque.columnas : null"
+              [attr.rowspan]="cabeceras().hayGrupos && !bloque.esGrupo ? 2 : null"
+              [class]="bloque.esGrupo ? 'centro' : bloque.columna?.alinear"
+              [class.ultimo]="ultimo"
+            >
+              {{ bloque.titulo }}
+            </th>
+          }
+        </tr>
+        @if (cabeceras().hayGrupos) {
+          <tr>
+            @for (columna of cabeceras().abajo; track columna.id) {
+              <th [class]="columna.alinear">{{ columna.titulo }}</th>
+            }
+          </tr>
+        }
+      </thead>
+      <tbody>
+        @for (fila of visibles(); track claveDe(fila)) {
+          <tr>
+            @for (columna of columnas(); track columna.id) {
+              <td
+                [class]="columna.alinear"
+                [class.destacar]="columna.destacar"
+                [class.sin-salto]="columna.sinSalto"
+                [class.corte]="cortes().has(columna.id)"
+              >
+                <ng-container *ngTemplateOutlet="celda; context: { $implicit: columna, fila }" />
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <!-- ── Móvil ── -->
+  @if (tamano()) {
+    <p class="rango">{{ rango() }}</p>
+  }
+  <div class="tarjetas">
+    @for (fila of visibles(); track claveDe(fila)) {
+      <article class="tarjeta">
+        <div class="cuerpo">
+          <div class="secciones">
+            @for (seccion of tarjeta().secciones; track $index) {
+              @if (seccion.grupo) {
+                <p class="grupo">{{ seccion.grupo }}</p>
+              }
+              @for (c of seccion.columnas; track c.columna.id) {
+                <p [class]="c.lugar">
+                  @if (c.lugar === 'detalle' && c.columna.etiquetaMovil) {
+                    {{ c.columna.etiquetaMovil }}:
+                  }
+                  <ng-container *ngTemplateOutlet="celda; context: { $implicit: c.columna, fila, movil: true }" />
+                </p>
+              }
+            }
+          </div>
+          @if (tarjeta().esquina.length) {
+            <div class="esquina">
+              @for (columna of tarjeta().esquina; track columna.id) {
+                <ng-container *ngTemplateOutlet="celda; context: { $implicit: columna, fila, movil: true }" />
+              }
+            </div>
+          }
+        </div>
+        @if (tarjeta().pie.length || tarjeta().pieFin.length) {
+          <footer class="pie">
+            <div class="pie-inicio">
+              @for (columna of tarjeta().pie; track columna.id) {
+                @if (columna.etiquetaMovil) {
+                  <p>
+                    <span class="rotulo">{{ columna.etiquetaMovil }}</span>
+                    <strong><ng-container *ngTemplateOutlet="celda; context: { $implicit: columna, fila, movil: true }" /></strong>
+                  </p>
+                } @else {
+                  <ng-container *ngTemplateOutlet="celda; context: { $implicit: columna, fila, movil: true }" />
+                }
+              }
+            </div>
+            @for (columna of tarjeta().pieFin; track columna.id) {
+              <ng-container *ngTemplateOutlet="celda; context: { $implicit: columna, fila, movil: true }" />
+            }
+          </footer>
+        }
+      </article>
+    }
+  </div>
+}
+
+@if (tamano() && datos().length) {
+  <gm-paginador [total]="datos().length" [(pagina)]="pagina" [(tamano)]="tamano" />
+}

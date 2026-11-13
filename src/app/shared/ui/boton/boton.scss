@@ -1,0 +1,80 @@
+@use '../../../../styles/breakpoint' as *;
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--control-lg);
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radio-lg);
+  background: var(--apagado);
+  color: var(--tinta-3);
+  font-weight: var(--peso-semi);
+  font-size: var(--icono-md);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.etiqueta {
+  font-size: var(--texto-md);
+}
+
+:host(:hover) {
+  filter: brightness(0.97);
+}
+
+:host(.primario) {
+  background: var(--marca);
+  color: var(--superficie);
+}
+
+:host(.primario:hover) {
+  background: var(--marca-oscura);
+  filter: none;
+}
+
+:host(.neutro) {
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  color: var(--tinta);
+}
+
+:host(.peligro) {
+  background: var(--peligro);
+  color: var(--superficie);
+}
+
+:host(.solo-icono) {
+  width: var(--control-sm);
+  height: var(--control-sm);
+  padding: 0;
+  border-radius: var(--radio-md);
+  font-size: var(--icono-sm);
+}
+
+:host(.solo-icono.peligro) {
+  background: var(--peligro-suave);
+  color: var(--peligro);
+}
+
+@media (max-width: $movil) {
+  :host(.solo-icono) {
+    width: var(--control-md);
+    height: var(--control-md);
+    border-radius: var(--radio-lg);
+  }
+
+  :host(.compacto) {
+    width: var(--control-xl);
+    height: var(--control-xl);
+    padding: 0;
+    border-radius: var(--radio-xl);
+    font-size: var(--icono-lg);
+  }
+
+  :host(.compacto) .etiqueta {
+    display: none;
+  }
+}
