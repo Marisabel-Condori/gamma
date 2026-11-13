@@ -27,6 +27,32 @@ export const routes: Routes = [
       },
       { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemasFacturadores/entel' },
       {
+        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales/:sucursalId/puntos-venta',
+        loadComponent: () =>
+          import('./features/sucursales/pages/puntos-venta.page').then((m) => m.PuntosVentaPage),
+      },
+      {
+        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales',
+        loadComponent: () =>
+          import('./features/homologacion-sucursales/pages/sucursales-homologadas.page').then(
+            (m) => m.SucursalesHomologadasPage,
+          ),
+      },
+      {
+        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales-homologadas',
+        loadComponent: () =>
+          import('./features/sucursales-homologadas/pages/sucursales-homologadas.page').then(
+            (m) => m.SucursalesHomologadasLegacyPage,
+          ),
+      },
+      {
+        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales-sin',
+        loadComponent: () =>
+          import('./features/homologacion-sucursales/pages/homologacion-sucursales.page').then(
+            (m) => m.HomologacionSucursalesPage,
+          ),
+      },
+      {
         path: 'sistemasFacturadores/:empresaId/:sistemaId/productos',
         loadComponent: () =>
           import('./features/sistemasFacturadores/pages/productosHomologados.page').then(
@@ -38,13 +64,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/sistemasFacturadores/pages/sistemasFacturadores.page').then(
             (m) => m.SistemasFacturadoresPage,
-          ),
-      },
-      {
-        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales',
-        loadComponent: () =>
-          import('./features/homologacion-sucursales/pages/homologacion-sucursales.page').then(
-            (m) => m.HomologacionSucursalesPage,
           ),
       },
       {

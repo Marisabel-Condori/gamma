@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { GammaState } from '../../../core/state/gamma-state';
-import { HomologacionSucursal } from '../models/homologacion-sucursal.model';
-import { SucursalesState } from '../state/sucursales.state';
+import { HomologacionSucursal } from '../../sucursales/models/homologacion-sucursal.model';
+import { SucursalesState } from '../../sucursales/state/sucursales.state';
 import { PageHeaderComponent } from '../../../shared/ui/page-header.component';
 import { Crumb } from '../../../shared/ui/page-header.component';
 import { SearchFieldComponent } from '../../../shared/ui/search-field.component';
@@ -13,7 +13,7 @@ import { ToastService } from '../../../shared/ui/toast.service';
 type PageToken = number | '…';
 
 @Component({
-  selector: 'app-homologar-sucursales-page',
+  selector: 'app-sucursales-homologadas-page',
   imports: [RouterLink, PageHeaderComponent, SearchFieldComponent, EmptyStateComponent, ModalComponent],
   template: `
     <section class="page homo-page branches-page">
@@ -90,7 +90,7 @@ type PageToken = number | '…';
   styles: ':host { display: block; }',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomologarSucursalesPage {
+export class SucursalesHomologadasLegacyPage {
   private readonly state = inject(GammaState);
   private readonly sucursalesState = inject(SucursalesState);
   private readonly toast = inject(ToastService);
