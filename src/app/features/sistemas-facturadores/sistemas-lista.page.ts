@@ -11,7 +11,9 @@ import {
   GmMenuFila,
   GmModal,
   GmOpcion,
+  GmSeccion,
   GmTabla,
+  GmTexto,
   Toast,
 } from '../../shared/ui';
 import { conteo } from '../../shared/utils/texto';
@@ -36,7 +38,7 @@ const COLUMNAS: GmColumna<SistemaResponse>[] = [
 
 @Component({
   selector: 'gm-sistemas-lista-page',
-  imports: [GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmMenuFila, GmModal],
+  imports: [GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmMenuFila, GmModal, GmSeccion, GmTexto],
   templateUrl: './sistemas-lista.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },

@@ -10,7 +10,9 @@ import {
   GmEncabezado,
   GmMiga,
   GmModal,
+  GmSeccion,
   GmTabla,
+  GmTexto,
   Toast,
 } from '../../../../shared/ui';
 import { SistemasService } from '../../data/sistemas.service';
@@ -36,7 +38,7 @@ const COLUMNAS: GmColumna<S>[] = [
 
 @Component({
   selector: 'gm-sucursales-homologadas-page',
-  imports: [RouterLink, GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmModal],
+  imports: [RouterLink, GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmModal, GmSeccion, GmTexto],
   templateUrl: './sucursales-homologadas.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },

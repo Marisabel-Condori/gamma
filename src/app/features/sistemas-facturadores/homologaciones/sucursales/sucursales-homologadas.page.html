@@ -33,18 +33,27 @@
 }
 
 @if (editando() !== null) {
-  <gm-modal [titulo]="editando() ? 'Editar sucursal' : 'Nueva homologación'" (cerrar)="editando.set(null)">
+  <gm-modal
+    [titulo]="editando() ? 'Editar sucursal' : 'Nueva homologación'"
+    [etiqueta]="'Sistema · ' + sistema()?.codigo"
+    ancho="680px"
+    (cerrar)="editando.set(null)"
+  >
     <form (submit)="guardar($event)" novalidate>
-      <div class="gm-campos">
-        <label class="gm-campo">
-          Código sucursal SIN
-          <input [value]="form().codigo" (input)="campo('codigo', $any($event.target).value)" />
-        </label>
-        <label class="gm-campo">
-          Descripción
-          <input [value]="form().descripcion" (input)="campo('descripcion', $any($event.target).value)" />
-        </label>
-      </div>
+      <gm-seccion titulo="SIN" columnas="1fr 2fr">
+        <gm-texto
+          etiqueta="Código sucursal"
+          placeholder="Ingresa el código"
+          [valor]="form().codigo"
+          (valorChange)="campo('codigo', $event)"
+        />
+        <gm-texto
+          etiqueta="Descripción"
+          placeholder="Ingresa la dirección"
+          [valor]="form().descripcion"
+          (valorChange)="campo('descripcion', $event)"
+        />
+      </gm-seccion>
       @if (error()) {
         <p class="gm-error">{{ error() }}</p>
       }

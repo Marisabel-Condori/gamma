@@ -18,6 +18,7 @@ const ICONOS = {
   servicios: 'apps',
   tienda: 'store',
   sincronizar: 'sync',
+  desplegar: 'expand_more',
 } as const;
 
 export type GmIconoNombre = keyof typeof ICONOS;
