@@ -10,5 +10,15 @@ export const SISTEMAS_ROUTES: Routes = [
     loadComponent: () =>
       import('./homologaciones/productos/productos-homologados.page').then((m) => m.ProductosHomologadosPage),
   },
-  // Aquí se irán sumando: ':sistemaId/sucursales', ':sistemaId/unidades-medida', ...
+  {
+    path: ':sistemaId/sucursales',
+    loadComponent: () =>
+      import('./homologaciones/sucursales/sucursales-homologadas.page').then((m) => m.SucursalesHomologadasPage),
+  },
+  {
+    path: ':sistemaId/sucursales/:sucursalId/puntos-venta',
+    loadComponent: () =>
+      import('./homologaciones/sucursales/puntos-venta/puntos-venta.page').then((m) => m.PuntosVentaPage),
+  },
+  // Aquí se irán sumando: ':sistemaId/unidades-medida', ':sistemaId/monedas', ...
 ];

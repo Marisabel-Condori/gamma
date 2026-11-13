@@ -28,6 +28,8 @@ export interface GmColumna<T = any> {
   destacar?: boolean;
   /** Evita que el texto salte de línea. */
   sinSalto?: boolean;
+  /** Textos largos (tokens, direcciones): se cortan con "…" y se ven completos al pasar el mouse. */
+  recortar?: boolean;
 
   /** Lugar en la tarjeta móvil. Por defecto: 'detalle'. */
   movil?: GmLugarMovil;

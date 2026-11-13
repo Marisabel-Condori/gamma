@@ -19,6 +19,7 @@ export interface GmMiga {
  * etiquetaTipo 'conteo': pill junto al título; en móvil pasa a texto debajo.
  * etiquetaTipo 'chip':   se mantiene junto al título también en móvil.
  * volver / tituloMovil:  en móvil reemplazan a las migas.
+ * subtitulo:             contexto bajo el título (escritorio y móvil).
  */
 @Component({
   selector: 'gm-encabezado',
@@ -52,6 +53,9 @@ export interface GmMiga {
         <ng-content />
       </div>
     </div>
+    @if (subtitulo()) {
+      <p class="subtitulo">{{ subtitulo() }}</p>
+    }
     @if (etiqueta() && etiquetaTipo() === 'conteo' && esMovil()) {
       <p class="conteo">{{ etiqueta() }}</p>
     }
@@ -61,6 +65,8 @@ export interface GmMiga {
 export class GmEncabezado {
   readonly titulo = input.required<string>();
   readonly tituloMovil = input<string>();
+  /** Texto de contexto bajo el título, ej. la sucursal que se está viendo. */
+  readonly subtitulo = input<string>();
   readonly migas = input<GmMiga[]>([]);
   readonly volver = input<string>();
   readonly etiqueta = input<string>();

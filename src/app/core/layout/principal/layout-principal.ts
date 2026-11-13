@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { GmConfirmar, GmIcono, GmToast } from '../../../shared/ui';
+import { AuthService } from '../../auth/auth.service';
 
 /** Barra superior, menú, contenido y pie. Aloja una sola vez el toast y las confirmaciones. */
 @Component({
@@ -10,6 +11,7 @@ import { GmConfirmar, GmIcono, GmToast } from '../../../shared/ui';
   styleUrl: './layout-principal.scss',
 })
 export class LayoutPrincipal {
+  private readonly auth = inject(AuthService);
   readonly perfilAbierto = signal(false);
   readonly menuAbierto = signal(false);
 
@@ -26,5 +28,10 @@ export class LayoutPrincipal {
   cerrar(): void {
     this.menuAbierto.set(false);
     this.perfilAbierto.set(false);
+  }
+
+  salir(): void {
+    this.auth.logout();
+    this.cerrar();
   }
 }

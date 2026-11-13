@@ -1,0 +1,56 @@
+@if (sistema(); as sistema) {
+  <gm-encabezado
+    titulo="Sucursales homologadas"
+    tituloMovil="Sucursales"
+    volver="/sistemas-facturadores"
+    [migas]="migas()"
+    [etiqueta]="sistema.codigo"
+    etiquetaTipo="chip"
+  >
+    <gm-buscar placeholder="Buscar por código o descripción..." [(valor)]="query" />
+    <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nueva homologación" compacto (click)="abrir()"></button>
+  </gm-encabezado>
+
+  <gm-tabla
+    [datos]="filtradas()"
+    [columnas]="columnas"
+    cabecera="clara"
+    anchoMinimo="820px"
+    [porPagina]="10"
+    [vacio]="vacio()"
+  >
+    <ng-template gmCelda="puntos" let-s>
+      <a gmBoton icono="tienda" [etiqueta]="puntos(s)" [routerLink]="[s.id, 'puntos-venta']"></a>
+    </ng-template>
+    <ng-template gmCelda="acciones" let-s>
+      <gm-acciones-fila que="sucursal" (editar)="abrir(s)" (eliminar)="eliminar(s)" />
+    </ng-template>
+  </gm-tabla>
+} @else {
+  <gm-encabezado titulo="Sistema no encontrado" />
+  <a gmBoton="neutro" icono="volver" etiqueta="Volver a sistemas facturadores" routerLink="/sistemas-facturadores"></a>
+}
+
+@if (editando() !== null) {
+  <gm-modal [titulo]="editando() ? 'Editar sucursal' : 'Nueva homologación'" (cerrar)="editando.set(null)">
+    <form (submit)="guardar($event)" novalidate>
+      <div class="gm-campos">
+        <label class="gm-campo">
+          Código sucursal SIN
+          <input [value]="form().codigo" (input)="campo('codigo', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">
+          Descripción
+          <input [value]="form().descripcion" (input)="campo('descripcion', $any($event.target).value)" />
+        </label>
+      </div>
+      @if (error()) {
+        <p class="gm-error">{{ error() }}</p>
+      }
+      <div class="gm-acciones">
+        <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="editando.set(null)"></button>
+        <button gmBoton="primario" type="submit" etiqueta="Guardar"></button>
+      </div>
+    </form>
+  </gm-modal>
+}

@@ -74,15 +74,35 @@ h1 {
   text-decoration: none;
 }
 
+.subtitulo {
+  margin-top: -4px;
+  color: var(--tinta-3);
+  font-size: var(--texto-lg);
+}
+
 .conteo {
   color: var(--tinta-3);
   font-size: var(--texto-sm);
 }
 
 // ── Móvil (clase puesta por el componente) ──
+// En móvil la fila se "disuelve" para ordenar: título → subtítulo → buscador/acción → conteo.
 :host(.movil) .fila {
-  flex-direction: column;
-  align-items: stretch;
+  display: contents;
+}
+
+:host(.movil) .subtitulo {
+  order: 1;
+  margin-top: -6px;
+  font-size: var(--texto-md);
+}
+
+:host(.movil) .herramientas {
+  order: 2;
+}
+
+:host(.movil) .conteo {
+  order: 3;
 }
 
 :host(.movil) .cabeza {

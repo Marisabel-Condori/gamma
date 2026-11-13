@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LayoutAcceso } from './core/layout/acceso/layout-acceso';
 import { LayoutPrincipal } from './core/layout/principal/layout-principal';
+import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -16,6 +17,7 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutPrincipal,
+    canActivateChild: [authGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       {

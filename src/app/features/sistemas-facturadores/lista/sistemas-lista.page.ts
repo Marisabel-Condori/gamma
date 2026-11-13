@@ -103,8 +103,8 @@ export class SistemasListaPage {
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
-    if (opcion === 'productos') {
-      void this.router.navigate(['/sistemas-facturadores', sistema.id, 'productos']);
+    if (opcion === 'productos' || opcion === 'sucursales') {
+      void this.router.navigate(['/sistemas-facturadores', sistema.id, opcion]);
       return;
     }
     this.toast.mostrar('Esta opción todavía no está disponible.');

@@ -1,7 +1,7 @@
 <!-- Contenido de una celda: plantilla personalizada o texto. -->
 <ng-template #celda let-columna let-fila="fila" let-movil="movil">
   @if (plantillas().get(columna.id); as plantilla) {
-    <ng-container *ngTemplateOutlet="plantilla; context: { $implicit: fila }" />
+    <ng-container *ngTemplateOutlet="plantilla; context: { $implicit: fila, movil: !!movil }" />
   } @else {
     {{ texto(columna, fila, movil) }}
   }
@@ -45,6 +45,8 @@
             @for (columna of columnas(); track columna.id) {
               <td
                 [class]="columna.alinear"
+                [class.recortar]="columna.recortar"
+                [attr.title]="columna.recortar ? texto(columna, fila) : null"
                 [class.destacar]="columna.destacar"
                 [class.sin-salto]="columna.sinSalto"
                 [class.corte]="cortes().has(columna.id)"

@@ -8,6 +8,10 @@
   margin-top: 14px;
 }
 
+.gm-campos > * {
+  min-width: 0;
+}
+
 .gm-campos--2 {
   grid-template-columns: 1fr 1fr;
 }

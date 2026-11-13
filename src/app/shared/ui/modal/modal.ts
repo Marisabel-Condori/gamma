@@ -10,7 +10,7 @@ import { GmBoton } from '../boton/boton';
   imports: [GmBoton],
   template: `
     <div class="velo" role="presentation" (click)="cerrar.emit()"></div>
-    <section class="dialogo" role="dialog" aria-modal="true" [attr.aria-label]="titulo()">
+    <section class="dialogo" [style.width]="'min(100%, ' + ancho() + ')'" role="dialog" aria-modal="true" [attr.aria-label]="titulo()">
       <header>
         <h2>{{ titulo() }}</h2>
         <button gmBoton icono="cerrar" type="button" aria-label="Cerrar" (click)="cerrar.emit()"></button>
@@ -34,7 +34,6 @@ import { GmBoton } from '../boton/boton';
     }
     .dialogo {
       position: relative;
-      width: min(100%, 520px);
       max-height: min(86vh, 820px);
       overflow: auto;
       padding: 20px 22px 18px;
@@ -57,5 +56,7 @@ import { GmBoton } from '../boton/boton';
 })
 export class GmModal {
   readonly titulo = input.required<string>();
+  /** Ancho máximo del modal. */
+  readonly ancho = input('520px');
   readonly cerrar = output<void>();
 }
