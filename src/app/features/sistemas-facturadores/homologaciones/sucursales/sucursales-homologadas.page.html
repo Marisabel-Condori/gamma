@@ -21,7 +21,7 @@
     [vacio]="vacio()"
   >
     <ng-template gmCelda="puntos" let-s>
-      <a gmBoton icono="tienda" [etiqueta]="puntos(s)" [routerLink]="[s.id, 'puntos-venta']"></a>
+      <a gmBoton chico icono="tienda" [etiqueta]="puntos(s)" [routerLink]="[s.id, 'puntos-venta']"></a>
     </ng-template>
     <ng-template gmCelda="acciones" let-s>
       <gm-acciones-fila que="sucursal" (editar)="abrir(s)" (eliminar)="eliminar(s)" />

@@ -25,7 +25,13 @@ td {
 }
 
 th {
+  padding-block: 9px;
   font-weight: var(--peso-negrita);
+}
+
+// Fila de grupos (ENTEL / SIN): más baja, para que la cabecera de dos filas no crezca de más.
+thead tr:first-child th[colspan] {
+  padding-block: 6px;
 }
 
 td {

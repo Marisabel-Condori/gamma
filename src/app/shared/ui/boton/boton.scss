@@ -54,6 +54,17 @@
   font-size: var(--icono-sm);
 }
 
+:host(.chico) {
+  height: var(--control-sm);
+  padding: 0 12px;
+  border-radius: var(--radio-md);
+  font-size: var(--icono-sm);
+}
+
+:host(.chico) .etiqueta {
+  font-size: var(--texto-sm);
+}
+
 :host(.solo-icono.peligro) {
   background: var(--peligro-suave);
   color: var(--peligro);
@@ -64,6 +75,10 @@
     width: var(--control-md);
     height: var(--control-md);
     border-radius: var(--radio-lg);
+  }
+
+  :host(.chico) {
+    height: var(--control-md);
   }
 
   :host(.compacto) {

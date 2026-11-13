@@ -8,6 +8,7 @@ export type GmBotonVariante = 'primario' | 'neutro' | 'suave' | 'peligro';
  *   <button gmBoton="primario" icono="agregar" etiqueta="Crear sistema" compacto></button>
  *   <button gmBoton icono="editar" aria-label="Editar"></button>        ← solo icono
  * `compacto`: en móvil oculta la etiqueta y queda como botón cuadrado.
+ * `chico`:    mismo alto que los botones de icono (para celdas de tabla).
  */
 @Component({
   selector: 'button[gmBoton], a[gmBoton]',
@@ -31,11 +32,14 @@ export class GmBoton {
   readonly icono = input<GmIconoNombre>();
   readonly etiqueta = input<string>();
   readonly compacto = input(false, { transform: booleanAttribute });
+  /** Botón con texto del alto de los botones de icono, para usar dentro de tablas. */
+  readonly chico = input(false, { transform: booleanAttribute });
 
   protected readonly clases = computed(() => {
     const lista: string[] = [this.variante() || 'suave'];
     if (this.icono() && !this.etiqueta()) lista.push('solo-icono');
     if (this.compacto()) lista.push('compacto');
+    if (this.chico()) lista.push('chico');
     return lista.join(' ');
   });
 }
