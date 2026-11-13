@@ -1,0 +1,71 @@
+:host {
+  display: contents;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(17, 32, 54, 0.46);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.dialog {
+  width: min(100%, 520px);
+  max-height: min(86vh, 820px);
+  overflow: auto;
+  background: white;
+  border-radius: var(--radius-2xl);
+  padding: 20px 22px 18px;
+  box-shadow: 0 24px 60px rgba(16, 32, 54, 0.24);
+}
+
+.dialog.plain {
+  position: relative;
+  width: min(100%, 320px);
+  display: grid;
+  place-items: center;
+  padding: 40px 28px;
+}
+
+.dialog-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.dialog-head h2 {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.icon-btn {
+  width: 34px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--radius-md);
+  display: inline-grid;
+  place-items: center;
+  background: var(--muted-bg);
+  color: var(--icon-muted);
+}
+
+.icon-btn .material-icons {
+  font-size: var(--icon-sm);
+}
+
+.icon-btn:hover {
+  filter: brightness(0.97);
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}

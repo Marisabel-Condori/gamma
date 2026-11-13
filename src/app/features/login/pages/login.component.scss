@@ -88,7 +88,7 @@
 }
 
 .brand-product {
-  font-size: 28px;
+  font-size: var(--text-6xl);
   letter-spacing: -0.03em;
 }
 
@@ -99,14 +99,14 @@
 .brand-kicker,
 .form-kicker {
   display: block;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
   letter-spacing: 0.14em;
 }
 
 .brand-message h2 {
   margin: 10px 0 8px;
-  font-size: 28px;
+  font-size: var(--text-6xl);
   line-height: 1.2;
   letter-spacing: -0.03em;
 }
@@ -129,7 +129,7 @@
 
 .form-header h1 {
   margin: 8px 0 6px;
-  font-size: 32px;
+  font-size: var(--text-8xl);
   letter-spacing: -0.03em;
   color: #2e1065;
 }
@@ -152,8 +152,8 @@
 }
 
 .field-group label {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
 }
 
 .input-wrap {
@@ -207,7 +207,7 @@
 .form-notice {
   margin: 0;
   color: var(--brand);
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .submit-button {
@@ -221,7 +221,7 @@
   border-radius: 12px;
   background: var(--brand);
   color: white;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
 }
 
 .submit-button:hover:not(:disabled) {
@@ -241,13 +241,13 @@
   display: inline-block;
   margin-bottom: 6px;
   color: var(--brand);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
 }
 
 .form-footer p {
   color: #6b6280;
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 @media (max-width: 800px) {
@@ -277,7 +277,7 @@
   }
 
   .brand-message h2 {
-    font-size: 26px;
+    font-size: var(--text-5xl);
   }
 
   .form-panel {
@@ -285,7 +285,7 @@
   }
 
   .form-header h1 {
-    font-size: 28px;
+    font-size: var(--text-6xl);
   }
 
   .login-form {

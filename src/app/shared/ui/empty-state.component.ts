@@ -8,7 +8,7 @@ import { Component, input } from '@angular/core';
       <p>{{ message() }}</p>
     </div>
   `,
-  styles: ':host { display: block; }',
+  styleUrl: './empty-state.component.scss',
 })
 export class EmptyStateComponent {
   readonly message = input('No hay resultados.');

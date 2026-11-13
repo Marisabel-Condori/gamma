@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+
+.empty {
+  background: white;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 36px 16px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.empty .material-icons {
+  font-size: var(--text-8xl);
+  color: #b0bdcc;
+}
+
+.empty p {
+  margin: 8px 0 0;
+}

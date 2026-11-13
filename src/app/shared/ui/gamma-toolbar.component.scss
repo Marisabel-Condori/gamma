@@ -1,0 +1,73 @@
+@use '../../../styles/breakpoint' as *;
+
+:host {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 20px;
+  width: 100%;
+}
+
+.gamma-toolbar__lead,
+.gamma-toolbar__tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.gamma-toolbar__title,
+.gamma-toolbar__search,
+.gamma-toolbar__action {
+  display: contents;
+}
+
+@media (max-width: $bp) {
+  :host {
+    column-gap: 10px;
+    row-gap: 14px;
+  }
+
+  .gamma-toolbar__lead,
+  .gamma-toolbar__tools {
+    display: contents;
+  }
+
+  .gamma-toolbar__title {
+    display: block;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .gamma-toolbar__search {
+    display: block;
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+  }
+
+  .gamma-toolbar__action {
+    display: flex;
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
+
+  .gamma-toolbar__meta {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: start;
+  }
+
+  :host(.gamma-toolbar--beside) .gamma-toolbar__title {
+    grid-column: 1;
+  }
+
+  :host(.gamma-toolbar--beside) .gamma-toolbar__meta {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+  }
+}

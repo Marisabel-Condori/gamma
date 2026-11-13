@@ -1,0 +1,93 @@
+:root {
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+  --ink: #16243c;
+  --ink-soft: #7d8b9e;
+  --ink-title: #14233c;
+  --ink-nav: #24344d;
+  --ink-strong: #243044;
+  --ink-desc: #3d4d63;
+  --ink-count: #7d8ba0;
+  --ink-quiet: #8b98a9;
+  --ink-crumb: #93a0b2;
+  --line: #e4edf5;
+  --line-strong: #dbe5ef;
+  --field-line: #d7e1ec;
+  --line-soft: #e8eef5;
+  --brand: #6d28d9;
+  --brand-dark: #5b21b6;
+  --brand-deep: #4c1d95;
+  --brand-bright: #7c3aed;
+  --brand-soft: #ede9fe;
+  --brand-mist: #f6f1fb;
+  --link: var(--brand);
+  --danger: #e15d5d;
+  --danger-bg: #fdecec;
+  --muted-bg: #f1f4f7;
+  --icon-muted: #607089;
+  --placeholder: #a0aec0;
+  --header-slate: #5b6778;
+  --header-slate-line: #4e5968;
+  --pill: #e7edf3;
+  --row-hover: #f6f3fc;
+  --card-line: #e7eef6;
+  --footer: #9aa6b6;
+  --avatar-bg: #e8edf3;
+  --table-head: #d5e0eb;
+  --table-head-ink: #2c3c52;
+  --table-line: #c5d2e0;
+  --table-group-line: #8fa0b3;
+  --table-cell-line: #d5dee8;
+
+  --font-sans: Inter, 'Segoe UI', Roboto, sans-serif;
+  --text-2xs: 12px;
+  --text-xs: 12.5px;
+  --text-sm: 13px;
+  --text-sm-plus: 13.5px;
+  --text-md: 14px;
+  --text-md-plus: 14.5px;
+  --text-base: 15px;
+  --text-lg: 16px;
+  --text-xl: 17px;
+  --text-2xl: 20px;
+  --text-3xl: 22px;
+  --text-4xl: 24px;
+  --text-5xl: 26px;
+  --text-6xl: 28px;
+  --text-7xl: 30px;
+  --text-8xl: 32px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  --leading-tight: 1.1;
+  --leading-title: 1.15;
+  --leading-snug: 1.3;
+  --leading-body: 1.45;
+
+  --control-xs: 28px;
+  --control-sm: 32px;
+  --control-md: 36px;
+  --control-lg: 42px;
+  --control-xl: 48px;
+  --icon-sm: 18px;
+  --icon-md: 20px;
+  --icon-lg: 22px;
+  --icon-xl: 30px;
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --radius-pill: 999px;
+  --radius: var(--radius-2xl);
+
+  --search-width: 280px;
+  --page-gutter: 48px;
+  --page-gutter-mobile: 28px;
+  color-scheme: light;
+}

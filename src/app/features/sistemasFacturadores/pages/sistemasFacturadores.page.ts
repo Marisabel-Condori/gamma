@@ -1,35 +1,43 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
+import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
+import { ConnectedPosition } from '@angular/cdk/overlay';
 import { Router } from '@angular/router';
 import { GammaDataService } from '../../../core/data/gamma-data.service';
 import { SistemaResponse } from '../../../core/models/gamma.models';
 import { countLabel } from '../../../shared/utils/labels';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state.component';
-import { IconButtonComponent } from '../../../shared/ui/icon-button.component';
+import { CajaBuscar, GammaIcon } from '../../../shared/ui/controles-globales';
+import { GammaToolbarComponent } from '../../../shared/ui/gamma-toolbar.component';
 import { ModalComponent } from '../../../shared/ui/modal.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header.component';
-import { SearchFieldComponent } from '../../../shared/ui/search-field.component';
 import { ToastService } from '../../../shared/ui/toast.service';
 
 type SistemaDialog = { kind: 'form'; id: string | null } | { kind: 'delete'; id: string };
-
-interface OpenMenu {
-  id: string;
-  top: number;
-  left: number;
-}
 
 @Component({
   selector: 'app-sistemasFacturadores-page',
   imports: [
     PageHeaderComponent,
-    SearchFieldComponent,
-    IconButtonComponent,
+    GammaToolbarComponent,
+    CajaBuscar,
+    GammaIcon,
+    CdkMenu,
+    CdkMenuItem,
+    CdkMenuTrigger,
     EmptyStateComponent,
     ModalComponent,
   ],
   templateUrl: './sistemasFacturadores.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: ':host { display: block; }',
+  encapsulation: ViewEncapsulation.None,
+  styleUrl: './sistemasFacturadores.page.scss',
 })
 export class SistemasFacturadoresPage {
   private readonly state = inject(GammaDataService);
@@ -38,9 +46,12 @@ export class SistemasFacturadoresPage {
 
   readonly query = signal('');
   readonly dialog = signal<SistemaDialog | null>(null);
-  readonly menu = signal<OpenMenu | null>(null);
   readonly formError = signal<string | null>(null);
   readonly form = signal({ codigo: '', descripcion: '' });
+  readonly menuPosition: ConnectedPosition[] = [
+    { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top', offsetY: 6 },
+    { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom', offsetY: -6 },
+  ];
   readonly homologarMenu = [
     { id: 'productos', label: 'Productos' },
     { id: 'sucursales', label: 'Sucursales' },
@@ -99,39 +110,12 @@ export class SistemasFacturadoresPage {
     this.dialog.set({ kind: 'delete', id: sistema.id });
   }
 
-  toggleMenu(sistema: SistemaResponse, event: Event): void {
-    if (this.menu()?.id === sistema.id) {
-      this.menu.set(null);
-      return;
-    }
-    const button = event.currentTarget as HTMLElement;
-    const rect = button.getBoundingClientRect();
-    const width = 240;
-    const height = 248;
-    const left = Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12));
-    const top =
-      rect.bottom + 6 + height > window.innerHeight
-        ? Math.max(8, rect.top - 6 - height)
-        : rect.bottom + 6;
-    this.menu.set({ id: sistema.id, top, left });
-  }
-
   chooseHomologar(sistemaId: string, option: string): void {
-    this.menu.set(null);
     if (option === 'productos') {
       void this.router.navigate(['/sistemas-facturadores', sistemaId, 'productos']);
       return;
     }
     this.toast.show('Esta opción todavía no está disponible.');
-  }
-
-  closeMenu(): void {
-    this.menu.set(null);
-  }
-
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    this.menu.set(null);
   }
 
   close(): void {

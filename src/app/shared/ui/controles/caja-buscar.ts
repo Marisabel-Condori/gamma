@@ -1,10 +1,12 @@
 import { Component, input, output } from '@angular/core';
+import { GammaIcon } from '../gamma-icon';
 
 @Component({
-  selector: 'app-search-field',
+  selector: 'caja_buscar',
+  imports: [GammaIcon],
   template: `
-    <label class="search">
-      <span class="material-icons" aria-hidden="true">search</span>
+    <label class="caja_buscar">
+      <app-icon name="search" />
       <input
         type="search"
         [value]="value()"
@@ -14,9 +16,9 @@ import { Component, input, output } from '@angular/core';
       />
     </label>
   `,
-  styles: ':host { display: contents; }',
+  styleUrl: './caja-buscar.scss',
 })
-export class SearchFieldComponent {
+export class CajaBuscar {
   readonly value = input('');
   readonly placeholder = input('Buscar...');
   readonly valueChange = output<string>();

@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { GammaIcon } from './gamma-icon';
 
 export interface Crumb {
   label: string;
@@ -8,7 +9,7 @@ export interface Crumb {
 
 @Component({
   selector: 'app-page-header',
-  imports: [RouterLink],
+  imports: [RouterLink, GammaIcon],
   template: `
     <header class="page-head">
       <div>
@@ -38,8 +39,8 @@ export interface Crumb {
         }
       </div>
       @if (actionLabel()) {
-        <button type="button" class="btn-primary" (click)="action.emit()">
-          <span class="material-icons">add</span>
+        <button type="button" class="gamma-button gamma-button--primary" (click)="action.emit()">
+          <app-icon name="add" />
           {{ actionLabel() }}
         </button>
       }

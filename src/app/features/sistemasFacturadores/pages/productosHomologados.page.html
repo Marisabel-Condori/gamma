@@ -1,10 +1,5 @@
 <section class="page homo-page">
   @if (sistema(); as sistema) {
-    <a class="back homo-mobile-back" [routerLink]="backLink()">
-      <span class="material-icons">chevron_left</span>
-      Homologaciones
-    </a>
-
     <p class="crumbs homo-route">
       @for (crumb of crumbs(); track crumb.label; let last = $last) {
         @if (crumb.link && !last) {
@@ -18,37 +13,46 @@
       }
     </p>
 
-    <div class="homo-heading">
-      <app-page-header
-        title="Productos y servicios homologados"
-        [backLink]="backLink()"
-        backLabel="Volver a sistemas facturadores"
-      />
-      <div class="system-chip">
+    <app-gamma-toolbar meta="beside">
+      <div gammaTitle>
+        <a class="back homo-mobile-back" [routerLink]="backLink()">
+          <span class="material-icons">chevron_left</span>
+          Homologaciones
+        </a>
+        <app-page-header
+          title="Productos y servicios homologados"
+          [backLink]="backLink()"
+          backLabel="Volver a sistemas facturadores"
+        />
+      </div>
+      <div gammaMeta class="gamma-pill system-chip">
         <strong>{{ sistema.codigo }}</strong>
       </div>
-    </div>
-
-    <div class="homo-tools">
-      <div class="homo-mobile-search">
-        <app-search-field
+      <div gammaSearch>
+        <caja_buscar
+          class="homo-mobile-search"
           placeholder="Buscar homologaciones..."
           [value]="query()"
           (valueChange)="onQuery($event)"
         />
-      </div>
-      <div class="homo-desktop-search">
-        <app-search-field
+        <caja_buscar
+          class="homo-desktop-search"
           placeholder="Buscar por código, producto o actividad..."
           [value]="query()"
           (valueChange)="onQuery($event)"
         />
       </div>
-      <button type="button" class="btn-primary homo-create" (click)="openCreate()">
-        <span class="material-icons">add</span>
-        <span class="homo-create-label">Nueva homologación</span>
+      <button
+        gammaAction
+        type="button"
+        class="gamma-button gamma-button--primary gamma-button--compact"
+        aria-label="Nueva homologación"
+        (click)="openCreate()"
+      >
+        <app-icon name="add" />
+        <span class="gamma-button__label">Nueva homologación</span>
       </button>
-    </div>
+    </app-gamma-toolbar>
 
     @if (filtered().length === 0) {
       <app-empty-state
@@ -60,8 +64,8 @@
       />
     } @else {
       <div class="table-wrap">
-        <div class="homo-sheet">
-          <table class="homo-table">
+        <div class="gamma-sheet homo-sheet">
+          <table class="gamma-table homo-table">
             <thead>
               <tr>
                 <th rowspan="2">Fecha</th>
@@ -88,13 +92,22 @@
                   <td>{{ item.productoSin }}</td>
                   <td>
                     <div class="actions inline">
-                      <app-icon-button icon="edit" label="Editar homologación" (pressed)="openEdit(item)" />
-                      <app-icon-button
-                        icon="delete"
-                        label="Eliminar homologación"
-                        tone="danger"
-                        (pressed)="openDelete(item)"
-                      />
+                      <button
+                        type="button"
+                        class="gamma-button gamma-button--icon"
+                        aria-label="Editar homologación"
+                        (click)="openEdit(item)"
+                      >
+                        <app-icon name="edit" />
+                      </button>
+                      <button
+                        type="button"
+                        class="gamma-button gamma-button--icon gamma-button--danger"
+                        aria-label="Eliminar homologación"
+                        (click)="openDelete(item)"
+                      >
+                        <app-icon name="delete" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -120,13 +133,22 @@
                 <strong>{{ item.fecha }} · {{ item.hora }}</strong>
               </p>
               <div class="actions inline">
-                <app-icon-button icon="edit" label="Editar homologación" (pressed)="openEdit(item)" />
-                <app-icon-button
-                  icon="delete"
-                  label="Eliminar homologación"
-                  tone="danger"
-                  (pressed)="openDelete(item)"
-                />
+                <button
+                  type="button"
+                  class="gamma-button gamma-button--icon"
+                  aria-label="Editar homologación"
+                  (click)="openEdit(item)"
+                >
+                  <app-icon name="edit" />
+                </button>
+                <button
+                  type="button"
+                  class="gamma-button gamma-button--icon gamma-button--danger"
+                  aria-label="Eliminar homologación"
+                  (click)="openDelete(item)"
+                >
+                  <app-icon name="delete" />
+                </button>
               </div>
             </div>
           </article>
@@ -216,8 +238,8 @@
             <p class="form-error">{{ formError() }}</p>
           }
           <div class="modal-actions">
-            <button type="button" class="btn-ghost" (click)="close()">Cancelar</button>
-            <button type="submit" class="btn-primary">Guardar</button>
+            <button type="button" class="gamma-button gamma-button--neutral" (click)="close()">Cancelar</button>
+            <button type="submit" class="gamma-button gamma-button--primary">Guardar</button>
           </div>
         </form>
       </app-modal>
@@ -226,8 +248,8 @@
       <app-modal title="Eliminar homologación" (closed)="close()">
         <p class="muted">Esta seguro que desea eliminar {{ item.productoEntel }}.</p>
         <div class="modal-actions">
-          <button type="button" class="btn-ghost" (click)="close()">Cancelar</button>
-          <button type="button" class="btn-danger" (click)="confirmDelete()">Eliminar</button>
+          <button type="button" class="gamma-button gamma-button--neutral" (click)="close()">Cancelar</button>
+          <button type="button" class="gamma-button gamma-button--danger" (click)="confirmDelete()">Eliminar</button>
         </div>
       </app-modal>
     }

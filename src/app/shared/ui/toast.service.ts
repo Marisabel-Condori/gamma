@@ -19,7 +19,7 @@ export class ToastService {
       <div class="toast" role="status">{{ message }}</div>
     }
   `,
-  styles: ':host { display: contents; }',
+  styleUrl: './toast.host.scss',
 })
 export class ToastHostComponent {
   readonly toast = inject(ToastService);

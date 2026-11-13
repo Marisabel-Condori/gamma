@@ -1,0 +1,49 @@
+@use '../../../../styles/breakpoint' as *;
+
+:host {
+  display: contents;
+}
+
+.caja_buscar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--control-lg);
+  width: var(--search-width);
+  max-width: 100%;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 14px;
+  background: white;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  color: var(--placeholder);
+}
+
+.caja_buscar app-icon {
+  font-size: var(--icon-md);
+  color: var(--placeholder);
+}
+
+.caja_buscar input {
+  border: 0;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+}
+
+.caja_buscar input::placeholder {
+  color: var(--placeholder);
+}
+
+@media (max-width: $bp) {
+  .caja_buscar {
+    width: 100%;
+    max-width: none;
+    flex: 1 1 auto;
+    height: var(--control-xl);
+    border-radius: var(--radius-xl);
+  }
+}

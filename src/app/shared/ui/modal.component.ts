@@ -27,7 +27,7 @@ import { Component, input, output } from '@angular/core';
       </div>
     </div>
   `,
-  styles: ':host { display: contents; }',
+  styleUrl: './modal.component.scss',
 })
 export class ModalComponent {
   readonly title = input.required<string>();

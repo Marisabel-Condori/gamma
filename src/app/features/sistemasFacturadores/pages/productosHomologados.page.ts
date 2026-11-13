@@ -6,15 +6,16 @@ import {
   inject,
   input,
   signal,
+  ViewEncapsulation,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { GammaDataService } from '../../../core/data/gamma-data.service';
 import { HomologacionProductoResponse } from '../../../core/models/gamma.models';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state.component';
-import { IconButtonComponent } from '../../../shared/ui/icon-button.component';
+import { CajaBuscar, GammaIcon } from '../../../shared/ui/controles-globales';
+import { GammaToolbarComponent } from '../../../shared/ui/gamma-toolbar.component';
 import { ModalComponent } from '../../../shared/ui/modal.component';
 import { PageHeaderComponent, Crumb } from '../../../shared/ui/page-header.component';
-import { SearchFieldComponent } from '../../../shared/ui/search-field.component';
 import { ToastService } from '../../../shared/ui/toast.service';
 
 type HomoDialog = { kind: 'form'; id: string | null } | { kind: 'delete'; id: string };
@@ -47,14 +48,16 @@ const EMPTY_FORM: HomoForm = {
   imports: [
     RouterLink,
     PageHeaderComponent,
-    SearchFieldComponent,
-    IconButtonComponent,
+    GammaToolbarComponent,
+    CajaBuscar,
+    GammaIcon,
     EmptyStateComponent,
     ModalComponent,
   ],
   templateUrl: './productosHomologados.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: ':host { display: block; }',
+  encapsulation: ViewEncapsulation.None,
+  styleUrl: './productosHomologados.page.scss',
 })
 export class ProductosHomologadosPage {
   private readonly state = inject(GammaDataService);

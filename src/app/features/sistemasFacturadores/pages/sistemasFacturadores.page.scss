@@ -1,0 +1,120 @@
+@use '../../../../styles/breakpoint' as *;
+
+.list-head,
+.gamma-row {
+  display: grid;
+  gap: 8px 18px;
+  align-items: center;
+}
+
+.list-head {
+  padding: 10px 16px;
+  color: white;
+  background: var(--header-slate);
+  border-bottom: 1px solid var(--header-slate-line);
+}
+
+.list-head > :last-child {
+  justify-self: end;
+}
+
+.systems-page .gamma-row > span {
+  color: var(--ink-desc);
+}
+
+.cols-sistemas {
+  grid-template-columns: minmax(140px, 0.8fr) minmax(220px, 1.6fr) 110px 96px;
+}
+
+.systems-page .gamma-sheet {
+  min-width: 720px;
+}
+
+.cols-sistemas .row-homologar {
+  justify-self: center;
+}
+
+.code {
+  font-weight: var(--weight-bold);
+  color: var(--ink);
+}
+
+@media (max-width: $bp) {
+  .systems-page .page-head h1 {
+    font-size: var(--text-5xl);
+    font-weight: var(--weight-black);
+  }
+
+  .systems-page .systems-count {
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    font-size: var(--text-sm-plus);
+    font-weight: var(--weight-medium);
+  }
+
+  .systems-page .table-wrap {
+    overflow: visible;
+  }
+
+  .systems-page .gamma-sheet {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .systems-page .list-head {
+    display: none;
+  }
+
+  .systems-page .gamma-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--card-line);
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 8px 22px rgba(20, 40, 70, 0.05);
+  }
+
+  .systems-page .gamma-row:hover {
+    border-color: var(--card-line);
+    background: white;
+  }
+
+  .systems-page .gamma-row .code {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 16px 8px 0 16px;
+    font-size: var(--text-lg);
+  }
+
+  .systems-page .gamma-row > span {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 2px 8px 14px 16px;
+    color: var(--ink-quiet);
+    font-size: var(--text-md);
+  }
+
+  .systems-page .gamma-row .actions {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: start;
+    justify-self: end;
+    padding: 14px 14px 0 0;
+  }
+
+  .systems-page .gamma-row .row-homologar {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    align-self: end;
+  }
+}

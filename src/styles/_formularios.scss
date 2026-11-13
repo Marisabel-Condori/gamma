@@ -1,0 +1,109 @@
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.field input,
+.field select {
+  height: var(--control-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--field-line);
+  padding: 0 12px;
+  font-weight: var(--weight-medium);
+  background: white;
+}
+
+.form-error {
+  color: #c43d3d;
+  margin: 8px 0 0;
+  font-size: var(--text-sm);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.actions.inline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.gamma-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--control-xs);
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--pill);
+  color: var(--ink-count);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.gamma-sheet {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.gamma-row,
+.gamma-table td {
+  background: white;
+  border-bottom: 1px solid var(--line);
+}
+
+.gamma-row {
+  padding: 13px 18px;
+}
+
+.gamma-row:last-child,
+.gamma-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.gamma-row:hover,
+.gamma-table tbody tr:hover td {
+  background: var(--row-hover);
+}
+
+.gamma-head,
+.gamma-table th {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+
+.gamma-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.gamma-table td {
+  padding: 10px 12px;
+  vertical-align: middle;
+  line-height: var(--leading-snug);
+  color: var(--ink-nav);
+}

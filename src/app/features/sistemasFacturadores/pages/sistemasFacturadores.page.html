@@ -1,69 +1,84 @@
 <section class="page systems-page">
-    <div class="systems-heading">
-      <app-page-header title="Sistemas Facturadores" />
-      <span class="systems-count">{{ countText() }}</span>
-    </div>
+  <app-gamma-toolbar>
+    <app-page-header gammaTitle title="Sistemas Facturadores" />
+    <span gammaMeta class="gamma-pill systems-count">{{ countText() }}</span>
+    <caja_buscar
+      gammaSearch
+      placeholder="Buscar sistema..."
+      [value]="query()"
+      (valueChange)="onQuery($event)"
+    />
+    <button
+      gammaAction
+      type="button"
+      class="gamma-button gamma-button--primary gamma-button--compact"
+      aria-label="Crear sistema"
+      (click)="openCreate()"
+    >
+      <app-icon name="add" />
+      <span class="gamma-button__label">Crear sistema</span>
+    </button>
+  </app-gamma-toolbar>
 
-    <div class="systems-tools">
-      <app-search-field placeholder="Buscar sistema..." [value]="query()" (valueChange)="onQuery($event)" />
-      <button type="button" class="btn-primary create-system" (click)="openCreate()">
-        <span class="material-icons">add</span>
-        <span class="create-system-label">Crear sistema</span>
-      </button>
-    </div>
-
-    @if (filtered().length === 0) {
-      <app-empty-state [message]="emptyMessage()" />
-    } @else {
-      <div class="table-wrap">
-        <div class="sheet">
-          <div class="list-head cols-sistemas">
-            <span>Sistema</span>
-            <span>Descripción</span>
-            <span>Homologar</span>
-            <span>Acciones</span>
-          </div>
-          @for (sistema of filtered(); track sistema.id) {
-            <article class="data-row cols-sistemas">
-              <strong class="code">{{ sistema.codigo }}</strong>
-              <span>{{ sistema.descripcion }}</span>
+  @if (filtered().length === 0) {
+    <app-empty-state [message]="emptyMessage()" />
+  } @else {
+    <div class="table-wrap">
+      <div class="gamma-sheet">
+        <div class="gamma-head list-head cols-sistemas">
+          <span>Sistema</span>
+          <span>Descripción</span>
+          <span>Homologar</span>
+          <span>Acciones</span>
+        </div>
+        @for (sistema of filtered(); track sistema.id) {
+          <article class="gamma-row cols-sistemas">
+            <strong class="code">{{ sistema.codigo }}</strong>
+            <span>{{ sistema.descripcion }}</span>
+            <button
+              type="button"
+              class="gamma-button gamma-button--icon gamma-button--menu row-homologar"
+              aria-label="Homologar"
+              [cdkMenuTriggerFor]="homologar"
+              [cdkMenuPosition]="menuPosition"
+              [cdkMenuTriggerData]="{ id: sistema.id }"
+            >
+              <span class="gamma-button__label">Homologar</span>
+              <app-icon name="more" />
+            </button>
+            <div class="actions inline">
               <button
                 type="button"
-                class="homo-menu"
-                aria-label="Homologar"
-                [attr.aria-expanded]="menu()?.id === sistema.id"
-                (click)="toggleMenu(sistema, $event)"
+                class="gamma-button gamma-button--icon"
+                aria-label="Editar sistema"
+                (click)="openEdit(sistema)"
               >
-                <span class="homo-menu-label">Homologar</span>
-                <span class="menu-trigger" aria-hidden="true">
-                  <span class="material-icons">more_vert</span>
-                </span>
+                <app-icon name="edit" />
               </button>
-              <div class="actions inline">
-                <app-icon-button icon="edit" label="Editar sistema" (pressed)="openEdit(sistema)" />
-                <app-icon-button
-                  icon="delete"
-                  label="Eliminar sistema"
-                  tone="danger"
-                  (pressed)="openDelete(sistema)"
-                />
-              </div>
-            </article>
-          }
-        </div>
-      </div>
-    }
-
-    @if (menu(); as current) {
-      <button type="button" class="row-menu-backdrop" aria-label="Cerrar menú" (click)="closeMenu()"></button>
-      <div class="row-menu" role="menu" [style.top.px]="current.top" [style.left.px]="current.left">
-        @for (item of homologarMenu; track item.id) {
-          <button type="button" role="menuitem" (click)="chooseHomologar(current.id, item.id)">
-            {{ item.label }}
-          </button>
+              <button
+                type="button"
+                class="gamma-button gamma-button--icon gamma-button--danger"
+                aria-label="Eliminar sistema"
+                (click)="openDelete(sistema)"
+              >
+                <app-icon name="delete" />
+              </button>
+            </div>
+          </article>
         }
       </div>
-    }
+    </div>
+  }
+
+  <ng-template #homologar let-id="id">
+    <div class="gamma-menu" cdkMenu>
+      @for (item of homologarMenu; track item.id) {
+        <button type="button" class="gamma-menu__item" cdkMenuItem (cdkMenuItemTriggered)="chooseHomologar(id, item.id)">
+          {{ item.label }}
+        </button>
+      }
+    </div>
+  </ng-template>
 
   @if (dialog(); as current) {
     @if (current.kind === 'form') {
@@ -87,8 +102,8 @@
             <p class="form-error">{{ formError() }}</p>
           }
           <div class="modal-actions">
-            <button type="button" class="btn-ghost" (click)="close()">Cancelar</button>
-            <button type="submit" class="btn-primary">Guardar</button>
+            <button type="button" class="gamma-button gamma-button--neutral" (click)="close()">Cancelar</button>
+            <button type="submit" class="gamma-button gamma-button--primary">Guardar</button>
           </div>
         </form>
       </app-modal>
@@ -97,8 +112,8 @@
       <app-modal title="Eliminar sistema" (closed)="close()">
         <p class="muted">Esta seguro que desea eliminar {{ sistema.codigo }}.</p>
         <div class="modal-actions">
-          <button type="button" class="btn-ghost" (click)="close()">Cancelar</button>
-          <button type="button" class="btn-danger" (click)="confirmDelete()">Eliminar</button>
+          <button type="button" class="gamma-button gamma-button--neutral" (click)="close()">Cancelar</button>
+          <button type="button" class="gamma-button gamma-button--danger" (click)="confirmDelete()">Eliminar</button>
         </div>
       </app-modal>
     }
