@@ -27,18 +27,6 @@ export const routes: Routes = [
       },
       { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemasFacturadores/entel' },
       {
-        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales/:sucursalId/puntos-venta',
-        loadComponent: () =>
-          import('./features/sucursales/pages/puntos-venta.page').then((m) => m.PuntosVentaPage),
-      },
-      {
-        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales',
-        loadComponent: () =>
-          import('./features/sucursales/pages/homologar-sucursales.page').then(
-            (m) => m.HomologarSucursalesPage,
-          ),
-      },
-      {
         path: 'sistemasFacturadores/:empresaId/:sistemaId/productos',
         loadComponent: () =>
           import('./features/sistemasFacturadores/pages/productosHomologados.page').then(

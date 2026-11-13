@@ -123,8 +123,8 @@ export class SistemasFacturadoresPage {
     this.dialog.set({ kind: 'delete', id: sistema.id });
   }
 
-  openHomologar(sistema: Sistema): void {
-    void this.router.navigate(['/sistemasFacturadores', this.empresaId(), sistema.id, 'sucursales']);
+  openHomologar(): void {
+    this.dialog.set({ kind: 'homologar' });
   }
 
   openProductos(sistema: Sistema): void {
