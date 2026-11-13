@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const SISTEMAS_ROUTES: Routes = [
   {
     path: '',
-    loadComponent: () => import('./lista/sistemas-lista.page').then((m) => m.SistemasListaPage),
+    loadComponent: () => import('./sistemas-lista.page').then((m) => m.SistemasListaPage),
   },
   {
     path: ':sistemaId/productos',
@@ -20,5 +20,5 @@ export const SISTEMAS_ROUTES: Routes = [
     loadComponent: () =>
       import('./homologaciones/sucursales/puntos-venta/puntos-venta.page').then((m) => m.PuntosVentaPage),
   },
-  // Aquí se irán sumando: ':sistemaId/unidades-medida', ':sistemaId/monedas', ...
+
 ];

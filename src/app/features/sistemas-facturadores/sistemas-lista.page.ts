@@ -13,10 +13,10 @@ import {
   GmOpcion,
   GmTabla,
   Toast,
-} from '../../../shared/ui';
-import { conteo } from '../../../shared/utils/texto';
-import { SistemaResponse } from '../data/sistemas.models';
-import { SistemasService } from '../data/sistemas.service';
+} from '../../shared/ui';
+import { conteo } from '../../shared/utils/texto';
+import { SistemaResponse } from './data/sistemas.models';
+import { SistemasService } from './data/sistemas.service';
 
 const OPCIONES_HOMOLOGAR: GmOpcion[] = [
   { id: 'productos', etiqueta: 'Productos' },
