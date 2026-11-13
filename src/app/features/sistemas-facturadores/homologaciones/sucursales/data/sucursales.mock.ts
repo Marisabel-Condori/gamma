@@ -1,4 +1,4 @@
-import { HomologacionSucursal, PuntoVenta, SistemaSin } from './sucursales.models';
+import { HomologacionMulticentro, HomologacionSucursal, PuntoVenta, SistemaSin } from './sucursales.models';
 
 const SUCURSALES: [string, string][] = [
   ['0', 'CALLE FEDERICO ZUAZO Nro. 1771 Edif.: TOWER Piso: 10 Depto.: - Zona/Barrio: CENTRAL La Paz'],
@@ -35,6 +35,22 @@ const PUNTOS_VENTA: [string, string, string, string, string, string][] = [
 ];
 
 export const SISTEMAS_SIN: SistemaSin[] = [{ id: 'GWSFE', nombre: 'GWSFE', codigo: '6D32BF2BE623402486D98B7' }];
+
+export function crearHomologacionesMulticentros(): HomologacionMulticentro[] {
+  const filas: Omit<HomologacionMulticentro, 'id' | 'sistemaId'>[] = [
+    { fecha: '11/07/2025 20:29:15', codigoEntel: '6571', multicentroEntel: 'Multicentro Entel Center', codigoSucursalSin: '129', descripcionSin: 'ZONA: CASCO VIEJO, CALLE: MERCADO, NRO.: S/N, TELEFONO: 72650953', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+    { fecha: '04/07/2025 21:21:30', codigoEntel: '159', multicentroEntel: 'Multicentro Cobija', codigoSucursalSin: '126', descripcionSin: 'ZONA: CENTRAL, AVENIDA: TCNL. ENRIQUE FERNANDEZ CORNEJO, NRO.: 129, TELEFONO: 72920064', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+    { fecha: '23/04/2025 15:10:24', codigoEntel: '6511', multicentroEntel: 'Multicentro Magdalena', codigoSucursalSin: '128', descripcionSin: 'CALLE NATANIEL GARCIA NRO SN ZONA 27 DE MAYO ESQUINA 6 DE AGOSTO', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+    { fecha: '09/04/2025 17:55:55', codigoEntel: '6512', multicentroEntel: 'Multicentro Mi Tren', codigoSucursalSin: '127', descripcionSin: 'CALLE TARATA NRO. S/N ZONA/BARRIO: SUR', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+    { fecha: '31/05/2024 13:13:49', codigoEntel: '6451', multicentroEntel: 'Multicentro Bello Horizonte', codigoSucursalSin: '125', descripcionSin: 'Urbanización Los Tocos, Distrito 7, Manzano M21, Lote N°10, Av. Vi-C Esquina Av. Esteban Ribera', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+    { fecha: '15/12/2022 15:08:25', codigoEntel: '6071', multicentroEntel: 'Multicentro Cielo Mall', codigoSucursalSin: '123', descripcionSin: 'CALLE JORGE CARRASCO NRO. 200 EDIF.: CIELO MALL PISO: PB DEPTO.: 1 ZONA/BARRIO: 12 DE OCTUBRE', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+    { fecha: '10/06/2022 20:00:58', codigoEntel: '4436', multicentroEntel: 'PRUEBAS ZSMART', codigoSucursalSin: '1', descripcionSin: 'ZONA: CENTRAL, CALLE: FEDERICO SUAZO, TIPO DE ESTABLECIMIENTO: EDIFICIO TOWER, NRO.: 1771', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+    { fecha: '28/04/2022 19:50:21', codigoEntel: '5331', multicentroEntel: 'AGENCIA VIRTUAL CONO SUR CBBA', codigoSucursalSin: '1', descripcionSin: 'ZONA: CENTRAL, CALLE: FEDERICO SUAZO, TIPO DE ESTABLECIMIENTO: EDIFICIO TOWER, NRO.: 1771', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+    { fecha: '28/04/2022 19:50:21', codigoEntel: '5190', multicentroEntel: 'OFICINA REGIONAL LTE BENI', codigoSucursalSin: '1', descripcionSin: 'ZONA: CENTRAL, CALLE: FEDERICO SUAZO, TIPO DE ESTABLECIMIENTO: EDIFICIO TOWER, NRO.: 1771', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+    { fecha: '28/04/2022 19:50:21', codigoEntel: '5188', multicentroEntel: 'OFICINA REGIONAL LTE PANDO', codigoSucursalSin: '1', descripcionSin: 'ZONA: CENTRAL, CALLE: FEDERICO SUAZO, TIPO DE ESTABLECIMIENTO: EDIFICIO TOWER, NRO.: 1771', codigoPuntoVentaSin: '0', puntoVentaSin: 'punto de venta default' },
+  ];
+  return filas.map((fila, i) => ({ id: `ZSMART-multicentro-${i + 1}`, sistemaId: 'ZSMART', ...fila }));
+}
 
 export function crearSucursales(): HomologacionSucursal[] {
   return SUCURSALES.map(([codigo, descripcion], i) => ({

@@ -16,6 +16,21 @@ export const SISTEMAS_ROUTES: Routes = [
       import('./homologaciones/sucursales/sucursales-homologadas.page').then((m) => m.SucursalesHomologadasPage),
   },
   {
+    path: ':sistemaId/sucursales-sin',
+    loadComponent: () =>
+      import('./homologaciones/sucursales/sucursales-sin/sucursales-sin.page').then((m) => m.SucursalesSinPage),
+  },
+  {
+    path: ':sistemaId/sucursales-sin/:sucursalId/puntos-venta',
+    loadComponent: () =>
+      import('./homologaciones/sucursales/puntos-venta/puntos-venta.page').then((m) => m.PuntosVentaPage),
+  },
+  {
+    path: ':sistemaId/sucursales-sin/:sucursalId/puntos-venta',
+    loadComponent: () =>
+      import('./homologaciones/sucursales/puntos-venta/puntos-venta.page').then((m) => m.PuntosVentaPage),
+  },
+  {
     path: ':sistemaId/sucursales/:sucursalId/puntos-venta',
     loadComponent: () =>
       import('./homologaciones/sucursales/puntos-venta/puntos-venta.page').then((m) => m.PuntosVentaPage),

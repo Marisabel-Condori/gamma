@@ -1,14 +1,14 @@
 @if (sistema(); as sistema) {
   <gm-encabezado
-    titulo="Sucursales homologadas"
-    tituloMovil="Sucursales"
+    titulo="Multicentros homologados"
+    tituloMovil="Multicentros"
     volver="/sistemas-facturadores"
     [migas]="migas()"
     [etiqueta]="sistema.codigo"
     etiquetaTipo="chip"
     etiquetaEn="movil"
   >
-    <gm-buscar placeholder="Buscar por código o descripción..." [(valor)]="query" />
+    <gm-buscar placeholder="Buscar por código, sucursal o punto de venta..." [(valor)]="query" />
     <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nueva homologación" compacto (click)="abrir()"></button>
   </gm-encabezado>
 
@@ -16,15 +16,12 @@
     [datos]="filtradas()"
     [columnas]="columnas"
     cabecera="clara"
-    anchoMinimo="820px"
+    anchoMinimo="1480px"
     [porPagina]="10"
     [vacio]="vacio()"
   >
-    <ng-template gmCelda="puntos" let-s>
-      <a gmBoton chico icono="tienda" [etiqueta]="puntos(s)" [routerLink]="[s.id, 'puntos-venta']"></a>
-    </ng-template>
-    <ng-template gmCelda="acciones" let-s>
-      <gm-acciones-fila que="sucursal" (editar)="abrir(s)" (eliminar)="eliminar(s)" />
+    <ng-template gmCelda="acciones" let-row>
+      <gm-acciones-fila que="homologación" (editar)="abrir(row)" (eliminar)="eliminar(row)" />
     </ng-template>
   </gm-tabla>
 } @else {
@@ -33,21 +30,32 @@
 }
 
 @if (editando() !== null) {
-  <gm-modal [titulo]="editando() ? 'Editar sucursal' : 'Nueva homologación'" (cerrar)="editando.set(null)">
+  <gm-modal [titulo]="editando() ? 'Editar homologación' : 'Nueva homologación'" (cerrar)="editando.set(null)">
     <form (submit)="guardar($event)" novalidate>
       <div class="gm-campos">
-        <label class="gm-campo">
-          Código sucursal SIN
-          <input [value]="form().codigo" (input)="campo('codigo', $any($event.target).value)" />
+        <label class="gm-campo">Fecha homologación
+          <input [value]="form().fecha" (input)="campo('fecha', $any($event.target).value)" />
         </label>
-        <label class="gm-campo">
-          Descripción
-          <input [value]="form().descripcion" (input)="campo('descripcion', $any($event.target).value)" />
+        <label class="gm-campo">Código sucursal ENTEL
+          <input [value]="form().codigoEntel" (input)="campo('codigoEntel', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Descripción ENTEL
+          <input [value]="form().multicentroEntel" (input)="campo('multicentroEntel', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Código sucursal SIN
+          <input [value]="form().codigoSucursalSin" (input)="campo('codigoSucursalSin', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Descripción SIN
+          <input [value]="form().descripcionSin" (input)="campo('descripcionSin', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Código punto de venta SIN
+          <input [value]="form().codigoPuntoVentaSin" (input)="campo('codigoPuntoVentaSin', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Punto de venta SIN
+          <input [value]="form().puntoVentaSin" (input)="campo('puntoVentaSin', $any($event.target).value)" />
         </label>
       </div>
-      @if (error()) {
-        <p class="gm-error">{{ error() }}</p>
-      }
+      @if (error()) { <p class="gm-error">{{ error() }}</p> }
       <div class="gm-acciones">
         <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="editando.set(null)"></button>
         <button gmBoton="primario" type="submit" etiqueta="Guardar"></button>

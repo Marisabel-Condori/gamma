@@ -7,6 +7,19 @@ export interface HomologacionSucursal {
 
 export type HomologacionSucursalRequest = Omit<HomologacionSucursal, 'id'>;
 
+/** Relación de ejemplo entre un multicentro ENTEL y su sucursal/punto de venta SIN. */
+export interface HomologacionMulticentro {
+  id: string;
+  sistemaId: string;
+  fecha: string;
+  codigoEntel: string;
+  multicentroEntel: string;
+  codigoSucursalSin: string;
+  descripcionSin: string;
+  codigoPuntoVentaSin: string;
+  puntoVentaSin: string;
+}
+
 export interface PuntoVenta {
   id: string;
   sucursalId: string;

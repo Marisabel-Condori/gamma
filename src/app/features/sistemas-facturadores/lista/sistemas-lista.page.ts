@@ -20,7 +20,8 @@ import { SistemasService } from '../data/sistemas.service';
 
 const OPCIONES_HOMOLOGAR: GmOpcion[] = [
   { id: 'productos', etiqueta: 'Productos' },
-  { id: 'sucursales', etiqueta: 'Sucursales' },
+  { id: 'sucursales', etiqueta: 'Multicentros' },
+  { id: 'sucursales-sin', etiqueta: 'Sucursales SIN' },
   { id: 'unidades-medida', etiqueta: 'Unidades de medida' },
   { id: 'monedas', etiqueta: 'Tipos de moneda' },
   { id: 'metodos-pago', etiqueta: 'Tipo de método de pago' },
@@ -103,7 +104,7 @@ export class SistemasListaPage {
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
-    if (opcion === 'productos' || opcion === 'sucursales') {
+    if (opcion === 'productos' || opcion === 'sucursales' || opcion === 'sucursales-sin') {
       void this.router.navigate(['/sistemas-facturadores', sistema.id, opcion]);
       return;
     }

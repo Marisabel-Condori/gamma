@@ -4,7 +4,6 @@
     tituloMovil="Puntos de venta"
     [volver]="volver()"
     [migas]="migas()"
-    [subtitulo]="subtitulo()"
     [etiqueta]="sistema()?.codigo"
     etiquetaTipo="chip"
   >
@@ -20,46 +19,11 @@
     [porPagina]="10"
     [vacio]="vacio()"
   >
-    <ng-template gmCelda="reprocesarCuis" let-p let-movil="movil">
-      <button
-        gmBoton
-        chico
-        type="button"
-        icono="sincronizar"
-        aria-label="Reprocesar CUIS"
-        [etiqueta]="movil ? 'Reprocesar CUIS' : undefined"
-        (click)="abrirReproceso(p, 'CUIS')"
-      ></button>
-    </ng-template>
-    <ng-template gmCelda="reprocesarCufd" let-p let-movil="movil">
-      <button
-        gmBoton
-        chico
-        type="button"
-        icono="sincronizar"
-        aria-label="Reprocesar CUFD"
-        [etiqueta]="movil ? 'Reprocesar CUFD' : undefined"
-        (click)="abrirReproceso(p, 'CUFD')"
-      ></button>
-    </ng-template>
     <ng-template gmCelda="acciones">
       <gm-acciones-fila que="punto de venta" (editar)="avisar('Edición')" (eliminar)="avisar('Eliminación')" />
     </ng-template>
   </gm-tabla>
 } @else {
   <gm-encabezado titulo="Sucursal no encontrada" />
-  <a gmBoton="neutro" icono="volver" etiqueta="Volver a sucursales" [routerLink]="volver()"></a>
-}
-
-@if (reproceso(); as r) {
-  <gm-modal [titulo]="'Reproceso ' + r.codigo" ancho="760px" (cerrar)="reproceso.set(null)">
-    <div class="gm-campos">
-      <gm-buscar placeholder="Buscar sistema SIN, código, CUIS o CUFD..." [(valor)]="queryReproceso" />
-      <gm-tabla [datos]="sistemasSin()" [columnas]="columnasReproceso()">
-        <ng-template gmCelda="reprocesar">
-          <button gmBoton type="button" icono="sincronizar" aria-label="Reprocesar CUIS" (click)="reprocesar()"></button>
-        </ng-template>
-      </gm-tabla>
-    </div>
-  </gm-modal>
+  <a gmBoton="neutro" icono="volver" etiqueta="Volver a multicentros" [routerLink]="volver()"></a>
 }

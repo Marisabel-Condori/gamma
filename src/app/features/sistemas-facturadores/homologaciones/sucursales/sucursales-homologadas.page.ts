@@ -14,25 +14,30 @@ import {
   Toast,
 } from '../../../../shared/ui';
 import { SistemasService } from '../../data/sistemas.service';
-import { HomologacionSucursal } from './data/sucursales.models';
-import { SucursalesService } from './data/sucursales.service';
+import { crearHomologacionesMulticentros } from './data/sucursales.mock';
+import { HomologacionMulticentro } from './data/sucursales.models';
 
-type S = HomologacionSucursal;
-
-const COLUMNAS: GmColumna<S>[] = [
-  {
-    id: 'codigo',
-    titulo: 'Código sucursal',
-    grupo: 'SIN',
-    ancho: '160px',
-    destacar: true,
-    movil: 'titulo',
-    valorMovil: (s) => `Sucursal ${s.codigo}`,
-  },
-  { id: 'descripcion', titulo: 'Descripción', grupo: 'SIN', movil: 'subtitulo' },
-  { id: 'puntos', titulo: 'Puntos de venta', ancho: '200px', alinear: 'centro', movil: 'pie' },
+const COLUMNAS: GmColumna<HomologacionMulticentro>[] = [
+  { id: 'fecha', titulo: 'Fecha homologación', ancho: '155px', sinSalto: true, movil: 'pie', etiquetaMovil: 'Homologado' },
+  { id: 'codigoEntel', titulo: 'Cod. sucursal', grupo: 'Sucursales ENTEL', ancho: '125px', etiquetaMovil: 'Código ENTEL' },
+  { id: 'multicentroEntel', titulo: 'Descripción', grupo: 'Sucursales ENTEL', destacar: true, movil: 'titulo', etiquetaMovil: 'ENTEL' },
+  { id: 'codigoSucursalSin', titulo: 'Cod. sucursal SIN', grupo: 'Sucursales SIN', ancho: '135px', etiquetaMovil: 'Código sucursal SIN' },
+  { id: 'descripcionSin', titulo: 'Descripción SIN', grupo: 'Sucursales SIN', etiquetaMovil: 'Sucursal SIN' },
+  { id: 'codigoPuntoVentaSin', titulo: 'Cod. punto venta SIN', grupo: 'Sucursales SIN', ancho: '145px', etiquetaMovil: 'Código punto de venta' },
+  { id: 'puntoVentaSin', titulo: 'Punto venta SIN', grupo: 'Sucursales SIN', ancho: '180px', etiquetaMovil: 'Punto de venta SIN' },
   { id: 'acciones', titulo: 'Acciones', ancho: '120px', movil: 'pie-fin' },
 ];
+
+type Formulario = Omit<HomologacionMulticentro, 'id' | 'sistemaId'>;
+const FORM_VACIO: Formulario = {
+  fecha: '',
+  codigoEntel: '',
+  multicentroEntel: '',
+  codigoSucursalSin: '',
+  descripcionSin: '',
+  codigoPuntoVentaSin: '0',
+  puntoVentaSin: 'punto de venta default',
+};
 
 @Component({
   selector: 'gm-sucursales-homologadas-page',
@@ -43,51 +48,39 @@ const COLUMNAS: GmColumna<S>[] = [
 })
 export class SucursalesHomologadasPage {
   private readonly sistemas = inject(SistemasService);
-  private readonly datos = inject(SucursalesService);
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
 
-  /** Viene de la ruta :sistemaId */
   readonly sistemaId = input.required<string>();
-
   readonly columnas = COLUMNAS;
   readonly query = signal('');
-  /** null = modal cerrado; '' = crear; id = editar. */
+  readonly filas = signal(crearHomologacionesMulticentros());
   readonly editando = signal<string | null>(null);
-  readonly form = signal({ codigo: '', descripcion: '' });
+  readonly form = signal<Formulario>({ ...FORM_VACIO });
   readonly error = signal<string | null>(null);
 
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
-
   readonly migas = computed<GmMiga[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
-    { etiqueta: `Homologación de sucursales de ${this.sistema()?.codigo ?? 'sistema'}` },
+    { etiqueta: `Multicentros de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);
-
   readonly filtradas = computed(() => {
     const q = this.query().trim().toLowerCase();
-    return this.datos
-      .sucursales()
-      .filter((s) => s.sistemaId === this.sistemaId())
-      .filter((s) => !q || `${s.codigo} ${s.descripcion}`.toLowerCase().includes(q));
+    return this.filas().filter((row) => row.sistemaId === this.sistemaId()).filter((row) =>
+      !q || `${row.fecha} ${row.codigoEntel} ${row.multicentroEntel} ${row.codigoSucursalSin} ${row.descripcionSin} ${row.codigoPuntoVentaSin} ${row.puntoVentaSin}`.toLowerCase().includes(q),
+    );
   });
-
   readonly vacio = computed(() =>
-    this.query() ? 'No hay resultados para la búsqueda.' : 'Este sistema todavía no tiene sucursales homologadas.',
+    this.query().trim() ? 'No hay resultados para la búsqueda.' : 'Este sistema todavía no tiene multicentros homologados.',
   );
 
-  puntos(s: S): string {
-    const total = this.datos.puntosDe(s.id).length;
-    return `${total} ${total === 1 ? 'punto de venta' : 'puntos de venta'}`;
-  }
-
-  abrir(s?: S): void {
-    this.form.set({ codigo: s?.codigo ?? '', descripcion: s?.descripcion ?? '' });
+  abrir(row?: HomologacionMulticentro): void {
+    this.form.set(row ? this.aFormulario(row) : { ...FORM_VACIO, fecha: this.fechaActual() });
     this.error.set(null);
-    this.editando.set(s?.id ?? '');
+    this.editando.set(row?.id ?? '');
   }
 
-  campo(nombre: 'codigo' | 'descripcion', valor: string): void {
+  campo(nombre: keyof Formulario, valor: string): void {
     this.form.update((f) => ({ ...f, [nombre]: valor }));
   }
 
@@ -95,25 +88,39 @@ export class SucursalesHomologadasPage {
     event.preventDefault();
     const id = this.editando();
     if (id === null) return;
-    const payload = { ...this.form(), sistemaId: this.sistemaId() };
-    const error = id ? this.datos.actualizar(id, payload) : this.datos.crear(payload);
-    if (error) {
-      this.error.set(error);
+    const datos = this.form();
+    if (Object.values(datos).some((valor) => !valor.trim())) {
+      this.error.set('Completa los datos de ambas sucursales y el punto de venta.');
       return;
     }
-    this.toast.mostrar(id ? 'Sucursal actualizada.' : 'Sucursal creada.');
+    if (id) {
+      this.filas.update((rows) => rows.map((row) => row.id === id ? { ...row, ...datos } : row));
+      this.toast.mostrar('Homologación actualizada.');
+    } else {
+      this.filas.update((rows) => [{ id: `ZSMART-multicentro-${Date.now()}`, sistemaId: this.sistemaId(), ...datos }, ...rows]);
+      this.toast.mostrar('Homologación creada.');
+    }
     this.editando.set(null);
   }
 
-  async eliminar(s: S): Promise<void> {
+  async eliminar(row: HomologacionMulticentro): Promise<void> {
     const si = await this.confirmar.preguntar({
-      titulo: 'Eliminar sucursal',
-      mensaje: `¿Está seguro de que desea eliminar la sucursal ${s.codigo}?`,
+      titulo: 'Eliminar homologación',
+      mensaje: `¿Está seguro de eliminar la homologación de ${row.multicentroEntel}?`,
       aceptar: 'Eliminar',
       peligro: true,
     });
     if (!si) return;
-    this.datos.eliminar(s.id);
-    this.toast.mostrar('Sucursal eliminada.');
+    this.filas.update((rows) => rows.filter((item) => item.id !== row.id));
+    this.toast.mostrar('Homologación eliminada.');
+  }
+
+  private aFormulario(row: HomologacionMulticentro): Formulario {
+    const { id: _id, sistemaId: _sistemaId, ...datos } = row;
+    return datos;
+  }
+
+  private fechaActual(): string {
+    return new Intl.DateTimeFormat('es-BO', { dateStyle: 'short', timeStyle: 'medium' }).format(new Date());
   }
 }
