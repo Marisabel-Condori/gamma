@@ -1,11 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { GmConfirmar, GmToast } from '../../../shared/ui';
+import { GmConfirmar, GmIcono, GmToast } from '../../../shared/ui';
 
 /** Barra superior, menú, contenido y pie. Aloja una sola vez el toast y las confirmaciones. */
 @Component({
   selector: 'gm-layout-principal',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, GmToast, GmConfirmar],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, GmIcono, GmToast, GmConfirmar],
   templateUrl: './layout-principal.html',
   styleUrl: './layout-principal.scss',
 })

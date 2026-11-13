@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
-const GLIFOS = {
+const ICONOS = {
   agregar: 'add',
   editar: 'edit',
   eliminar: 'delete',
@@ -12,26 +12,30 @@ const GLIFOS = {
   anterior: 'chevron_left',
   siguiente: 'chevron_right',
   vacio: 'search_off',
+  menu: 'menu',
+  inicio: 'home',
+  sistemas: 'account_balance',
+  servicios: 'apps',
 } as const;
 
-export type GmIconoNombre = keyof typeof GLIFOS;
+export type GmIconoNombre = keyof typeof ICONOS;
 
 /** <gm-icono nombre="editar" />. El tamaño lo hereda del font-size del padre. */
 @Component({
   selector: 'gm-icono',
-  template: `<span class="material-icons" aria-hidden="true">{{ glifo() }}</span>`,
+  template: `<span class="material-icons-outlined" aria-hidden="true">{{ icono() }}</span>`,
   styles: `
     :host {
       display: inline-grid;
       place-items: center;
       line-height: 1;
     }
-    .material-icons {
+    .material-icons-outlined {
       font-size: inherit;
     }
   `,
 })
 export class GmIcono {
   readonly nombre = input.required<GmIconoNombre>();
-  readonly glifo = computed(() => GLIFOS[this.nombre()]);
+  readonly icono = computed(() => ICONOS[this.nombre()]);
 }

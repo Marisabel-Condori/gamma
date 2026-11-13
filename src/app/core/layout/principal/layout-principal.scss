@@ -45,6 +45,11 @@ main {
   display: none;
 }
 
+.menu-boton,
+.menu-volver gm-icono {
+  font-size: var(--icono-md);
+}
+
 nav {
   display: flex;
   flex: 1;
@@ -65,7 +70,7 @@ nav a {
   white-space: nowrap;
 }
 
-nav a .material-icons-outlined {
+nav a gm-icono {
   font-size: var(--icono-lg);
 }
 

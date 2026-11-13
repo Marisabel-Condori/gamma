@@ -6,7 +6,7 @@
     [attr.aria-label]="menuAbierto() ? 'Cerrar menú' : 'Abrir menú'"
     (click)="alternarMenu()"
   >
-    <span class="material-icons-outlined">{{ menuAbierto() ? 'close' : 'menu' }}</span>
+    <gm-icono [nombre]="menuAbierto() ? 'cerrar' : 'menu'" />
   </button>
   <a class="marca" routerLink="/inicio" (click)="cerrar()">GAMMA</a>
   <span class="divisor" aria-hidden="true"></span>
@@ -15,19 +15,19 @@
   }
   <nav [class.abierto]="menuAbierto()">
     <button type="button" class="menu-volver" (click)="cerrar()">
-      <span class="material-icons-outlined">arrow_back</span>
+      <gm-icono nombre="volver" />
       Volver
     </button>
     <a routerLink="/inicio" routerLinkActive="activo" (click)="cerrar()">
-      <span class="material-icons-outlined">home</span>
+      <gm-icono nombre="inicio" />
       Inicio
     </a>
     <a routerLink="/sistemas-facturadores" routerLinkActive="activo" (click)="cerrar()">
-      <span class="material-icons-outlined">account_balance</span>
+      <gm-icono nombre="sistemas" />
       Sistemas Facturadores
     </a>
     <a routerLink="/servicios" routerLinkActive="activo" (click)="cerrar()">
-      <span class="material-icons-outlined">apps</span>
+      <gm-icono nombre="servicios" />
       Servicios
     </a>
   </nav>
