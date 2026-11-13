@@ -19,8 +19,8 @@
     [porPagina]="10"
     [vacio]="vacio()"
   >
-    <ng-template gmCelda="acciones" let-h>
-      <gm-acciones-fila que="homologación" (editar)="abrir(h)" (eliminar)="eliminar(h)" />
+    <ng-template gmCelda="acciones" let-homologacion>
+      <gm-acciones-fila que="homologación" (editar)="abrir(homologacion)" (eliminar)="eliminar(homologacion)" />
     </ng-template>
   </gm-tabla>
 } @else {

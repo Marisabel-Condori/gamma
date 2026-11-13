@@ -22,13 +22,14 @@ import { ACTIVIDADES_SIN, PRODUCTOS_SIN } from '../../data/catalogos-sin';
 import { HomologacionProductoResponse } from '../../data/sistemas.models';
 import { SistemasService } from '../../data/sistemas.service';
 
-type H = HomologacionProductoResponse;
+/** Nombre corto para el tipo de cada fila de esta pantalla. */
+type Homologacion = HomologacionProductoResponse;
 
-const COLUMNAS: GmColumna<H>[] = [
+const COLUMNAS: GmColumna<Homologacion>[] = [
   {
     id: 'fecha',
     titulo: 'Fecha',
-    valor: (h) => `${h.fecha} · ${h.hora}`,
+    valor: (homologacion) => `${homologacion.fecha} · ${homologacion.hora}`,
     sinSalto: true,
     movil: 'pie',
     etiquetaMovil: 'Homologado',
@@ -40,13 +41,13 @@ const COLUMNAS: GmColumna<H>[] = [
     grupo: 'ENTEL',
     destacar: true,
     movil: 'titulo',
-    valorMovil: (h) => oracion(h.productoEntel),
+    valorMovil: (homologacion) => oracion(homologacion.productoEntel),
   },
   {
     id: 'actividad',
     titulo: 'Actividad',
     grupo: 'SIN',
-    valor: (h) => `${h.actividadCodigo} · ${h.actividadNombre}`,
+    valor: (homologacion) => `${homologacion.actividadCodigo} · ${homologacion.actividadNombre}`,
     etiquetaMovil: 'Actividad',
     ordenMovil: 99,
   },
@@ -56,7 +57,7 @@ const COLUMNAS: GmColumna<H>[] = [
     titulo: 'Producto o servicio',
     grupo: 'SIN',
     movil: 'titulo',
-    valorMovil: (h) => oracion(h.productoSin),
+    valorMovil: (homologacion) => oracion(homologacion.productoSin),
   },
   { id: 'acciones', titulo: 'Acciones', ancho: '120px', movil: 'pie-fin' },
 ];
@@ -126,10 +127,17 @@ export class ProductosHomologadosPage {
   readonly filtrados = computed(() => {
     const q = this.query().trim().toLowerCase();
     const id = this.sistema()?.id;
-    return this.datos.homologaciones().filter((h) => {
-      if (h.sistemaId !== id) return false;
+    return this.datos.homologaciones().filter((homologacion) => {
+      if (homologacion.sistemaId !== id) return false;
       if (!q) return true;
-      return [h.codigoEntel, h.productoEntel, h.actividadCodigo, h.actividadNombre, h.codigoSin, h.productoSin]
+      return [
+        homologacion.codigoEntel,
+        homologacion.productoEntel,
+        homologacion.actividadCodigo,
+        homologacion.actividadNombre,
+        homologacion.codigoSin,
+        homologacion.productoSin,
+      ]
         .join(' ')
         .toLowerCase()
         .includes(q);
@@ -150,13 +158,13 @@ export class ProductosHomologadosPage {
     });
   }
 
-  abrir(h?: H): void {
-    this.codigoEntel.set(h?.codigoEntel ?? '');
-    this.productoEntel.set(h?.productoEntel ?? '');
-    this.actividad.set(h?.actividadCodigo ?? '');
-    this.productoSin.set(h?.codigoSin ?? '');
+  abrir(homologacion?: Homologacion): void {
+    this.codigoEntel.set(homologacion?.codigoEntel ?? '');
+    this.productoEntel.set(homologacion?.productoEntel ?? '');
+    this.actividad.set(homologacion?.actividadCodigo ?? '');
+    this.productoSin.set(homologacion?.codigoSin ?? '');
     this.error.set(null);
-    this.editando.set(h?.id ?? '');
+    this.editando.set(homologacion?.id ?? '');
   }
 
   /** Al cambiar de actividad, el producto elegido ya no corresponde. */
@@ -179,7 +187,7 @@ export class ProductosHomologadosPage {
     }
 
     // La fecha y hora de homologación se registran al crear; al editar se conservan.
-    const anterior = this.datos.homologaciones().find((h) => h.id === id);
+    const anterior = this.datos.homologaciones().find((homologacion) => homologacion.id === id);
     const { fecha, hora } = anterior ?? ahora();
     const payload = {
       sistemaId: sistema.id,
@@ -201,15 +209,15 @@ export class ProductosHomologadosPage {
     this.editando.set(null);
   }
 
-  async eliminar(h: H): Promise<void> {
+  async eliminar(homologacion: Homologacion): Promise<void> {
     const si = await this.confirmar.preguntar({
       titulo: 'Eliminar homologación',
-      mensaje: `¿Está seguro de que desea eliminar ${h.productoEntel}?`,
+      mensaje: `¿Está seguro de que desea eliminar ${homologacion.productoEntel}?`,
       aceptar: 'Eliminar',
       peligro: true,
     });
     if (!si) return;
-    this.datos.deleteHomologacion(h.id);
+    this.datos.deleteHomologacion(homologacion.id);
     this.toast.mostrar('Homologación eliminada.');
   }
 }
