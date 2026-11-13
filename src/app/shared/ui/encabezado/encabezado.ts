@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { GmIcono } from '../icono/icono';
 import { Pantalla } from '../pantalla';
@@ -20,6 +20,7 @@ export interface GmMiga {
  * etiquetaTipo 'chip':   se mantiene junto al título también en móvil.
  * volver / tituloMovil:  en móvil reemplazan a las migas.
  * subtitulo:             contexto bajo el título (escritorio y móvil).
+ * etiquetaEn:            'movil' o 'escritorio' para mostrar la etiqueta solo en una vista.
  */
 @Component({
   selector: 'gm-encabezado',
@@ -44,7 +45,7 @@ export interface GmMiga {
           <a class="volver" aria-label="Volver" [routerLink]="volver()"><gm-icono nombre="atras" /></a>
         }
         <h1>{{ esMovil() ? (tituloMovil() ?? titulo()) : titulo() }}</h1>
-        @if (etiqueta() && (etiquetaTipo() === 'chip' || !esMovil())) {
+        @if (mostrarEtiqueta() && (etiquetaTipo() === 'chip' || !esMovil())) {
           <span class="etiqueta" [class.chip]="etiquetaTipo() === 'chip'">{{ etiqueta() }}</span>
         }
       </div>
@@ -56,7 +57,7 @@ export interface GmMiga {
     @if (subtitulo()) {
       <p class="subtitulo">{{ subtitulo() }}</p>
     }
-    @if (etiqueta() && etiquetaTipo() === 'conteo' && esMovil()) {
+    @if (mostrarEtiqueta() && etiquetaTipo() === 'conteo' && esMovil()) {
       <p class="conteo">{{ etiqueta() }}</p>
     }
   `,
@@ -71,6 +72,14 @@ export class GmEncabezado {
   readonly volver = input<string>();
   readonly etiqueta = input<string>();
   readonly etiquetaTipo = input<'conteo' | 'chip'>('conteo');
+  /** En qué vista se muestra la etiqueta. */
+  readonly etiquetaEn = input<'ambas' | 'movil' | 'escritorio'>('ambas');
 
   protected readonly esMovil = inject(Pantalla).esMovil;
+
+  protected readonly mostrarEtiqueta = computed(() => {
+    const donde = this.etiquetaEn();
+    const vistaOk = donde === 'ambas' || (donde === 'movil') === this.esMovil();
+    return !!this.etiqueta() && vistaOk;
+  });
 }
