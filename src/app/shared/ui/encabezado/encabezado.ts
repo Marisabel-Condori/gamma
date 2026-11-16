@@ -36,7 +36,7 @@ export interface GmRutaNavegacion {
           <a class="volver" aria-label="Volver" [routerLink]="volver()"><gm-icono nombre="atras" /></a>
         }
         <h1>{{ esMovil() ? (tituloMovil() ?? titulo()) : titulo() }}</h1>
-        @if (mostrarEtiqueta() && (etiquetaTipo() === 'chip' || !esMovil())) {
+        @if (etiquetaJuntoAlTitulo()) {
           <span class="etiqueta" [class.chip]="etiquetaTipo() === 'chip'">{{ etiqueta() }}</span>
         }
       </div>
@@ -48,7 +48,7 @@ export interface GmRutaNavegacion {
     @if (subtitulo()) {
       <p class="subtitulo">{{ subtitulo() }}</p>
     }
-    @if (mostrarEtiqueta() && etiquetaTipo() === 'conteo' && esMovil()) {
+    @if (etiqueta() && etiquetaTipo() === 'conteo' && esMovil()) {
       <p class="conteo">{{ etiqueta() }}</p>
     }
   `,
@@ -57,20 +57,16 @@ export interface GmRutaNavegacion {
 export class GmEncabezado {
   readonly titulo = input.required<string>();
   readonly tituloMovil = input<string>();
-  /** Texto de contexto bajo el título, ej. la sucursal que se está viendo. */
   readonly subtitulo = input<string>();
   readonly rutanavegacion = input<GmRutaNavegacion[]>([]);
   readonly volver = input<string>();
   readonly etiqueta = input<string>();
   readonly etiquetaTipo = input<'conteo' | 'chip'>('conteo');
-  /** En qué vista se muestra la etiqueta. */
-  readonly etiquetaEn = input<'ambas' | 'movil' | 'escritorio'>('ambas');
 
   protected readonly esMovil = inject(Pantalla).esMovil;
 
-  protected readonly mostrarEtiqueta = computed(() => {
-    const donde = this.etiquetaEn();
-    const vistaOk = donde === 'ambas' || (donde === 'movil') === this.esMovil();
-    return !!this.etiqueta() && vistaOk;
+  protected readonly etiquetaJuntoAlTitulo = computed(() => {
+    if (!this.etiqueta()) return false;
+    return this.etiquetaTipo() === 'chip' ? this.esMovil() : !this.esMovil();
   });
 }
