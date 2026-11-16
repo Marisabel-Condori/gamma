@@ -1,0 +1,75 @@
+// Única fuente de colores, textos y medidas de GAMMA.
+// Regla: ningún .scss usa un color o tamaño suelto; si falta uno, se agrega aquí.
+
+:root {
+  color-scheme: light;
+
+  // ── Colores ─────────────────────────────────────────────
+  --fondo: #f4f7fb;
+  --superficie: #ffffff;
+  --apagado: #f1f4f7; // fondo de botones suaves, pills
+
+  --tinta: #16243c; // texto principal y títulos
+  --tinta-2: #3d4d63; // texto secundario (descripciones)
+  --tinta-3: #6b7a90; // texto tenue, iconos, placeholders
+
+  --linea: #e4edf5;
+  --linea-fuerte: #d3dde8;
+
+  --marca: #6b2fa8; // morado del botón del login
+  --marca-oscura: #4b1f78;
+  --marca-suave: #efe6f8;
+  --marca-tenue: #f7f3fb; // hover de filas y menús
+
+  --peligro: #e15d5d;
+  --peligro-suave: #fdecec;
+
+  --tabla-oscura: #5b6778; // cabecera de tablas simples
+  --tabla-clara: #d5e0eb; // cabecera de tablas agrupadas (homologaciones)
+
+  --velo: rgba(17, 32, 54, 0.46); // fondo detrás de modales y menú móvil
+  --sombra: 0 16px 36px rgba(16, 32, 54, 0.14);
+  --sombra-suave: 0 8px 22px rgba(20, 40, 70, 0.05);
+
+  // ── Texto ───────────────────────────────────────────────
+  --fuente: Inter, 'Segoe UI', Roboto, sans-serif;
+
+  --texto-xs: 12px;
+  --texto-sm: 13px;
+  --texto-md: 14px; // base
+  --texto-lg: 16px;
+  --texto-xl: 18px;
+  --texto-2xl: 22px;
+  --texto-3xl: 28px;
+  --texto-4xl: 32px;
+
+  --peso-normal: 400;
+  --peso-medio: 500;
+  --peso-semi: 600;
+  --peso-negrita: 700;
+  --peso-extra: 800;
+
+  --interlineado: 1.45;
+  --interlineado-titulo: 1.15;
+
+  // ── Medidas ─────────────────────────────────────────────
+  --control-sm: 32px; // botón de icono
+  --control-md: 36px;
+  --control-lg: 42px; // botón, buscador, input
+  --control-xl: 48px; // controles en móvil
+
+  --icono-sm: 18px;
+  --icono-md: 20px;
+  --icono-lg: 24px;
+  --icono-xl: 30px;
+
+  --radio-sm: 8px;
+  --radio-md: 10px;
+  --radio-lg: 12px;
+  --radio-xl: 16px;
+  --radio-pill: 999px;
+
+  --pagina-ancho: 1280px;
+  --pagina-margen: 48px;
+  --pagina-margen-movil: 28px;
+}

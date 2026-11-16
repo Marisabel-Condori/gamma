@@ -3,7 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": "52b8a9c4-6ebb-485e-925a-fb3c7c013da9"
+    "analytics": "26930367-32df-4c38-b7b6-a39782875511"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -16,7 +16,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "gm",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
@@ -31,8 +31,12 @@
               }
             ],
             "styles": [
+              "node_modules/@angular/cdk/overlay-prebuilt.css",
               "src/styles.scss"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles"]
+            }
           },
           "configurations": {
             "production": {

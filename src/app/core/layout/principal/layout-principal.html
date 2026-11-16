@@ -1,0 +1,55 @@
+<header class="barra">
+  <button
+    type="button"
+    class="menu-boton"
+    [attr.aria-expanded]="menuAbierto()"
+    [attr.aria-label]="menuAbierto() ? 'Cerrar menú' : 'Abrir menú'"
+    (click)="alternarMenu()"
+  >
+    <gm-icono [nombre]="menuAbierto() ? 'cerrar' : 'menu'" />
+  </button>
+  <a class="marca" routerLink="/inicio" (click)="cerrar()">GAMMA</a>
+  <span class="divisor" aria-hidden="true"></span>
+  @if (menuAbierto()) {
+    <button type="button" class="velo" aria-label="Cerrar menú" (click)="cerrar()"></button>
+  }
+  <nav [class.abierto]="menuAbierto()">
+    <button type="button" class="menu-volver" (click)="cerrar()">
+      <gm-icono nombre="volver" />
+      Volver
+    </button>
+    <a routerLink="/inicio" routerLinkActive="activo" (click)="cerrar()">
+      <gm-icono nombre="inicio" />
+      Inicio
+    </a>
+    <a routerLink="/sistemas-facturadores" routerLinkActive="activo" (click)="cerrar()">
+      <gm-icono nombre="sistemas" />
+      Sistemas Facturadores
+    </a>
+    <a routerLink="/servicios" routerLinkActive="activo" (click)="cerrar()">
+      <gm-icono nombre="servicios" />
+      Servicios
+    </a>
+  </nav>
+  <div class="perfil">
+    <button type="button" class="avatar" [attr.aria-label]="'Sesión de ' + perfilNombre" (click)="alternarPerfil()">{{ perfilIniciales }}</button>
+    @if (perfilAbierto()) {
+      <button type="button" class="velo-transparente" aria-label="Cerrar" (click)="perfilAbierto.set(false)"></button>
+      <div class="popover">
+        <div class="aviso">
+          <strong>{{ perfilNombre }}</strong>
+          <p>{{ perfilArea }}</p>
+        </div>
+        <a class="salir" href="/login" (click)="$event.preventDefault(); salir()">Salir</a>
+      </div>
+    }
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+<footer class="pie">GAMMA · Sistema Base de Facturación Electrónica</footer>
+
+<gm-toast />
+<gm-confirmar />

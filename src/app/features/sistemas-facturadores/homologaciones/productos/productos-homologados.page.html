@@ -1,0 +1,51 @@
+@if (sistema(); as sistema) {
+  <gm-encabezado
+    titulo="Productos y servicios homologados"
+    tituloMovil="Homologaciones"
+    volver="/sistemas-facturadores"
+    [migas]="migas()"
+    [etiqueta]="sistema.codigo"
+    etiquetaTipo="chip"
+  >
+    <gm-buscar placeholder="Buscar por código, producto o actividad..." [(valor)]="query" />
+    <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nueva homologación" compacto (click)="abrir()"></button>
+  </gm-encabezado>
+
+  <gm-tabla
+    [datos]="filtrados()"
+    [columnas]="columnas"
+    cabecera="clara"
+    anchoMinimo="1080px"
+    [porPagina]="10"
+    [vacio]="vacio()"
+  >
+    <ng-template gmCelda="acciones" let-h>
+      <gm-acciones-fila que="homologación" (editar)="abrir(h)" (eliminar)="eliminar(h)" />
+    </ng-template>
+  </gm-tabla>
+} @else {
+  <gm-encabezado titulo="Sistema no encontrado" />
+  <a gmBoton="neutro" icono="volver" etiqueta="Volver a sistemas facturadores" routerLink="/sistemas-facturadores"></a>
+}
+
+@if (editando() !== null) {
+  <gm-modal [titulo]="editando() ? 'Editar homologación' : 'Nueva homologación'" (cerrar)="editando.set(null)">
+    <form (submit)="guardar($event)" novalidate>
+      <div class="gm-campos gm-campos--2">
+        @for (c of campos; track c.id) {
+          <label class="gm-campo">
+            {{ c.etiqueta }}
+            <input [value]="form()[c.id]" [placeholder]="c.ejemplo ?? ''" (input)="campo(c.id, $any($event.target).value)" />
+          </label>
+        }
+      </div>
+      @if (error()) {
+        <p class="gm-error">{{ error() }}</p>
+      }
+      <div class="gm-acciones">
+        <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="editando.set(null)"></button>
+        <button gmBoton="primario" type="submit" etiqueta="Guardar"></button>
+      </div>
+    </form>
+  </gm-modal>
+}

@@ -1,0 +1,91 @@
+@use '../../../../styles/breakpoint' as *;
+
+:host {
+  display: inline-flex;
+}
+
+.disparador {
+  display: inline-grid;
+  place-items: center;
+  width: var(--control-sm);
+  height: var(--control-sm);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radio-md);
+  background: var(--apagado);
+  color: var(--tinta-3);
+  font-size: var(--icono-sm);
+}
+
+.disparador:hover,
+.disparador[aria-expanded='true'] {
+  background: var(--marca-suave);
+  color: var(--marca);
+}
+
+.etiqueta {
+  display: none;
+}
+
+.menu {
+  width: 240px;
+  padding: 6px;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+}
+
+.item {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: var(--radio-sm);
+  background: transparent;
+  text-align: left;
+  font-weight: var(--peso-semi);
+}
+
+.item:hover,
+.item:focus-visible {
+  background: var(--marca-tenue);
+  color: var(--marca);
+  outline: none;
+}
+
+@media (max-width: $movil) {
+  :host {
+    display: flex;
+    width: 100%;
+  }
+
+  .disparador {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    background: transparent;
+    color: var(--marca);
+  }
+
+  .disparador:hover,
+  .disparador[aria-expanded='true'] {
+    background: transparent;
+  }
+
+  .etiqueta {
+    display: block;
+    font-size: var(--texto-lg);
+    font-weight: var(--peso-semi);
+  }
+
+  gm-icono {
+    width: var(--control-md);
+    height: var(--control-md);
+    border-radius: var(--radio-lg);
+    background: var(--apagado);
+    color: var(--tinta-3);
+  }
+}

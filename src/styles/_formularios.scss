@@ -1,0 +1,54 @@
+@use 'breakpoint' as *;
+
+// Formularios dentro de modales: <div class="gm-campos"> con <label class="gm-campo">.
+
+.gm-campos {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.gm-campos > * {
+  min-width: 0;
+}
+
+.gm-campos--2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.gm-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+}
+
+.gm-campo input,
+.gm-campo select {
+  height: var(--control-lg);
+  padding: 0 12px;
+  border: 1px solid var(--linea-fuerte);
+  border-radius: var(--radio-md);
+  background: var(--superficie);
+  font-weight: var(--peso-medio);
+}
+
+.gm-error {
+  margin-top: 8px;
+  color: var(--peligro);
+  font-size: var(--texto-sm);
+}
+
+.gm-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+@media (max-width: $movil) {
+  .gm-campos--2 {
+    grid-template-columns: 1fr;
+  }
+}

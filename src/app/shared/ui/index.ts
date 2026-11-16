@@ -1,0 +1,21 @@
+// Todo lo reutilizable de la interfaz. Las pantallas importan desde aquí.
+export { GmAccionesFila } from './acciones-fila/acciones-fila';
+export { GmBoton } from './boton/boton';
+export type { GmBotonVariante } from './boton/boton';
+export { GmBuscar } from './buscar/buscar';
+export { Confirmar, GmConfirmar } from './confirmar/confirmar';
+export type { GmPregunta } from './confirmar/confirmar';
+export { GmEncabezado } from './encabezado/encabezado';
+export type { GmMiga } from './encabezado/encabezado';
+export { GmEstadoVacio } from './estado-vacio/estado-vacio';
+export { GmIcono } from './icono/icono';
+export type { GmIconoNombre } from './icono/icono';
+export { GmMenuFila } from './menu-fila/menu-fila';
+export type { GmOpcion } from './menu-fila/menu-fila';
+export { GmModal } from './modal/modal';
+export { GmPaginador } from './paginador/paginador';
+export { Pantalla } from './pantalla';
+export { GmCelda } from './tabla/celda';
+export { GmTabla } from './tabla/tabla';
+export type { GmColumna, GmLugarMovil } from './tabla/tabla.models';
+export { GmToast, Toast } from './toast/toast';

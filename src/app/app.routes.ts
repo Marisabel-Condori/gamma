@@ -1,77 +1,54 @@
 import { Routes } from '@angular/router';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
-import { authGuard } from './core/state/auth.guard';
+import { LayoutAcceso } from './core/layout/acceso/layout-acceso';
+import { LayoutPrincipal } from './core/layout/principal/layout-principal';
+import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'login',
-    component: AuthLayoutComponent,
+    component: LayoutAcceso,
     children: [
       {
         path: '',
-        loadComponent: () => import('./features/login/pages/login.component').then((m) => m.LoginComponent),
+        loadComponent: () => import('./features/acceso/login/login.page').then((m) => m.LoginPage),
       },
     ],
   },
-  { path: '', pathMatch: 'full', redirectTo: 'login' },
   {
     path: '',
-    component: MainLayoutComponent,
+    component: LayoutPrincipal,
     canActivateChild: [authGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       {
         path: 'inicio',
-        loadComponent: () => import('./features/inicio/pages/inicio.page').then((m) => m.InicioPage),
-      },
-      { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemasFacturadores/entel' },
-      {
-        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales/:sucursalId/puntos-venta',
-        loadComponent: () =>
-          import('./features/sucursales/pages/puntos-venta.page').then((m) => m.PuntosVentaPage),
+        loadComponent: () => import('./features/inicio/inicio.page').then((m) => m.InicioPage),
       },
       {
-        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales',
-        loadComponent: () =>
-          import('./features/homologacion-sucursales/pages/sucursales-homologadas.page').then(
-            (m) => m.SucursalesHomologadasPage,
-          ),
-      },
-      {
-        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales-homologadas',
-        loadComponent: () =>
-          import('./features/sucursales-homologadas/pages/sucursales-homologadas.page').then(
-            (m) => m.SucursalesHomologadasLegacyPage,
-          ),
-      },
-      {
-        path: 'sistemasFacturadores/:empresaId/:sistemaId/sucursales-sin',
-        loadComponent: () =>
-          import('./features/homologacion-sucursales/pages/homologacion-sucursales.page').then(
-            (m) => m.HomologacionSucursalesPage,
-          ),
-      },
-      {
-        path: 'sistemasFacturadores/:empresaId/:sistemaId/productos',
-        loadComponent: () =>
-          import('./features/sistemasFacturadores/pages/productosHomologados.page').then(
-            (m) => m.ProductosHomologadosPage,
-          ),
-      },
-      {
-        path: 'sistemasFacturadores/:empresaId',
-        loadComponent: () =>
-          import('./features/sistemasFacturadores/pages/sistemasFacturadores.page').then(
-            (m) => m.SistemasFacturadoresPage,
-          ),
+        path: 'sistemas-facturadores',
+        loadChildren: () =>
+          import('./features/sistemas-facturadores/sistemas-facturadores.routes').then((m) => m.SISTEMAS_ROUTES),
       },
       {
         path: 'servicios',
-        loadComponent: () =>
-          import('./features/servicios/pages/servicios.page').then((m) => m.ServiciosPage),
+        loadComponent: () => import('./features/servicios/servicios.page').then((m) => m.ServiciosPage),
+      },
+
+      // Direcciones antiguas que siguen funcionando.
+      { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
+      { path: 'sistemasFacturadores/entel', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
+      {
+        path: 'sistemasFacturadores/:sistemaId/productos',
+        redirectTo: ({ params }) => `/sistemas-facturadores/${params['sistemaId']}/productos`,
+      },
+      {
+        path: 'sistemasFacturadores/:origen/:sistemaId/productos',
+        redirectTo: ({ params }) => {
+          const sistemaId = (params['sistemaId'] ?? '').replace(/^entel-/, '');
+          return `/sistemas-facturadores/${sistemaId}/productos`;
+        },
       },
     ],
   },
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: 'inicio' },
 ];

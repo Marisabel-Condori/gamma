@@ -1,0 +1,97 @@
+@if (sistema(); as sistema) {
+  <gm-encabezado
+    titulo="Multicentros homologados"
+    tituloMovil="Multicentros"
+    volver="/sistemas-facturadores"
+    [migas]="migas()"
+    [etiqueta]="sistema.codigo"
+    etiquetaTipo="chip"
+    etiquetaEn="movil"
+  >
+    <gm-buscar placeholder="Buscar por código, sucursal o punto de venta..." [(valor)]="query" />
+    <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nueva homologación" compacto (click)="abrir()"></button>
+  </gm-encabezado>
+
+  <gm-tabla
+    [datos]="filtradas()"
+    [columnas]="columnas"
+    cabecera="clara"
+    anchoMinimo="1480px"
+    [porPagina]="10"
+    [vacio]="vacio()"
+  >
+    <ng-template gmCelda="acciones" let-row>
+      <gm-acciones-fila que="homologación" (editar)="abrir(row)" (eliminar)="eliminar(row)" />
+    </ng-template>
+  </gm-tabla>
+} @else {
+  <gm-encabezado titulo="Sistema no encontrado" />
+  <a gmBoton="neutro" icono="volver" etiqueta="Volver a sistemas facturadores" routerLink="/sistemas-facturadores"></a>
+}
+
+@if (editando() !== null) {
+  <gm-modal [titulo]="editando() ? 'Editar homologación' : 'Nueva homologación'" (cerrar)="editando.set(null)">
+    <form (submit)="guardar($event)" novalidate>
+      <div class="gm-campos gm-campos--2">
+        <label class="gm-campo">Fecha de homologación
+          <input [value]="form().fecha" readonly />
+        </label>
+        <label class="gm-campo">Código sucursal ENTEL
+          <input [value]="form().codigoEntel" placeholder="Ej. 6571" (input)="campo('codigoEntel', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Descripción ENTEL
+          <input [value]="form().multicentroEntel" placeholder="Nombre del multicentro" (input)="campo('multicentroEntel', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Código sucursal SIN
+          <div class="selector-buscable">
+            <input [value]="busquedaSucursal()" placeholder="Buscar por código o dirección" autocomplete="off" (focus)="enfocarSucursal()" (input)="buscarSucursal($event)" />
+            @if (sucursalesAbiertas()) {
+              <div class="opciones-buscables" role="listbox" aria-label="Sucursales SIN">
+                @for (sucursal of sucursalesFiltradas(); track sucursal.id) {
+                  <button type="button" class="opcion-buscable" role="option" (click)="seleccionarSucursal(sucursal.codigo)">
+                    <strong>{{ sucursal.codigo }}</strong><span>{{ sucursal.descripcion }}</span>
+                  </button>
+                } @empty {
+                  <p class="sin-opciones">No se encontraron sucursales.</p>
+                }
+              </div>
+            }
+          </div>
+        </label>
+        <label class="gm-campo">Descripción SIN
+          <input [value]="form().descripcionSin" placeholder="Se completa al elegir sucursal" readonly />
+        </label>
+        <label class="gm-campo">Código punto de venta SIN
+          <div class="selector-buscable">
+            <input [value]="busquedaPunto()" placeholder="Buscar punto de venta" autocomplete="off" [disabled]="!form().codigoSucursalSin" (focus)="enfocarPunto()" (input)="buscarPunto($event)" />
+            @if (puntosAbiertos()) {
+              <div class="opciones-buscables" role="listbox" aria-label="Puntos de venta SIN">
+                @for (punto of puntosFiltrados(); track punto.id) {
+                  <button type="button" class="opcion-buscable" role="option" (click)="seleccionarPuntoVenta(punto.codigo)">
+                    <strong>{{ punto.codigo }}</strong><span>{{ punto.descripcion }}</span>
+                  </button>
+                }
+                @if (puntosDisponibles().length === 0 && '0 punto de venta default'.includes(busquedaPunto().toLowerCase())) {
+                  <button type="button" class="opcion-buscable" role="option" (click)="seleccionarPuntoVenta('0')">
+                    <strong>0</strong><span>punto de venta default</span>
+                  </button>
+                }
+                @if (puntosDisponibles().length > 0 && puntosFiltrados().length === 0) {
+                  <p class="sin-opciones">No se encontraron puntos de venta.</p>
+                }
+              </div>
+            }
+          </div>
+        </label>
+        <label class="gm-campo">Punto de venta SIN
+          <input [value]="form().puntoVentaSin" placeholder="Se completa al elegir punto de venta" readonly />
+        </label>
+      </div>
+      @if (error()) { <p class="gm-error">{{ error() }}</p> }
+      <div class="gm-acciones">
+        <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="editando.set(null)"></button>
+        <button gmBoton="primario" type="submit" etiqueta="Guardar"></button>
+      </div>
+    </form>
+  </gm-modal>
+}
