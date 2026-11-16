@@ -29,9 +29,9 @@
 
 .menu {
   width: 240px;
-  padding: 6px;
+  padding: 4px;
   background: var(--superficie);
-  border: 1px solid var(--linea);
+  border: 2px solid var(--linea);
   border-radius: var(--radio-lg);
   box-shadow: var(--sombra);
 }
@@ -39,7 +39,7 @@
 .item {
   display: block;
   width: 100%;
-  padding: 9px 12px;
+  padding: 5px 10px;
   border: 0;
   border-radius: var(--radio-sm);
   background: transparent;
