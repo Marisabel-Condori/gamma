@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { GmConfirmar, GmIcono, GmToast } from '../../../shared/ui';
 import { AuthService } from '../../auth/auth.service';
 
@@ -12,15 +12,16 @@ import { AuthService } from '../../auth/auth.service';
 })
 export class LayoutPrincipal {
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   readonly perfilAbierto = signal(false);
   readonly menuAbierto = signal(false);
 
-  alternarPerfil(): void {
+  abrirCerrarPerfil(): void {
     this.menuAbierto.set(false);
     this.perfilAbierto.update((abierto) => !abierto);
   }
 
-  alternarMenu(): void {
+  abrirCerrarMenu(): void {
     this.perfilAbierto.set(false);
     this.menuAbierto.update((abierto) => !abierto);
   }
@@ -33,5 +34,6 @@ export class LayoutPrincipal {
   salir(): void {
     this.auth.logout();
     this.cerrar();
+    void this.router.navigate(['/login']);
   }
 }

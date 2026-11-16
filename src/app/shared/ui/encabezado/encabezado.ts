@@ -8,19 +8,10 @@ export interface GmMiga {
   enlace?: string;
 }
 
-/**
- * Encabezado de pantalla: migas, título, etiqueta, buscador y acción.
- *
- *   <gm-encabezado titulo="Sistemas Facturadores" [etiqueta]="conteo()">
+/**   <gm-encabezado titulo="Sistemas Facturadores" [etiqueta]="conteo()">
  *     <gm-buscar [(valor)]="query" />
  *     <button gmBoton="primario" ...></button>
  *   </gm-encabezado>
- *
- * etiquetaTipo 'conteo': pill junto al título; en móvil pasa a texto debajo.
- * etiquetaTipo 'chip':   se mantiene junto al título también en móvil.
- * volver / tituloMovil:  en móvil reemplazan a las migas.
- * subtitulo:             contexto bajo el título (escritorio y móvil).
- * etiquetaEn:            'movil' o 'escritorio' para mostrar la etiqueta solo en una vista.
  */
 @Component({
   selector: 'gm-encabezado',

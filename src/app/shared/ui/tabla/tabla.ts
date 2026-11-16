@@ -23,10 +23,7 @@ const RANGO: Record<GmLugarMovil, number> = {
   oculto: 6,
 };
 
-/**
- * Tabla del sistema. En escritorio es una tabla; en móvil, una lista de tarjetas.
- *
- *   <gm-tabla [datos]="filas()" [columnas]="columnas" [porPagina]="10">
+/**  <gm-tabla [datos]="filas()" [columnas]="columnas" [porPagina]="10">
  *     <ng-template gmCelda="acciones" let-fila> ... </ng-template>
  *   </gm-tabla>
  */

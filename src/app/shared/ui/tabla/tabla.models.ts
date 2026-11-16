@@ -1,20 +1,7 @@
-/**
- * Dónde aparece la columna cuando la tabla se convierte en tarjeta (móvil):
- *
- *   ┌───────────────────────────────┐
- *   │ GRUPO (si la columna tiene)   │
- *   │ titulo              esquina   │
- *   │ subtitulo                     │
- *   │ detalle                       │
- *   ├───────────────────────────────┤
- *   │ pie                 pie-fin   │
- *   └───────────────────────────────┘
- */
+
 export type GmLugarMovil = 'titulo' | 'subtitulo' | 'detalle' | 'esquina' | 'pie' | 'pie-fin' | 'oculto';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface GmColumna<T = any> {
-  /** Identificador; también es la propiedad que se muestra si no hay `valor` ni plantilla. */
   id: string;
   titulo: string;
   /** Columnas consecutivas con el mismo grupo comparten una cabecera arriba (ENTEL / SIN). */

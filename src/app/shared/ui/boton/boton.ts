@@ -4,11 +4,9 @@ import { GmIcono, GmIconoNombre } from '../icono/icono';
 export type GmBotonVariante = 'primario' | 'neutro' | 'suave' | 'peligro';
 
 /**
- * Botón del sistema.
+ * Botón
  *   <button gmBoton="primario" icono="agregar" etiqueta="Crear sistema" compacto></button>
- *   <button gmBoton icono="editar" aria-label="Editar"></button>        ← solo icono
- * `compacto`: en móvil oculta la etiqueta y queda como botón cuadrado.
- * `chico`:    mismo alto que los botones de icono (para celdas de tabla).
+ *   <button gmBoton icono="editar" aria-label="Editar"></button>        (solo icono)
  */
 @Component({
   selector: 'button[gmBoton], a[gmBoton]',
@@ -32,7 +30,7 @@ export class GmBoton {
   readonly icono = input<GmIconoNombre>();
   readonly etiqueta = input<string>();
   readonly compacto = input(false, { transform: booleanAttribute });
-  /** Botón con texto del alto de los botones de icono, para usar dentro de tablas. */
+  /** Botón para tablas. */
   readonly chico = input(false, { transform: booleanAttribute });
 
   protected readonly clases = computed(() => {

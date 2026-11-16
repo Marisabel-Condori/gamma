@@ -1,0 +1,10 @@
+{
+  "/vortex-codigos": {
+    "target": "https://qb41v4jz-8080.brs.devtunnels.ms",
+    "secure": true,
+    "changeOrigin": true,
+    "headers": {
+      "X-Tunnel-Skip-AntiPhishing-Page": "true"
+    }
+  }
+}

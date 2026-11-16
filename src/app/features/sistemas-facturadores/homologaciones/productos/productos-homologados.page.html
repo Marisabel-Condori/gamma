@@ -44,19 +44,24 @@
       <gm-seccion titulo="SIN">
         <gm-lista
           etiqueta="Actividad"
-          placeholder="Selecciona una actividad"
-          [opciones]="actividades"
+          [placeholder]="cargandoActividades() ? 'Cargando actividades...' : 'Selecciona una actividad'"
+          [opciones]="actividades()"
+          [deshabilitado]="cargandoActividades()"
           [valor]="actividad()"
           (valorChange)="elegirActividad($event)"
         />
         <gm-lista
           etiqueta="Producto o servicio"
-          placeholder="Selecciona un producto o servicio"
+          [placeholder]="cargandoProductos() ? 'Cargando productos...' : 'Selecciona un producto o servicio'"
           [opciones]="productosSin()"
-          [deshabilitado]="!actividad()"
+          [deshabilitado]="!actividad() || cargandoProductos()"
           [(valor)]="productoSin"
         />
       </gm-seccion>
+
+      @if (errorCatalogo()) {
+        <p class="gm-error">{{ errorCatalogo() }}</p>
+      }
 
       @if (error()) {
         <p class="gm-error">{{ error() }}</p>

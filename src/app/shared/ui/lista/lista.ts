@@ -1,4 +1,6 @@
-import { Component, booleanAttribute, input, model } from '@angular/core';
+import { CdkListbox, CdkOption, ListboxValueChangeEvent } from '@angular/cdk/listbox';
+import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
+import { Component, ElementRef, booleanAttribute, computed, input, model, signal, viewChild } from '@angular/core';
 import { GmIcono } from '../icono/icono';
 
 export interface GmOpcionLista {
@@ -6,62 +8,70 @@ export interface GmOpcionLista {
   etiqueta: string;
 }
 
-/**
- * Lista desplegable con su etiqueta.
- *   <gm-lista etiqueta="Actividad" placeholder="Selecciona una actividad"
+const POSICIONES: ConnectedPosition[] = [
+  { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 6 },
+  { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -6 },
+];
+
+let siguienteId = 0;
+
+/**  <gm-lista etiqueta="Actividad" placeholder="Selecciona una actividad"
  *             [opciones]="actividades" [(valor)]="actividad" />
- * `deshabilitado`: gris y sin poder elegir (ej. mientras falta elegir otra lista).
  */
 @Component({
   selector: 'gm-lista',
-  imports: [GmIcono],
+  imports: [CdkConnectedOverlay, CdkOverlayOrigin, CdkListbox, CdkOption, GmIcono],
   template: `
-    <label class="gm-campo">
-      {{ etiqueta() }}
-      <span class="control">
-        <select [disabled]="deshabilitado()" [class.vacia]="!valor()" (change)="valor.set($any($event.target).value)">
-          <option value="" disabled [selected]="!valor()">{{ placeholder() }}</option>
-          @for (opcion of opciones(); track opcion.valor) {
-            <option [value]="opcion.valor" [selected]="opcion.valor === valor()">{{ opcion.etiqueta }}</option>
-          }
-        </select>
+    <div class="gm-campo">
+      <span [id]="id + '-etiqueta'">{{ etiqueta() }}</span>
+      <button
+        #boton
+        type="button"
+        class="control"
+        cdkOverlayOrigin
+        #origen="cdkOverlayOrigin"
+        aria-haspopup="listbox"
+        [attr.aria-labelledby]="id + '-etiqueta'"
+        [attr.aria-expanded]="abierta()"
+        [class.vacia]="!seleccionada()"
+        [disabled]="deshabilitado()"
+        (click)="alternar()"
+      >
+        <span class="texto">{{ seleccionada()?.etiqueta ?? placeholder() }}</span>
         <gm-icono nombre="desplegar" />
-      </span>
-    </label>
+      </button>
+    </div>
+
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="origen"
+      [cdkConnectedOverlayOpen]="abierta()"
+      [cdkConnectedOverlayPositions]="posiciones"
+      cdkConnectedOverlayHasBackdrop
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      (backdropClick)="cerrar()"
+      (overlayKeydown)="$event.key === 'Escape' && cerrar(true)"
+      (detach)="abierta.set(false)"
+      (attach)="enfocarLista()"
+    >
+      <ul
+        #panel
+        class="panel"
+        cdkListbox
+        [style.width.px]="ancho()"
+        [attr.aria-labelledby]="id + '-etiqueta'"
+        [cdkListboxValue]="seleccionada() ? [valor()] : []"
+        (cdkListboxValueChange)="elegir($event)"
+      >
+        @for (opcion of opciones(); track opcion.valor) {
+          <li class="opcion" [cdkOption]="opcion.valor">{{ opcion.etiqueta }}</li>
+        } @empty {
+          <li class="sin-opciones">No hay opciones.</li>
+        }
+      </ul>
+    </ng-template>
   `,
-  styles: `
-    :host {
-      display: block;
-      min-width: 0;
-    }
-    .control {
-      position: relative;
-      display: block;
-    }
-    select {
-      width: 100%;
-      padding-right: 40px;
-      appearance: none;
-      cursor: pointer;
-    }
-    select.vacia,
-    select:disabled {
-      color: var(--tinta-3);
-    }
-    select:disabled {
-      background: var(--apagado);
-      cursor: default;
-    }
-    gm-icono {
-      position: absolute;
-      top: 50%;
-      right: 12px;
-      transform: translateY(-50%);
-      color: var(--tinta-3);
-      font-size: var(--icono-lg);
-      pointer-events: none;
-    }
-  `,
+  styleUrl: './lista.scss',
 })
 export class GmLista {
   readonly etiqueta = input.required<string>();
@@ -69,4 +79,38 @@ export class GmLista {
   readonly valor = model('');
   readonly placeholder = input('Selecciona una opción');
   readonly deshabilitado = input(false, { transform: booleanAttribute });
+
+  protected readonly id = `gm-lista-${siguienteId++}`;
+  protected readonly posiciones = POSICIONES;
+  protected readonly abierta = signal(false);
+  protected readonly ancho = signal(0);
+  /** La opción elegida, solo si existe en la lista */
+  protected readonly seleccionada = computed(() => this.opciones().find((o) => o.valor === this.valor()));
+
+  private readonly boton = viewChild.required<ElementRef<HTMLButtonElement>>('boton');
+  private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
+
+  protected alternar(): void {
+    if (this.abierta()) {
+      this.cerrar();
+      return;
+    }
+    //menú mide lo mismo que el campo.
+    this.ancho.set(this.boton().nativeElement.getBoundingClientRect().width);
+    this.abierta.set(true);
+  }
+
+  protected elegir(evento: ListboxValueChangeEvent<string>): void {
+    this.valor.set(evento.value[0] ?? '');
+    this.cerrar(true);
+  }
+
+  protected cerrar(volverAlCampo = false): void {
+    this.abierta.set(false);
+    if (volverAlCampo) this.boton().nativeElement.focus();
+  }
+
+  protected enfocarLista(): void {
+    setTimeout(() => this.panel()?.nativeElement.focus());
+  }
 }

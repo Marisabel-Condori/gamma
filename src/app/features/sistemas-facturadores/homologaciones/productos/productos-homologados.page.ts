@@ -18,11 +18,10 @@ import {
   Toast,
 } from '../../../../shared/ui';
 import { oracion } from '../../../../shared/utils/texto';
-import { ACTIVIDADES_SIN, PRODUCTOS_SIN } from '../../data/catalogos-sin';
+import { CatalogoProductosService, sinRepetidos } from '../../data/catalogo-productos.service';
 import { HomologacionProductoResponse } from '../../data/sistemas.models';
 import { SistemasService } from '../../data/sistemas.service';
 
-/** Nombre corto para el tipo de cada fila de esta pantalla. */
 type Homologacion = HomologacionProductoResponse;
 
 const COLUMNAS: GmColumna<Homologacion>[] = [
@@ -47,7 +46,7 @@ const COLUMNAS: GmColumna<Homologacion>[] = [
     id: 'actividad',
     titulo: 'Actividad',
     grupo: 'SIN',
-    valor: (homologacion) => `${homologacion.actividadCodigo} · ${homologacion.actividadNombre}`,
+    valor: (homologacion) => `${homologacion.actividadNombre}`,
     etiquetaMovil: 'Actividad',
     ordenMovil: 99,
   },
@@ -61,8 +60,6 @@ const COLUMNAS: GmColumna<Homologacion>[] = [
   },
   { id: 'acciones', titulo: 'Acciones', ancho: '120px', movil: 'pie-fin' },
 ];
-
-const ACTIVIDADES: GmOpcionLista[] = ACTIVIDADES_SIN.map((a) => ({ valor: a.codigo, etiqueta: `${a.codigo} · ${a.nombre}` }));
 
 @Component({
   selector: 'gm-productos-homologados-page',
@@ -88,17 +85,15 @@ export class ProductosHomologadosPage {
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
   private readonly router = inject(Router);
+  private readonly catalogos = inject(CatalogoProductosService);
 
   /** Viene de la ruta :sistemaId */
   readonly sistemaId = input.required<string>();
 
   readonly columnas = COLUMNAS;
-  readonly actividades = ACTIVIDADES;
 
   readonly query = signal('');
 
-  // ── Formulario del modal ──
-  /** null = modal cerrado; '' = crear; id = editar. */
   readonly editando = signal<string | null>(null);
   readonly codigoEntel = signal('');
   readonly productoEntel = signal('');
@@ -106,12 +101,37 @@ export class ProductosHomologadosPage {
   readonly productoSin = signal('');
   readonly error = signal<string | null>(null);
 
-  /** Productos del SIN de la actividad elegida. */
+  // ── Catálogos del SIN (backend) ──
+  /** Productos del SIN: se piden de nuevo cada vez que cambia la actividad. */
+  private readonly productosRecurso = this.catalogos.productosSegunActividad(this.actividad);
+
+  private readonly listaActividades = computed(() => {
+    const recurso = this.catalogos.actividades;
+    return sinRepetidos(recurso.hasValue() ? recurso.value().data : [], (a) => a.codigoCaeb);
+  });
+
+  private readonly listaProductos = computed(() => {
+    const recurso = this.productosRecurso;
+    return sinRepetidos(recurso.hasValue() ? recurso.value().data : [], (p) => String(p.codigoProducto));
+  });
+
+  readonly actividades = computed<GmOpcionLista[]>(() =>
+    this.listaActividades().map((a) => ({ valor: a.codigoCaeb, etiqueta: a.descripcion })),
+  );
+
   readonly productosSin = computed<GmOpcionLista[]>(() =>
-    PRODUCTOS_SIN.filter((p) => p.actividad === this.actividad()).map((p) => ({
-      valor: p.codigo,
-      etiqueta: `${p.codigo} · ${p.nombre}`,
+    this.listaProductos().map((p) => ({
+      valor: String(p.codigoProducto),
+      etiqueta: p.descripcionProducto,
     })),
+  );
+
+  readonly cargandoActividades = computed(() => this.catalogos.actividades.isLoading());
+  readonly cargandoProductos = computed(() => this.productosRecurso.isLoading());
+  readonly errorCatalogo = computed(() =>
+    this.catalogos.actividades.error() || this.productosRecurso.error()
+      ? 'No se pudo cargar el catálogo del SIN. Cierra el modal e intenta de nuevo.'
+      : null,
   );
 
   readonly sistema = computed(() => {
@@ -164,6 +184,8 @@ export class ProductosHomologadosPage {
     this.actividad.set(homologacion?.actividadCodigo ?? '');
     this.productoSin.set(homologacion?.codigoSin ?? '');
     this.error.set(null);
+    // Si las actividades fallaron antes (ej. backend apagado), se vuelven a pedir.
+    if (this.catalogos.actividades.error()) this.catalogos.actividades.reload();
     this.editando.set(homologacion?.id ?? '');
   }
 
@@ -179,8 +201,8 @@ export class ProductosHomologadosPage {
     const sistema = this.sistema();
     if (id === null || !sistema) return;
 
-    const actividad = ACTIVIDADES_SIN.find((a) => a.codigo === this.actividad());
-    const producto = PRODUCTOS_SIN.find((p) => p.codigo === this.productoSin() && p.actividad === this.actividad());
+    const actividad = this.listaActividades().find((a) => a.codigoCaeb === this.actividad());
+    const producto = this.listaProductos().find((p) => String(p.codigoProducto) === this.productoSin());
     if (!this.codigoEntel().trim() || !this.productoEntel().trim() || !actividad || !producto) {
       this.error.set('Completa todos los campos de la homologación.');
       return;
@@ -195,10 +217,10 @@ export class ProductosHomologadosPage {
       hora,
       codigoEntel: this.codigoEntel(),
       productoEntel: this.productoEntel(),
-      actividadCodigo: actividad.codigo,
-      actividadNombre: actividad.nombre,
-      codigoSin: producto.codigo,
-      productoSin: producto.nombre,
+      actividadCodigo: actividad.codigoCaeb,
+      actividadNombre: actividad.descripcion,
+      codigoSin: String(producto.codigoProducto),
+      productoSin: producto.descripcionProducto,
     };
     const error = id ? this.datos.updateHomologacion(id, payload) : this.datos.createHomologacion(payload);
     if (error) {

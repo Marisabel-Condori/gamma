@@ -1,13 +1,9 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { Pantalla } from '../pantalla';
 
-/**
- * Bloque de un formulario con título (ej. ENTEL / SIN) y sus campos en grilla.
- *   <gm-seccion titulo="ENTEL" columnas="1fr 2fr">
+/**   <gm-seccion titulo="ENTEL" columnas="1fr 2fr">
  *     <gm-texto ... />  <gm-texto ... />
  *   </gm-seccion>
- * `columnas`: igual que grid-template-columns. En móvil siempre es una columna.
- * Sin `titulo` sirve solo para ordenar campos en columnas.
  */
 @Component({
   selector: 'gm-seccion',

@@ -34,7 +34,9 @@
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["src/styles"]
+              "includePaths": [
+                "src/styles"
+              ]
             }
           },
           "configurations": {
@@ -71,7 +73,10 @@
               "buildTarget": "gamma:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test"

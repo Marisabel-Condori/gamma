@@ -15,7 +15,6 @@ const POSICIONES: ConnectedPosition[] = [
 
 /**
  * Botón ⋮ con un menú de opciones.
- * En escritorio se ve solo el icono; en móvil, la etiqueta a la izquierda y el icono a la derecha.
  */
 @Component({
   selector: 'gm-menu-fila',

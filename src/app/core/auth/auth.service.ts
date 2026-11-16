@@ -1,23 +1,22 @@
 import { Injectable } from '@angular/core';
 
-const CLAVE = 'gamma.demo.authenticated';
-const USUARIO_DEMO = 'admin';
-const CLAVE_DEMO = '123456';
+const AUTH_STORAGE_KEY = 'gamma.authenticated';
+const USUARIO = 'admin';
+const PASSWORD = '123456';
 
-/** Sesión de demostración: se reemplazará por el login real del backend. */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   estaAutenticado(): boolean {
-    return sessionStorage.getItem(CLAVE) === 'true';
+    return sessionStorage.getItem(AUTH_STORAGE_KEY) === 'true';
   }
 
   login(usuario: string, clave: string): boolean {
-    if (usuario.trim() !== USUARIO_DEMO || clave !== CLAVE_DEMO) return false;
-    sessionStorage.setItem(CLAVE, 'true');
+    if (usuario.trim() !== USUARIO || clave !== PASSWORD) return false;
+    sessionStorage.setItem(AUTH_STORAGE_KEY, 'true');
     return true;
   }
 
   logout(): void {
-    sessionStorage.removeItem(CLAVE);
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
   }
 }

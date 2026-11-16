@@ -1,11 +1,6 @@
 import { Directive, TemplateRef, inject, input } from '@angular/core';
 
-/**
- * Contenido personalizado de una columna (botones, menús, formato especial).
- *   <ng-template gmCelda="acciones" let-fila> ... </ng-template>
- * Se usa igual en la tabla de escritorio y en la tarjeta móvil.
- * Si el contenido cambia en móvil: let-movil="movil" (true dentro de la tarjeta).
- */
+/**  <ng-template gmCelda="acciones" let-fila> ... </ng-template> */
 @Directive({ selector: 'ng-template[gmCelda]' })
 export class GmCelda {
   readonly columna = input.required<string>({ alias: 'gmCelda' });

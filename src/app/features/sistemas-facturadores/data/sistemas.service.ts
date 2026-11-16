@@ -7,7 +7,7 @@ import {
 } from './sistemas.models';
 import { GammaData, createSeed } from './sistemas.mock';
 
-const STORAGE_KEY = 'gamma.demo.v2';
+const STORAGE_KEY = 'gamma.sistemas';
 
 @Injectable({ providedIn: 'root' })
 export class SistemasService {

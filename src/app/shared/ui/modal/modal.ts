@@ -3,14 +3,12 @@ import { GmBoton } from '../boton/boton';
 
 /**
  * <gm-modal titulo="Crear sistema" (cerrar)="close()"> ...contenido... </gm-modal>
- * `etiqueta`: contexto bajo el título, ej. "Sistema · ZSMART".
- * Se muestra mientras exista en la plantilla (envuélvelo en un @if).
  */
 @Component({
   selector: 'gm-modal',
   imports: [GmBoton],
   template: `
-    <div class="velo" role="presentation" (click)="cerrar.emit()"></div>
+    <div class="velo" role="presentation"></div>
     <section class="dialogo" [style.width]="'min(100%, ' + ancho() + ')'" role="dialog" aria-modal="true" [attr.aria-label]="titulo()">
       <header>
         <div>

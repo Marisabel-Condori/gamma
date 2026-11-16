@@ -1,9 +1,6 @@
 import { Component, input, model } from '@angular/core';
 
-/**
- * Campo de texto con su etiqueta.
- *   <gm-texto etiqueta="Código" placeholder="Ingresa el código" [(valor)]="codigo" />
- */
+/**  <gm-texto etiqueta="Código" placeholder="Ingresa el código" [(valor)]="codigo" /> */
 @Component({
   selector: 'gm-texto',
   template: `
