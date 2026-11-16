@@ -16,6 +16,7 @@ import {
 import { SistemasService } from '../../data/sistemas.service';
 import { crearHomologacionesMulticentros } from './data/sucursales.mock';
 import { HomologacionMulticentro } from './data/sucursales.models';
+import { SucursalesService } from './data/sucursales.service';
 
 const COLUMNAS: GmColumna<HomologacionMulticentro>[] = [
   { id: 'fecha', titulo: 'Fecha homologación', ancho: '155px', sinSalto: true, movil: 'pie', etiquetaMovil: 'Homologado' },
@@ -35,14 +36,15 @@ const FORM_VACIO: Formulario = {
   multicentroEntel: '',
   codigoSucursalSin: '',
   descripcionSin: '',
-  codigoPuntoVentaSin: '0',
-  puntoVentaSin: 'punto de venta default',
+  codigoPuntoVentaSin: '',
+  puntoVentaSin: '',
 };
 
 @Component({
   selector: 'gm-sucursales-homologadas-page',
   imports: [RouterLink, GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmModal],
   templateUrl: './sucursales-homologadas.page.html',
+  styleUrl: './sucursales-homologadas.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },
 })
@@ -50,6 +52,7 @@ export class SucursalesHomologadasPage {
   private readonly sistemas = inject(SistemasService);
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
+  private readonly sucursales = inject(SucursalesService);
 
   readonly sistemaId = input.required<string>();
   readonly columnas = COLUMNAS;
@@ -58,6 +61,26 @@ export class SucursalesHomologadasPage {
   readonly editando = signal<string | null>(null);
   readonly form = signal<Formulario>({ ...FORM_VACIO });
   readonly error = signal<string | null>(null);
+  readonly busquedaSucursal = signal('');
+  readonly busquedaPunto = signal('');
+  readonly sucursalesAbiertas = signal(false);
+  readonly puntosAbiertos = signal(false);
+  readonly sucursalesDisponibles = computed(() => this.sucursales.sucursales());
+  readonly sucursalesFiltradas = computed(() => {
+    const q = this.busquedaSucursal().trim().toLowerCase();
+    return this.sucursalesDisponibles().filter((sucursal) =>
+      !q || `${sucursal.codigo} ${sucursal.descripcion}`.toLowerCase().includes(q),
+    );
+  });
+  readonly puntosDisponibles = computed(() => {
+    const codigo = this.form().codigoSucursalSin;
+    const sucursal = this.sucursalesDisponibles().find((item) => item.codigo === codigo);
+    return sucursal ? this.sucursales.puntosDe(sucursal.id) : [];
+  });
+  readonly puntosFiltrados = computed(() => {
+    const q = this.busquedaPunto().trim().toLowerCase();
+    return this.puntosDisponibles().filter((punto) => `${punto.codigo} ${punto.descripcion}`.toLowerCase().includes(q));
+  });
 
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
   readonly migas = computed<GmMiga[]>(() => [
@@ -75,9 +98,66 @@ export class SucursalesHomologadasPage {
   );
 
   abrir(row?: HomologacionMulticentro): void {
-    this.form.set(row ? this.aFormulario(row) : { ...FORM_VACIO, fecha: this.fechaActual() });
+    const datos = row ? this.aFormulario(row) : { ...FORM_VACIO, fecha: this.fechaActual() };
+    this.form.set(datos);
+    const sucursal = this.sucursalesDisponibles().find((item) => item.codigo === datos.codigoSucursalSin);
+    this.busquedaSucursal.set(sucursal ? `${sucursal.codigo} — ${sucursal.descripcion}` : '');
+    this.busquedaPunto.set(datos.codigoPuntoVentaSin ? `${datos.codigoPuntoVentaSin} — ${datos.puntoVentaSin}` : '');
+    this.sucursalesAbiertas.set(false);
+    this.puntosAbiertos.set(false);
     this.error.set(null);
     this.editando.set(row?.id ?? '');
+  }
+
+  enfocarSucursal(): void {
+    this.sucursalesAbiertas.set(true);
+  }
+
+  buscarSucursal(event: Event): void {
+    const texto = (event.target as HTMLInputElement).value;
+    this.busquedaSucursal.set(texto);
+    this.sucursalesAbiertas.set(true);
+    this.busquedaPunto.set('');
+    this.puntosAbiertos.set(false);
+    this.form.update((actual) => ({ ...actual, codigoSucursalSin: '', descripcionSin: '', codigoPuntoVentaSin: '', puntoVentaSin: '' }));
+  }
+
+  enfocarPunto(): void {
+    if (this.form().codigoSucursalSin) this.puntosAbiertos.set(true);
+  }
+
+  buscarPunto(event: Event): void {
+    const texto = (event.target as HTMLInputElement).value;
+    this.busquedaPunto.set(texto);
+    this.puntosAbiertos.set(true);
+    this.form.update((actual) => ({ ...actual, codigoPuntoVentaSin: '', puntoVentaSin: '' }));
+  }
+
+  seleccionarSucursal(codigo: string): void {
+    const sucursal = this.sucursalesDisponibles().find((item) => item.codigo === codigo);
+    const punto = sucursal ? this.sucursales.puntosDe(sucursal.id)[0] : null;
+    this.form.update((actual) => ({
+      ...actual,
+      codigoSucursalSin: sucursal?.codigo ?? '',
+      descripcionSin: sucursal?.descripcion ?? '',
+      codigoPuntoVentaSin: punto?.codigo ?? (sucursal ? '0' : ''),
+      puntoVentaSin: punto?.descripcion ?? (sucursal ? 'punto de venta default' : ''),
+    }));
+    this.busquedaSucursal.set(sucursal ? `${sucursal.codigo} — ${sucursal.descripcion}` : '');
+    this.busquedaPunto.set(punto ? `${punto.codigo} — ${punto.descripcion}` : sucursal ? '0 — punto de venta default' : '');
+    this.sucursalesAbiertas.set(false);
+    this.puntosAbiertos.set(false);
+  }
+
+  seleccionarPuntoVenta(codigo: string): void {
+    const punto = this.puntosDisponibles().find((item) => item.codigo === codigo);
+    this.form.update((actual) => ({
+      ...actual,
+      codigoPuntoVentaSin: punto?.codigo ?? (codigo === '0' ? '0' : ''),
+      puntoVentaSin: punto?.descripcion ?? (codigo === '0' ? 'punto de venta default' : ''),
+    }));
+    this.busquedaPunto.set(punto ? `${punto.codigo} — ${punto.descripcion}` : codigo === '0' ? '0 — punto de venta default' : '');
+    this.puntosAbiertos.set(false);
   }
 
   campo(nombre: keyof Formulario, valor: string): void {

@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
@@ -24,14 +25,23 @@ export class LoginPage {
   }
 
   submitLogin(): void {
+    if (this.loading) return;
     this.loading = true;
-    if (!this.auth.login(this.username, this.password)) {
-      this.notice = 'Usuario o contraseña incorrectos.';
-      this.loading = false;
-      return;
-    }
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    const destination = returnUrl?.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/inicio';
-    void this.router.navigateByUrl(destination);
+    this.notice = '';
+    this.auth.login(this.username, this.password).subscribe({
+      next: () => {
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        const destination = returnUrl?.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/inicio';
+        void this.router.navigateByUrl(destination);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.notice = error.status === 0
+          ? 'No se pudo conectar con Gamma. Verifica que WildFly esté activo.'
+          : error.status === 401
+            ? 'Usuario o contraseña incorrectos.'
+            : 'No se pudo iniciar sesión. Intenta de nuevo o revisa el backend.';
+        this.loading = false;
+      },
+    });
   }
 }
