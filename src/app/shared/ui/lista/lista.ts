@@ -111,14 +111,16 @@ export class GmLista {
   protected readonly visibles = computed(() => {
     const texto = this.conBuscador() ? normalizar(this.filtro()) : '';
     if (!texto) return this.opciones();
+    const iguales: GmOpcionLista[] = [];
     const empiezan: GmOpcionLista[] = [];
     const contienen: GmOpcionLista[] = [];
     for (const opcion of this.opciones()) {
       const etiqueta = normalizar(opcion.etiqueta);
-      if (etiqueta.startsWith(texto)) empiezan.push(opcion);
+      if (etiqueta === texto) iguales.push(opcion);
+      else if (etiqueta.startsWith(texto)) empiezan.push(opcion);
       else if (etiqueta.includes(texto)) contienen.push(opcion);
     }
-    return [...empiezan, ...contienen];
+    return [...iguales, ...empiezan, ...contienen];
   });
   protected readonly seleccionadaVisible = computed(() => this.visibles().some((o) => o.valor === this.valor()));
 
@@ -158,10 +160,13 @@ export class GmLista {
   }
 }
 
+/** Ignora tildes, mayúsculas, el tipo de guion (-, –, —) y los espacios de más. */
 function normalizar(texto: string): string {
   return texto
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s*[-\u2013\u2014]\s*/g, '-')
+    .replace(/\s+/g, ' ')
     .toLowerCase()
     .trim();
 }

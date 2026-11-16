@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { DOCUMENTO_IDENTIFICACION } from './homologaciones/documento-identificacion/documento-identificacion.config';
+import { METODOS_PAGO } from './homologaciones/metodos-pago/metodos-pago.config';
 import { MONEDAS } from './homologaciones/monedas/monedas.config';
 import { MOTIVOS_ANULACION } from './homologaciones/motivos-anulacion/motivos-anulacion.config';
 import { UNIDADES_MEDIDA } from './homologaciones/unidades-medida/unidades-medida.config';
@@ -36,6 +37,11 @@ export const SISTEMAS_ROUTES: Routes = [
     path: ':sistemaId/monedas',
     loadComponent: homologacionCatalogo,
     data: { config: MONEDAS },
+  },
+  {
+    path: ':sistemaId/metodos-pago',
+    loadComponent: homologacionCatalogo,
+    data: { config: METODOS_PAGO },
   },
   {
     path: ':sistemaId/documento-identificacion',

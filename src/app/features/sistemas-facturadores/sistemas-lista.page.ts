@@ -37,6 +37,16 @@ const COLUMNAS: GmColumna<SistemaResponse>[] = [
   { id: 'acciones', titulo: 'Acciones', alinear: 'fin', ancho: '120px', movil: 'esquina' },
 ];
 
+const PANTALLAS_LISTAS = [
+  'productos',
+  'sucursales',
+  'unidades-medida',
+  'monedas',
+  'metodos-pago',
+  'documento-identificacion',
+  'motivos-anulacion',
+];
+
 @Component({
   selector: 'gm-sistemas-lista-page',
   imports: [GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmMenuFila, GmModal, GmSeccion, GmTexto],
@@ -106,7 +116,7 @@ export class SistemasListaPage {
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
-    if (['productos', 'sucursales', 'unidades-medida', 'monedas', 'documento-identificacion', 'motivos-anulacion'].includes(opcion)) {
+    if (PANTALLAS_LISTAS.includes(opcion)) {
       void this.router.navigate(['/sistemas-facturadores', sistema.id, opcion]);
       return;
     }
