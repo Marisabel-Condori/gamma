@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { DOCUMENTO_IDENTIFICACION } from './homologaciones/documento-identificacion/documento-identificacion.config';
 import { MONEDAS } from './homologaciones/monedas/monedas.config';
 import { UNIDADES_MEDIDA } from './homologaciones/unidades-medida/unidades-medida.config';
 
@@ -35,5 +36,9 @@ export const SISTEMAS_ROUTES: Routes = [
     loadComponent: homologacionCatalogo,
     data: { config: MONEDAS },
   },
-
+  {
+    path: ':sistemaId/documento-identificacion',
+    loadComponent: homologacionCatalogo,
+    data: { config: DOCUMENTO_IDENTIFICACION },
+  },
 ];

@@ -13,6 +13,7 @@ const POSICIONES: ConnectedPosition[] = [
   { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -6 },
 ];
 
+const MINIMO_PARA_BUSCAR = 10;
 let siguienteId = 0;
 
 /**  <gm-lista etiqueta="Actividad" placeholder="Selecciona una actividad"
@@ -56,7 +57,7 @@ let siguienteId = 0;
       (attach)="enfocarLista()"
     >
       <div class="panel" [style.width.px]="ancho()">
-        @if (buscable()) {
+        @if (conBuscador()) {
           <label class="buscador">
             <gm-icono nombre="buscar" />
             <input
@@ -106,8 +107,9 @@ export class GmLista {
 
   // ── Buscador ──
   protected readonly filtro = signal('');
+  protected readonly conBuscador = computed(() => this.buscable() && this.opciones().length > MINIMO_PARA_BUSCAR);
   protected readonly visibles = computed(() => {
-    const texto = normalizar(this.filtro());
+    const texto = this.conBuscador() ? normalizar(this.filtro()) : '';
     if (!texto) return this.opciones();
     const empiezan: GmOpcionLista[] = [];
     const contienen: GmOpcionLista[] = [];

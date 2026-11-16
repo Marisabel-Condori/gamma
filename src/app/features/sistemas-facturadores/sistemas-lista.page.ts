@@ -26,6 +26,7 @@ const OPCIONES_HOMOLOGAR: GmOpcion[] = [
   { id: 'unidades-medida', etiqueta: 'Unidades de medida' },
   { id: 'monedas', etiqueta: 'Tipos de moneda' },
   { id: 'metodos-pago', etiqueta: 'Tipo de método de pago' },
+  { id: 'documento-identificacion', etiqueta: 'Tipo documento identificación' },
   { id: 'motivos-anulacion', etiqueta: 'Motivo de anulación' },
 ];
 
@@ -105,7 +106,7 @@ export class SistemasListaPage {
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
-    if (['productos', 'sucursales', 'unidades-medida', 'monedas'].includes(opcion)) {
+    if (['productos', 'sucursales', 'unidades-medida', 'monedas', 'documento-identificacion'].includes(opcion)) {
       void this.router.navigate(['/sistemas-facturadores', sistema.id, opcion]);
       return;
     }

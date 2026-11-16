@@ -1,6 +1,6 @@
 import { httpResource } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { API_URL } from '../../../core/constants';
+import { API_URL, TIEMPO_ESPERA_API } from '../../../core/constants';
 import { ApiRespuesta } from '../../../core/models/api-respuesta.model';
 
 
@@ -22,13 +22,20 @@ export interface ProductoServicioSin {
 
 @Injectable({ providedIn: 'root' })
 export class CatalogoProductosService {
-  readonly actividades = httpResource<ApiRespuesta<ActividadSin[]>>(() => `${API_URL}/catalogos/actividades`);
+  readonly actividades = httpResource<ApiRespuesta<ActividadSin[]>>(() => ({
+    url: `${API_URL}/catalogos/actividades`,
+    timeout: TIEMPO_ESPERA_API,
+  }));
 
   productosSegunActividad(codigoActividad: () => string) {
     return httpResource<ApiRespuesta<ProductoServicioSin[]>>(() => {
       const codigo = codigoActividad();
       return codigo
-        ? { url: `${API_URL}/catalogos/productosServiciosPorCodigoActividad`, params: { codigoActividad: codigo } }
+        ? {
+            url: `${API_URL}/catalogos/productosServiciosPorCodigoActividad`,
+            params: { codigoActividad: codigo },
+            timeout: TIEMPO_ESPERA_API,
+          }
         : undefined;
     });
   }
