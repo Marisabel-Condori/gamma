@@ -61,7 +61,7 @@ export class SucursalesHomologadasPage {
 
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
 
-  readonly migas = computed<GmMiga[]>(() => [
+  readonly rutanavegacion = computed<GmMiga[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Homologación de sucursales de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);

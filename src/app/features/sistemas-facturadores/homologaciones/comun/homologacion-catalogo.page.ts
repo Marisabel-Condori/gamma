@@ -115,7 +115,7 @@ export class HomologacionCatalogoPage {
 
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
 
-  readonly migas = computed<GmMiga[]>(() => [
+  readonly rutanavegacion = computed<GmMiga[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Homologación de ${this.config.conceptoPlural} de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);

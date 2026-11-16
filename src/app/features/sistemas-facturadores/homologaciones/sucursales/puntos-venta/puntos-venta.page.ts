@@ -62,7 +62,7 @@ export class PuntosVentaPage {
   readonly sucursal = computed(() => this.datos.sucursales().find((s) => s.id === this.sucursalId()) ?? null);
   readonly volver = computed(() => `/sistemas-facturadores/${this.sistemaId()}/sucursales`);
 
-  readonly migas = computed<GmMiga[]>(() => [
+  readonly rutanavegacion = computed<GmMiga[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Sucursales de ${this.sistema()?.codigo ?? 'sistema'}`, enlace: this.volver() },
     { etiqueta: `Sucursal ${this.sucursal()?.codigo ?? ''}` },

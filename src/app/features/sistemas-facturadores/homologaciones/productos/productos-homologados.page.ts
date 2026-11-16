@@ -138,7 +138,7 @@ export class ProductosHomologadosPage {
     return this.datos.sistemas().find((s) => s.id === id) ?? null;
   });
 
-  readonly migas = computed<GmMiga[]>(() => [
+  readonly rutanavegacion = computed<GmMiga[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Homologación de productos de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);

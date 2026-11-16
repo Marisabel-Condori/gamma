@@ -18,9 +18,9 @@ export interface GmMiga {
   imports: [RouterLink, GmIcono],
   host: { '[class.movil]': 'esMovil()' },
   template: `
-    @if (migas().length && !esMovil()) {
-      <nav class="migas" aria-label="Ubicación">
-        @for (miga of migas(); track miga.etiqueta; let ultima = $last) {
+    @if (rutanavegacion().length && !esMovil()) {
+      <nav class="rutanavegacion" aria-label="Ubicación">
+        @for (miga of rutanavegacion(); track miga.etiqueta; let ultima = $last) {
           @if (miga.enlace && !ultima) {
             <a [routerLink]="miga.enlace">{{ miga.etiqueta }}</a>
             <span>/</span>
@@ -59,7 +59,7 @@ export class GmEncabezado {
   readonly tituloMovil = input<string>();
   /** Texto de contexto bajo el título, ej. la sucursal que se está viendo. */
   readonly subtitulo = input<string>();
-  readonly migas = input<GmMiga[]>([]);
+  readonly rutanavegacion = input<GmMiga[]>([]);
   readonly volver = input<string>();
   readonly etiqueta = input<string>();
   readonly etiquetaTipo = input<'conteo' | 'chip'>('conteo');
