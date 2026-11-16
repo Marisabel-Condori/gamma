@@ -9,7 +9,7 @@ import {
   GmColumna,
   GmEncabezado,
   GmLista,
-  GmMiga,
+  GmRutaNavegacion,
   GmModal,
   GmOpcionLista,
   GmSeccion,
@@ -138,7 +138,7 @@ export class ProductosHomologadosPage {
     return this.datos.sistemas().find((s) => s.id === id) ?? null;
   });
 
-  readonly rutanavegacion = computed<GmMiga[]>(() => [
+  readonly rutanavegacion = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Homologación de productos de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);

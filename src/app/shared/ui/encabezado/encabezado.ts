@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { GmIcono } from '../icono/icono';
 import { Pantalla } from '../pantalla';
 
-export interface GmMiga {
+export interface GmRutaNavegacion {
   etiqueta: string;
   enlace?: string;
 }
@@ -20,12 +20,12 @@ export interface GmMiga {
   template: `
     @if (rutanavegacion().length && !esMovil()) {
       <nav class="rutanavegacion" aria-label="Ubicación">
-        @for (miga of rutanavegacion(); track miga.etiqueta; let ultima = $last) {
-          @if (miga.enlace && !ultima) {
-            <a [routerLink]="miga.enlace">{{ miga.etiqueta }}</a>
+        @for (rutanavegacion of rutanavegacion(); track rutanavegacion.etiqueta; let ultima = $last) {
+          @if (rutanavegacion.enlace && !ultima) {
+            <a [routerLink]="rutanavegacion.enlace">{{ rutanavegacion.etiqueta }}</a>
             <span>/</span>
           } @else {
-            <span>{{ miga.etiqueta }}</span>
+            <span>{{ rutanavegacion.etiqueta }}</span>
           }
         }
       </nav>
@@ -59,7 +59,7 @@ export class GmEncabezado {
   readonly tituloMovil = input<string>();
   /** Texto de contexto bajo el título, ej. la sucursal que se está viendo. */
   readonly subtitulo = input<string>();
-  readonly rutanavegacion = input<GmMiga[]>([]);
+  readonly rutanavegacion = input<GmRutaNavegacion[]>([]);
   readonly volver = input<string>();
   readonly etiqueta = input<string>();
   readonly etiquetaTipo = input<'conteo' | 'chip'>('conteo');

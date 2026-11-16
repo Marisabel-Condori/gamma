@@ -9,7 +9,7 @@ import {
   GmColumna,
   GmEncabezado,
   GmLista,
-  GmMiga,
+  GmRutaNavegacion,
   GmModal,
   GmOpcionLista,
   GmSeccion,
@@ -115,7 +115,7 @@ export class HomologacionCatalogoPage {
 
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
 
-  readonly rutanavegacion = computed<GmMiga[]>(() => [
+  readonly rutanavegacion = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Homologación de ${this.config.conceptoPlural} de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);

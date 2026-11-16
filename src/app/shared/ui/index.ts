@@ -6,7 +6,7 @@ export { GmBuscar } from './buscar/buscar';
 export { Confirmar, GmConfirmar } from './confirmar/confirmar';
 export type { GmPregunta } from './confirmar/confirmar';
 export { GmEncabezado } from './encabezado/encabezado';
-export type { GmMiga } from './encabezado/encabezado';
+export type { GmRutaNavegacion } from './encabezado/encabezado';
 export { GmEstadoVacio } from './estado-vacio/estado-vacio';
 export { GmIcono } from './icono/icono';
 export type { GmIconoNombre } from './icono/icono';

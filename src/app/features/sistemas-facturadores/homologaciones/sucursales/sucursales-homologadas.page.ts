@@ -8,7 +8,7 @@ import {
   GmCelda,
   GmColumna,
   GmEncabezado,
-  GmMiga,
+  GmRutaNavegacion,
   GmModal,
   GmSeccion,
   GmTabla,
@@ -49,19 +49,17 @@ export class SucursalesHomologadasPage {
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
 
-  /** Viene de la ruta :sistemaId */
   readonly sistemaId = input.required<string>();
 
   readonly columnas = COLUMNAS;
   readonly query = signal('');
-  /** null = modal cerrado; '' = crear; id = editar. */
   readonly editando = signal<string | null>(null);
   readonly form = signal({ codigo: '', descripcion: '' });
   readonly error = signal<string | null>(null);
 
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
 
-  readonly rutanavegacion = computed<GmMiga[]>(() => [
+  readonly rutanavegacion = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Homologación de sucursales de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);

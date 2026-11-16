@@ -7,7 +7,7 @@ import {
   GmCelda,
   GmColumna,
   GmEncabezado,
-  GmMiga,
+  GmRutaNavegacion,
   GmModal,
   GmTabla,
   Toast,
@@ -51,7 +51,6 @@ export class PuntosVentaPage {
   private readonly datos = inject(SucursalesService);
   private readonly toast = inject(Toast);
 
-  /** Vienen de la ruta :sistemaId/sucursales/:sucursalId/puntos-venta */
   readonly sistemaId = input.required<string>();
   readonly sucursalId = input.required<string>();
 
@@ -62,7 +61,7 @@ export class PuntosVentaPage {
   readonly sucursal = computed(() => this.datos.sucursales().find((s) => s.id === this.sucursalId()) ?? null);
   readonly volver = computed(() => `/sistemas-facturadores/${this.sistemaId()}/sucursales`);
 
-  readonly rutanavegacion = computed<GmMiga[]>(() => [
+  readonly rutanavegacion = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Sucursales de ${this.sistema()?.codigo ?? 'sistema'}`, enlace: this.volver() },
     { etiqueta: `Sucursal ${this.sucursal()?.codigo ?? ''}` },
