@@ -18,7 +18,7 @@ export class LoginPage {
   password = '';
   showPassword = false;
   loading = false;
-  notice = '';
+  mensajeError = '';
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -27,7 +27,7 @@ export class LoginPage {
   submitLogin(): void {
     if (this.loading) return;
     this.loading = true;
-    this.notice = '';
+    this.mensajeError = '';
     this.auth.login(this.username, this.password).subscribe({
       next: () => {
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
@@ -35,7 +35,7 @@ export class LoginPage {
         void this.router.navigateByUrl(destination);
       },
       error: (error: HttpErrorResponse) => {
-        this.notice = error.status === 0
+        this.mensajeError = error.status === 0
           ? 'No se pudo conectar con Gamma. Verifica que WildFly esté activo.'
           : error.status === 401
             ? 'Usuario o contraseña incorrectos.'

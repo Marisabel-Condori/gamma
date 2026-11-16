@@ -1,10 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { crearPuntosVenta, crearSucursales } from './sucursales.mock';
-import { HomologacionSucursal, HomologacionSucursalRequest, PuntoVenta } from './sucursales.models';
+import { HomologacionSucursal, HomologacionSucursalRequest, PuntoVenta } from './sucursales.model';
 
-const CLAVE = 'gamma.demo.sucursales.v2';
+const CLAVE = 'gamma.sucursales.v2';
 
-/** Sucursales homologadas y sus puntos de venta (datos de demostración en sessionStorage). */
 @Injectable({ providedIn: 'root' })
 export class SucursalesService {
   readonly sucursales = signal<HomologacionSucursal[]>(restaurar());

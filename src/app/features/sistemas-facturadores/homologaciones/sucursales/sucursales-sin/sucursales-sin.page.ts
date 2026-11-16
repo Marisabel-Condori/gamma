@@ -8,13 +8,13 @@ import {
   GmCelda,
   GmColumna,
   GmEncabezado,
-  GmMiga,
+  GmRutaNavegacion,
   GmModal,
   GmTabla,
   Toast,
 } from '../../../../../shared/ui';
 import { SistemasService } from '../../../data/sistemas.service';
-import { HomologacionSucursal } from '../data/sucursales.models';
+import { HomologacionSucursal } from '../data/sucursales.model';
 import { SucursalesService } from '../data/sucursales.service';
 
 const COLUMNAS: GmColumna<HomologacionSucursal>[] = [
@@ -44,7 +44,7 @@ export class SucursalesSinPage {
   readonly form = signal({ codigo: '', descripcion: '' });
   readonly error = signal<string | null>(null);
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
-  readonly migas = computed<GmMiga[]>(() => [
+  readonly migas = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Sucursales SIN de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);

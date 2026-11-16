@@ -1,9 +1,9 @@
 @if (sistema(); as sistema) {
   <gm-encabezado
     titulo="Productos y servicios homologados"
-    tituloMovil="Homologaciones"
+    tituloMovil="Productos"
     volver="/sistemas-facturadores"
-    [migas]="migas()"
+    [rutanavegacion]="rutanavegacion()"
     [etiqueta]="sistema.codigo"
     etiquetaTipo="chip"
   >
@@ -19,8 +19,8 @@
     [porPagina]="10"
     [vacio]="vacio()"
   >
-    <ng-template gmCelda="acciones" let-h>
-      <gm-acciones-fila que="homologación" (editar)="abrir(h)" (eliminar)="eliminar(h)" />
+    <ng-template gmCelda="acciones" let-homologacion>
+      <gm-acciones-fila que="homologación" (editar)="abrir(homologacion)" (eliminar)="eliminar(homologacion)" />
     </ng-template>
   </gm-tabla>
 } @else {
@@ -29,16 +29,40 @@
 }
 
 @if (editando() !== null) {
-  <gm-modal [titulo]="editando() ? 'Editar homologación' : 'Nueva homologación'" (cerrar)="editando.set(null)">
+  <gm-modal
+    [titulo]="editando() ? 'Editar homologación' : 'Nueva homologación'"
+    [etiqueta]="'Sistema · ' + sistema()?.codigo"
+    ancho="680px"
+    (cerrar)="editando.set(null)"
+  >
     <form (submit)="guardar($event)" novalidate>
-      <div class="gm-campos gm-campos--2">
-        @for (c of campos; track c.id) {
-          <label class="gm-campo">
-            {{ c.etiqueta }}
-            <input [value]="form()[c.id]" [placeholder]="c.ejemplo ?? ''" (input)="campo(c.id, $any($event.target).value)" />
-          </label>
-        }
-      </div>
+      <gm-seccion titulo="ENTEL" columnas="1fr 2fr">
+        <gm-texto etiqueta="Código" placeholder="Ingresa el código" [(valor)]="codigoEntel" />
+        <gm-texto etiqueta="Producto o servicio" placeholder="Ingresa el nombre" [(valor)]="productoEntel" />
+      </gm-seccion>
+
+      <gm-seccion titulo="SIN">
+        <gm-lista
+          etiqueta="Actividad"
+          [placeholder]="cargandoActividades() ? 'Cargando actividades...' : 'Selecciona una actividad'"
+          [opciones]="actividades()"
+          [deshabilitado]="cargandoActividades()"
+          [valor]="actividad()"
+          (valorChange)="elegirActividad($event)"
+        />
+        <gm-lista
+          etiqueta="Producto o servicio"
+          [placeholder]="cargandoProductos() ? 'Cargando productos...' : 'Selecciona un producto o servicio'"
+          [opciones]="productosSin()"
+          [deshabilitado]="!actividad() || cargandoProductos()"
+          [(valor)]="productoSin"
+        />
+      </gm-seccion>
+
+      @if (errorCatalogo()) {
+        <p class="gm-error">{{ errorCatalogo() }}</p>
+      }
+
       @if (error()) {
         <p class="gm-error">{{ error() }}</p>
       }

@@ -3,38 +3,29 @@ import { RouterLink } from '@angular/router';
 import { GmIcono } from '../icono/icono';
 import { Pantalla } from '../pantalla';
 
-export interface GmMiga {
+export interface GmRutaNavegacion {
   etiqueta: string;
   enlace?: string;
 }
 
-/**
- * Encabezado de pantalla: migas, título, etiqueta, buscador y acción.
- *
- *   <gm-encabezado titulo="Sistemas Facturadores" [etiqueta]="conteo()">
+/**   <gm-encabezado titulo="Sistemas Facturadores" [etiqueta]="conteo()">
  *     <gm-buscar [(valor)]="query" />
  *     <button gmBoton="primario" ...></button>
  *   </gm-encabezado>
- *
- * etiquetaTipo 'conteo': pill junto al título; en móvil pasa a texto debajo.
- * etiquetaTipo 'chip':   se mantiene junto al título también en móvil.
- * volver / tituloMovil:  en móvil reemplazan a las migas.
- * subtitulo:             contexto bajo el título (escritorio y móvil).
- * etiquetaEn:            'movil' o 'escritorio' para mostrar la etiqueta solo en una vista.
  */
 @Component({
   selector: 'gm-encabezado',
   imports: [RouterLink, GmIcono],
   host: { '[class.movil]': 'esMovil()' },
   template: `
-    @if (migas().length && !esMovil()) {
-      <nav class="migas" aria-label="Ubicación">
-        @for (miga of migas(); track miga.etiqueta; let ultima = $last) {
-          @if (miga.enlace && !ultima) {
-            <a [routerLink]="miga.enlace">{{ miga.etiqueta }}</a>
+    @if (rutanavegacion().length && !esMovil()) {
+      <nav class="rutanavegacion" aria-label="Ubicación">
+        @for (rutanavegacion of rutanavegacion(); track rutanavegacion.etiqueta; let ultima = $last) {
+          @if (rutanavegacion.enlace && !ultima) {
+            <a [routerLink]="rutanavegacion.enlace">{{ rutanavegacion.etiqueta }}</a>
             <span>/</span>
           } @else {
-            <span>{{ miga.etiqueta }}</span>
+            <span>{{ rutanavegacion.etiqueta }}</span>
           }
         }
       </nav>
@@ -45,7 +36,7 @@ export interface GmMiga {
           <a class="volver" aria-label="Volver" [routerLink]="volver()"><gm-icono nombre="atras" /></a>
         }
         <h1>{{ esMovil() ? (tituloMovil() ?? titulo()) : titulo() }}</h1>
-        @if (mostrarEtiqueta() && (etiquetaTipo() === 'chip' || !esMovil())) {
+        @if (etiquetaJuntoAlTitulo()) {
           <span class="etiqueta" [class.chip]="etiquetaTipo() === 'chip'">{{ etiqueta() }}</span>
         }
       </div>
@@ -57,7 +48,7 @@ export interface GmMiga {
     @if (subtitulo()) {
       <p class="subtitulo">{{ subtitulo() }}</p>
     }
-    @if (mostrarEtiqueta() && etiquetaTipo() === 'conteo' && esMovil()) {
+    @if (etiqueta() && etiquetaTipo() === 'conteo' && esMovil()) {
       <p class="conteo">{{ etiqueta() }}</p>
     }
   `,
@@ -66,20 +57,16 @@ export interface GmMiga {
 export class GmEncabezado {
   readonly titulo = input.required<string>();
   readonly tituloMovil = input<string>();
-  /** Texto de contexto bajo el título, ej. la sucursal que se está viendo. */
   readonly subtitulo = input<string>();
-  readonly migas = input<GmMiga[]>([]);
+  readonly rutanavegacion = input<GmRutaNavegacion[]>([]);
   readonly volver = input<string>();
   readonly etiqueta = input<string>();
   readonly etiquetaTipo = input<'conteo' | 'chip'>('conteo');
-  /** En qué vista se muestra la etiqueta. */
-  readonly etiquetaEn = input<'ambas' | 'movil' | 'escritorio'>('ambas');
 
   protected readonly esMovil = inject(Pantalla).esMovil;
 
-  protected readonly mostrarEtiqueta = computed(() => {
-    const donde = this.etiquetaEn();
-    const vistaOk = donde === 'ambas' || (donde === 'movil') === this.esMovil();
-    return !!this.etiqueta() && vistaOk;
+  protected readonly etiquetaJuntoAlTitulo = computed(() => {
+    if (!this.etiqueta()) return false;
+    return this.etiquetaTipo() === 'chip' ? this.esMovil() : !this.esMovil();
   });
 }

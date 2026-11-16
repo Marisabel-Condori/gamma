@@ -1,0 +1,122 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: var(--control-lg);
+  padding: 0 12px;
+  border: 1px solid var(--linea-fuerte);
+  border-radius: var(--radio-md);
+  background: var(--superficie);
+  font-weight: var(--peso-normal);
+  text-align: left;
+}
+
+.control[aria-expanded='true'] {
+  border-color: var(--marca);
+  box-shadow: 0 0 0 3px var(--marca-suave);
+}
+
+.texto {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.control.vacia,
+.control:disabled {
+  color: var(--tinta-3);
+}
+
+.control:disabled {
+  background: var(--apagado);
+}
+
+gm-icono {
+  color: var(--tinta-3);
+  font-size: var(--icono-lg);
+}
+
+// ── Menú ──
+.panel {
+  padding: 6px;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+}
+
+.opciones {
+  max-height: 280px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  outline: none;
+}
+
+.buscador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--control-md);
+  margin-bottom: 6px;
+  padding: 0 10px;
+  border: 1px solid var(--linea-fuerte);
+  border-radius: var(--radio-md);
+}
+
+.buscador gm-icono {
+  font-size: var(--icono-md);
+}
+
+.buscador input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--tinta);
+  font-size: var(--texto-md);
+}
+
+.buscador input::placeholder {
+  color: var(--tinta-3);
+}
+
+.opcion,
+.sin-opciones {
+  padding: 9px 12px;
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-md);
+}
+
+.opcion {
+  cursor: pointer;
+}
+
+.opcion:focus-visible {
+  outline: none;
+}
+
+.opcion:hover,
+.opcion.cdk-option-active {
+  background: var(--marca-tenue);
+  color: var(--marca);
+}
+
+.opcion[aria-selected='true'] {
+  color: var(--marca);
+  font-weight: var(--peso-negrita);
+}
+
+.sin-opciones {
+  color: var(--tinta-3);
+}

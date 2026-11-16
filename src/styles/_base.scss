@@ -51,7 +51,7 @@ button:disabled {
   user-select: none;
 }
 
-// Contenedor de cada pantalla: el componente página agrega host: { class: 'gm-pagina' }.
+// Contenedor de cada pantalla: { class: 'gm-pagina' }.
 .gm-pagina {
   display: flex;
   flex-direction: column;

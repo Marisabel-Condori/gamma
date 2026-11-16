@@ -1,6 +1,5 @@
 import { Component, Injectable, inject, signal } from '@angular/core';
 
-/** Mensajes breves: this.toast.mostrar('Sistema creado.') */
 @Injectable({ providedIn: 'root' })
 export class Toast {
   readonly actual = signal<string | null>(null);
@@ -13,7 +12,6 @@ export class Toast {
   }
 }
 
-/** Se coloca una sola vez, en el layout principal. */
 @Component({
   selector: 'gm-toast',
   template: `

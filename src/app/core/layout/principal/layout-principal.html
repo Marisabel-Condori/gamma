@@ -4,7 +4,7 @@
     class="menu-boton"
     [attr.aria-expanded]="menuAbierto()"
     [attr.aria-label]="menuAbierto() ? 'Cerrar menú' : 'Abrir menú'"
-    (click)="alternarMenu()"
+    (click)="abrirCerrarMenu()"
   >
     <gm-icono [nombre]="menuAbierto() ? 'cerrar' : 'menu'" />
   </button>
@@ -32,15 +32,25 @@
     </a>
   </nav>
   <div class="perfil">
-    <button type="button" class="avatar" [attr.aria-label]="'Sesión de ' + perfilNombre" (click)="alternarPerfil()">{{ perfilIniciales }}</button>
+    <button
+      type="button"
+      class="avatar"
+      [attr.aria-label]="'Sesión de ' + perfilNombre"
+      (click)="abrirCerrarPerfil()"
+    >{{ perfilIniciales }}</button>
     @if (perfilAbierto()) {
-      <button type="button" class="velo-transparente" aria-label="Cerrar" (click)="perfilAbierto.set(false)"></button>
+      <button
+        type="button"
+        class="velo-transparente"
+        aria-label="Cerrar"
+        (click)="perfilAbierto.set(false)"
+      ></button>
       <div class="popover">
         <div class="aviso">
           <strong>{{ perfilNombre }}</strong>
           <p>{{ perfilArea }}</p>
         </div>
-        <a class="salir" href="/login" (click)="$event.preventDefault(); salir()">Salir</a>
+        <button type="button" class="salir" (click)="salir()">Cerrar sesión</button>
       </div>
     }
   </div>

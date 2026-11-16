@@ -11,20 +11,22 @@ import {
   GmMenuFila,
   GmModal,
   GmOpcion,
+  GmSeccion,
   GmTabla,
+  GmTexto,
   Toast,
-} from '../../../shared/ui';
-import { conteo } from '../../../shared/utils/texto';
-import { SistemaResponse } from '../data/sistemas.models';
-import { SistemasService } from '../data/sistemas.service';
+} from '../../shared/ui';
+import { conteo } from '../../shared/utils/texto';
+import { SistemaResponse } from './data/sistemas.model';
+import { SistemasService } from './data/sistemas.service';
 
 const OPCIONES_HOMOLOGAR: GmOpcion[] = [
   { id: 'productos', etiqueta: 'Productos' },
-  { id: 'sucursales', etiqueta: 'Multicentros' },
-  { id: 'sucursales-sin', etiqueta: 'Sucursales SIN' },
+  { id: 'sucursales', etiqueta: 'Sucursales' },
   { id: 'unidades-medida', etiqueta: 'Unidades de medida' },
   { id: 'monedas', etiqueta: 'Tipos de moneda' },
   { id: 'metodos-pago', etiqueta: 'Tipo de método de pago' },
+  { id: 'documento-identificacion', etiqueta: 'Tipo documento identificación' },
   { id: 'motivos-anulacion', etiqueta: 'Motivo de anulación' },
 ];
 
@@ -35,9 +37,19 @@ const COLUMNAS: GmColumna<SistemaResponse>[] = [
   { id: 'acciones', titulo: 'Acciones', alinear: 'fin', ancho: '120px', movil: 'esquina' },
 ];
 
+const PANTALLAS_LISTAS = [
+  'productos',
+  'sucursales',
+  'unidades-medida',
+  'monedas',
+  'metodos-pago',
+  'documento-identificacion',
+  'motivos-anulacion',
+];
+
 @Component({
   selector: 'gm-sistemas-lista-page',
-  imports: [GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmMenuFila, GmModal],
+  imports: [GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmMenuFila, GmModal, GmSeccion, GmTexto],
   templateUrl: './sistemas-lista.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },
@@ -104,7 +116,7 @@ export class SistemasListaPage {
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
-    if (opcion === 'productos' || opcion === 'sucursales' || opcion === 'sucursales-sin') {
+    if (PANTALLAS_LISTAS.includes(opcion)) {
       void this.router.navigate(['/sistemas-facturadores', sistema.id, opcion]);
       return;
     }

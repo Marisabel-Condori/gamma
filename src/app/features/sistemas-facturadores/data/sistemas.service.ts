@@ -4,10 +4,10 @@ import {
   HomologacionProductoResponse,
   SistemaRequest,
   SistemaResponse,
-} from './sistemas.models';
+} from './sistemas.model';
 import { GammaData, createSeed } from './sistemas.mock';
 
-const STORAGE_KEY = 'gamma.demo.v2';
+const STORAGE_KEY = 'gamma.sistemas';
 
 @Injectable({ providedIn: 'root' })
 export class SistemasService {

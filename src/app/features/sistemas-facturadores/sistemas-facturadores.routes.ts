@@ -1,9 +1,17 @@
 import { Routes } from '@angular/router';
+import { DOCUMENTO_IDENTIFICACION } from './homologaciones/documento-identificacion/documento-identificacion.config';
+import { METODOS_PAGO } from './homologaciones/metodos-pago/metodos-pago.config';
+import { MONEDAS } from './homologaciones/monedas/monedas.config';
+import { MOTIVOS_ANULACION } from './homologaciones/motivos-anulacion/motivos-anulacion.config';
+import { UNIDADES_MEDIDA } from './homologaciones/unidades-medida/unidades-medida.config';
+
+const homologacionCatalogo = () =>
+  import('./homologaciones/comun/homologacion-catalogo.page').then((m) => m.HomologacionCatalogoPage);
 
 export const SISTEMAS_ROUTES: Routes = [
   {
     path: '',
-    loadComponent: () => import('./lista/sistemas-lista.page').then((m) => m.SistemasListaPage),
+    loadComponent: () => import('./sistemas-lista.page').then((m) => m.SistemasListaPage),
   },
   {
     path: ':sistemaId/productos',
@@ -35,5 +43,29 @@ export const SISTEMAS_ROUTES: Routes = [
     loadComponent: () =>
       import('./homologaciones/sucursales/puntos-venta/puntos-venta.page').then((m) => m.PuntosVentaPage),
   },
-  // Aquí se irán sumando: ':sistemaId/unidades-medida', ':sistemaId/monedas', ...
+  {
+    path: ':sistemaId/unidades-medida',
+    loadComponent: homologacionCatalogo,
+    data: { config: UNIDADES_MEDIDA },
+  },
+  {
+    path: ':sistemaId/monedas',
+    loadComponent: homologacionCatalogo,
+    data: { config: MONEDAS },
+  },
+  {
+    path: ':sistemaId/metodos-pago',
+    loadComponent: homologacionCatalogo,
+    data: { config: METODOS_PAGO },
+  },
+  {
+    path: ':sistemaId/documento-identificacion',
+    loadComponent: homologacionCatalogo,
+    data: { config: DOCUMENTO_IDENTIFICACION },
+  },
+  {
+    path: ':sistemaId/motivos-anulacion',
+    loadComponent: homologacionCatalogo,
+    data: { config: MOTIVOS_ANULACION },
+  },
 ];

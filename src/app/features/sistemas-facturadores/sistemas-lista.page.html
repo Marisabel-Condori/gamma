@@ -13,18 +13,24 @@
 </gm-tabla>
 
 @if (editando() !== null) {
-  <gm-modal [titulo]="editando() ? 'Editar sistema' : 'Crear sistema'" (cerrar)="editando.set(null)">
+  <gm-modal [titulo]="editando() ? 'Editar sistema' : 'Crear sistema'" ancho="620px" (cerrar)="editando.set(null)">
     <form (submit)="guardar($event)" novalidate>
-      <div class="gm-campos">
-        <label class="gm-campo">
-          Código
-          <input [value]="form().codigo" maxlength="20" (input)="campo('codigo', $any($event.target).value)" />
-        </label>
-        <label class="gm-campo">
-          Descripción
-          <input [value]="form().descripcion" maxlength="160" (input)="campo('descripcion', $any($event.target).value)" />
-        </label>
-      </div>
+      <gm-seccion columnas="1fr 2fr">
+        <gm-texto
+          etiqueta="Código"
+          placeholder="Ingresa el código"
+          [maxlength]="20"
+          [valor]="form().codigo"
+          (valorChange)="campo('codigo', $event)"
+        />
+        <gm-texto
+          etiqueta="Descripción"
+          placeholder="Ingresa la descripción"
+          [maxlength]="160"
+          [valor]="form().descripcion"
+          (valorChange)="campo('descripcion', $event)"
+        />
+      </gm-seccion>
       @if (error()) {
         <p class="gm-error">{{ error() }}</p>
       }

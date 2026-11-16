@@ -13,10 +13,6 @@ interface Pendiente extends GmPregunta {
   responder: (si: boolean) => void;
 }
 
-/**
- * Confirmaciones sin escribir un modal en cada pantalla:
- *   if (await this.confirmar.preguntar({ titulo: 'Eliminar sistema', mensaje: '...', peligro: true })) { ... }
- */
 @Injectable({ providedIn: 'root' })
 export class Confirmar {
   readonly pendiente = signal<Pendiente | null>(null);
@@ -35,7 +31,6 @@ export class Confirmar {
   }
 }
 
-/** Se coloca una sola vez, en el layout principal. */
 @Component({
   selector: 'gm-confirmar',
   imports: [GmModal, GmBoton],

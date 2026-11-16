@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { GmConfirmar, GmIcono, GmToast } from '../../../shared/ui';
 import { AuthService } from '../../auth/auth.service';
 
@@ -29,12 +28,12 @@ export class LayoutPrincipal {
     return this.auth.iniciales;
   }
 
-  alternarPerfil(): void {
+  abrirCerrarPerfil(): void {
     this.menuAbierto.set(false);
     this.perfilAbierto.update((abierto) => !abierto);
   }
 
-  alternarMenu(): void {
+  abrirCerrarMenu(): void {
     this.perfilAbierto.set(false);
     this.menuAbierto.update((abierto) => !abierto);
   }

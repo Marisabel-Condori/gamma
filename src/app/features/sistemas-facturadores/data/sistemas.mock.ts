@@ -1,4 +1,4 @@
-import { HomologacionProductoResponse, SistemaResponse } from './sistemas.models';
+import { HomologacionProductoResponse, SistemaResponse } from './sistemas.model';
 
 const SISTEMAS = [
   { codigo: 'ZSMART', descripcion: 'ZSMART' },

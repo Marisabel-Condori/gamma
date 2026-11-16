@@ -18,11 +18,12 @@ const ICONOS = {
   servicios: 'apps',
   tienda: 'store',
   sincronizar: 'sync',
+  desplegar: 'expand_more',
 } as const;
 
 export type GmIconoNombre = keyof typeof ICONOS;
 
-/** <gm-icono nombre="editar" />. El tamaño lo hereda del font-size del padre. */
+/** <gm-icono nombre="editar" />. El tamaño del padre. */
 @Component({
   selector: 'gm-icono',
   template: `<span class="material-icons-outlined" aria-hidden="true">{{ icono() }}</span>`,

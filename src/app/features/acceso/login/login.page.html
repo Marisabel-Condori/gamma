@@ -50,8 +50,8 @@
             </div>
           </div>
 
-          @if (notice) {
-            <p class="login-error-container" role="alert">{{ notice }}</p>
+          @if (mensajeError) {
+            <p class="login-error-container" role="alert">{{ mensajeError }}</p>
           }
 
           <button class="login-submit-button" type="submit" [disabled]="!username || !password || loading">

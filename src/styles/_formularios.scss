@@ -1,6 +1,5 @@
-@use 'breakpoint' as *;
-
-// Formularios dentro de modales: <div class="gm-campos"> con <label class="gm-campo">.
+// Estilos base de los controles de formulario. Los usan gm-texto, gm-lista y gm-seccion;
+// las pantallas no escriben <label class="gm-campo"> a mano.
 
 .gm-campos {
   display: grid;
@@ -12,16 +11,12 @@
   min-width: 0;
 }
 
-.gm-campos--2 {
-  grid-template-columns: 1fr 1fr;
-}
-
 .gm-campo {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: var(--texto-sm);
-  font-weight: var(--peso-semi);
+  gap: 8px;
+  font-size: var(--texto-md);
+  font-weight: var(--peso-negrita);
 }
 
 .gm-campo input,
@@ -31,7 +26,11 @@
   border: 1px solid var(--linea-fuerte);
   border-radius: var(--radio-md);
   background: var(--superficie);
-  font-weight: var(--peso-medio);
+  font-weight: var(--peso-normal);
+}
+
+.gm-campo input::placeholder {
+  color: var(--tinta-3);
 }
 
 .gm-error {
@@ -45,10 +44,4 @@
   justify-content: flex-end;
   gap: 8px;
   margin-top: 18px;
-}
-
-@media (max-width: $movil) {
-  .gm-campos--2 {
-    grid-template-columns: 1fr;
-  }
 }
