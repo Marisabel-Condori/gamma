@@ -106,7 +106,7 @@ export class SistemasListaPage {
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
-    if (['productos', 'sucursales', 'unidades-medida', 'monedas', 'documento-identificacion'].includes(opcion)) {
+    if (['productos', 'sucursales', 'unidades-medida', 'monedas', 'documento-identificacion', 'motivos-anulacion'].includes(opcion)) {
       void this.router.navigate(['/sistemas-facturadores', sistema.id, opcion]);
       return;
     }

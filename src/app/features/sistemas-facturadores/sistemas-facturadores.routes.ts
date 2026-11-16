@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { DOCUMENTO_IDENTIFICACION } from './homologaciones/documento-identificacion/documento-identificacion.config';
 import { MONEDAS } from './homologaciones/monedas/monedas.config';
+import { MOTIVOS_ANULACION } from './homologaciones/motivos-anulacion/motivos-anulacion.config';
 import { UNIDADES_MEDIDA } from './homologaciones/unidades-medida/unidades-medida.config';
 
 const homologacionCatalogo = () =>
@@ -40,5 +41,10 @@ export const SISTEMAS_ROUTES: Routes = [
     path: ':sistemaId/documento-identificacion',
     loadComponent: homologacionCatalogo,
     data: { config: DOCUMENTO_IDENTIFICACION },
+  },
+  {
+    path: ':sistemaId/motivos-anulacion',
+    loadComponent: homologacionCatalogo,
+    data: { config: MOTIVOS_ANULACION },
   },
 ];
