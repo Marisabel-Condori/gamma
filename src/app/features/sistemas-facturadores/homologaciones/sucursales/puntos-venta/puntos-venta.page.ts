@@ -14,7 +14,7 @@ import {
 } from '../../../../../shared/ui';
 import { SistemasService } from '../../../data/sistemas.service';
 import { SISTEMAS_SIN } from '../data/sucursales.mock';
-import { PuntoVenta, SistemaSin } from '../data/sucursales.models';
+import { PuntoVenta, SistemaSin } from '../data/sucursales.model';
 import { SucursalesService } from '../data/sucursales.service';
 
 type Codigo = 'CUIS' | 'CUFD';

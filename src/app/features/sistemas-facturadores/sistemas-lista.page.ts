@@ -17,7 +17,7 @@ import {
   Toast,
 } from '../../shared/ui';
 import { conteo } from '../../shared/utils/texto';
-import { SistemaResponse } from './data/sistemas.models';
+import { SistemaResponse } from './data/sistemas.model';
 import { SistemasService } from './data/sistemas.service';
 
 const OPCIONES_HOMOLOGAR: GmOpcion[] = [
@@ -105,7 +105,7 @@ export class SistemasListaPage {
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
-    if (opcion === 'productos' || opcion === 'sucursales') {
+    if (['productos', 'sucursales', 'unidades-medida'].includes(opcion)) {
       void this.router.navigate(['/sistemas-facturadores', sistema.id, opcion]);
       return;
     }

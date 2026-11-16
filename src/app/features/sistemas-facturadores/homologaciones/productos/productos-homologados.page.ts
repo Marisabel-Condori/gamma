@@ -18,8 +18,10 @@ import {
   Toast,
 } from '../../../../shared/ui';
 import { oracion } from '../../../../shared/utils/texto';
-import { CatalogoProductosService, sinRepetidos } from '../../data/catalogo-productos.service';
-import { HomologacionProductoResponse } from '../../data/sistemas.models';
+import { ahora } from '../../../../shared/utils/fechas';
+import { sinRepetidos } from '../../../../shared/utils/listas';
+import { CatalogoProductosService } from '../../data/catalogo-productos.service';
+import { HomologacionProductoResponse } from '../../data/sistemas.model';
 import { SistemasService } from '../../data/sistemas.service';
 
 type Homologacion = HomologacionProductoResponse;
@@ -87,7 +89,6 @@ export class ProductosHomologadosPage {
   private readonly router = inject(Router);
   private readonly catalogos = inject(CatalogoProductosService);
 
-  /** Viene de la ruta :sistemaId */
   readonly sistemaId = input.required<string>();
 
   readonly columnas = COLUMNAS;
@@ -101,8 +102,6 @@ export class ProductosHomologadosPage {
   readonly productoSin = signal('');
   readonly error = signal<string | null>(null);
 
-  // ── Catálogos del SIN (backend) ──
-  /** Productos del SIN: se piden de nuevo cada vez que cambia la actividad. */
   private readonly productosRecurso = this.catalogos.productosSegunActividad(this.actividad);
 
   private readonly listaActividades = computed(() => {
@@ -169,7 +168,6 @@ export class ProductosHomologadosPage {
   );
 
   constructor() {
-    // Si la URL trae un id antiguo (entel-ZSMART), se corrige.
     effect(() => {
       const sistema = this.sistema();
       if (sistema && sistema.id !== this.sistemaId()) {
@@ -184,12 +182,10 @@ export class ProductosHomologadosPage {
     this.actividad.set(homologacion?.actividadCodigo ?? '');
     this.productoSin.set(homologacion?.codigoSin ?? '');
     this.error.set(null);
-    // Si las actividades fallaron antes (ej. backend apagado), se vuelven a pedir.
     if (this.catalogos.actividades.error()) this.catalogos.actividades.reload();
     this.editando.set(homologacion?.id ?? '');
   }
 
-  /** Al cambiar de actividad, el producto elegido ya no corresponde. */
   elegirActividad(codigo: string): void {
     this.actividad.set(codigo);
     this.productoSin.set('');
@@ -208,7 +204,6 @@ export class ProductosHomologadosPage {
       return;
     }
 
-    // La fecha y hora de homologación se registran al crear; al editar se conservan.
     const anterior = this.datos.homologaciones().find((homologacion) => homologacion.id === id);
     const { fecha, hora } = anterior ?? ahora();
     const payload = {
@@ -242,13 +237,4 @@ export class ProductosHomologadosPage {
     this.datos.deleteHomologacion(homologacion.id);
     this.toast.mostrar('Homologación eliminada.');
   }
-}
-
-function ahora(): { fecha: string; hora: string } {
-  const d = new Date();
-  const dos = (n: number) => String(n).padStart(2, '0');
-  return {
-    fecha: `${dos(d.getDate())}/${dos(d.getMonth() + 1)}/${d.getFullYear()}`,
-    hora: `${dos(d.getHours())}:${dos(d.getMinutes())}:${dos(d.getSeconds())}`,
-  };
 }

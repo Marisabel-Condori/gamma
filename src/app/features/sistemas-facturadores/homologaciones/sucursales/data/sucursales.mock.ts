@@ -1,4 +1,4 @@
-import { HomologacionSucursal, PuntoVenta, SistemaSin } from './sucursales.models';
+import { HomologacionSucursal, PuntoVenta, SistemaSin } from './sucursales.model';
 
 const SUCURSALES: [string, string][] = [
   ['0', 'CALLE FEDERICO ZUAZO Nro. 1771 Edif.: TOWER Piso: 10 Depto.: - Zona/Barrio: CENTRAL La Paz'],

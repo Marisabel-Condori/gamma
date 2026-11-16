@@ -4,7 +4,7 @@ import { GmEstadoVacio } from '../estado-vacio/estado-vacio';
 import { GmPaginador, rangoTexto } from '../paginador/paginador';
 import { Pantalla } from '../pantalla';
 import { GmCelda } from './celda';
-import { GmColumna, GmLugarMovil } from './tabla.models';
+import { GmColumna, GmLugarMovil } from './tabla.model';
 
 interface Bloque {
   titulo: string;

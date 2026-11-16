@@ -46,16 +46,49 @@ gm-icono {
 
 // ── Menú ──
 .panel {
-  max-height: 280px;
-  margin: 0;
   padding: 6px;
-  overflow-y: auto;
-  list-style: none;
   background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: var(--radio-lg);
   box-shadow: var(--sombra);
+}
+
+.opciones {
+  max-height: 280px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
   outline: none;
+}
+
+.buscador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--control-md);
+  margin-bottom: 6px;
+  padding: 0 10px;
+  border: 1px solid var(--linea-fuerte);
+  border-radius: var(--radio-md);
+}
+
+.buscador gm-icono {
+  font-size: var(--icono-md);
+}
+
+.buscador input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--tinta);
+  font-size: var(--texto-md);
+}
+
+.buscador input::placeholder {
+  color: var(--tinta-3);
 }
 
 .opcion,

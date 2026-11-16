@@ -16,7 +16,7 @@ import {
   Toast,
 } from '../../../../shared/ui';
 import { SistemasService } from '../../data/sistemas.service';
-import { HomologacionSucursal } from './data/sucursales.models';
+import { HomologacionSucursal } from './data/sucursales.model';
 import { SucursalesService } from './data/sucursales.service';
 
 type S = HomologacionSucursal;

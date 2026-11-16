@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { crearPuntosVenta, crearSucursales } from './sucursales.mock';
-import { HomologacionSucursal, HomologacionSucursalRequest, PuntoVenta } from './sucursales.models';
+import { HomologacionSucursal, HomologacionSucursalRequest, PuntoVenta } from './sucursales.model';
 
 const CLAVE = 'gamma.demo.sucursales.v2';
 

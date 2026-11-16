@@ -20,5 +20,10 @@ export const SISTEMAS_ROUTES: Routes = [
     loadComponent: () =>
       import('./homologaciones/sucursales/puntos-venta/puntos-venta.page').then((m) => m.PuntosVentaPage),
   },
+  {
+    path: ':sistemaId/unidades-medida',
+    loadComponent: () =>
+      import('./homologaciones/unidades-medida/unidades-medida.page').then((m) => m.UnidadesMedidaPage),
+  },
 
 ];

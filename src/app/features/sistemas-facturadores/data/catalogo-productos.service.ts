@@ -1,7 +1,7 @@
 import { httpResource } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_URL } from '../../../core/constants';
-import { ApiRespuesta } from '../../../core/models/api-respuesta';
+import { ApiRespuesta } from '../../../core/models/api-respuesta.model';
 
 
 export interface ActividadSin {
@@ -32,15 +32,4 @@ export class CatalogoProductosService {
         : undefined;
     });
   }
-}
-
-/** eliminando datos repetidos de la lista dropdown */
-export function sinRepetidos<T>(lista: readonly T[], clave: (item: T) => string): T[] {
-  const vistos = new Set<string>();
-  return lista.filter((item) => {
-    const k = clave(item);
-    if (vistos.has(k)) return false;
-    vistos.add(k);
-    return true;
-  });
 }

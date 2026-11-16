@@ -20,6 +20,6 @@ export { Pantalla } from './pantalla';
 export { GmSeccion } from './seccion/seccion';
 export { GmCelda } from './tabla/celda';
 export { GmTabla } from './tabla/tabla';
-export type { GmColumna, GmLugarMovil } from './tabla/tabla.models';
+export type { GmColumna, GmLugarMovil } from './tabla/tabla.model';
 export { GmTexto } from './texto/texto';
 export { GmToast, Toast } from './toast/toast';

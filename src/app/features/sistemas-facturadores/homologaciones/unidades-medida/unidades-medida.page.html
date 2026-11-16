@@ -1,0 +1,68 @@
+@if (sistema(); as sistema) {
+  <gm-encabezado
+    titulo="Unidades de medida homologadas"
+    tituloMovil="Unidades"
+    volver="/sistemas-facturadores"
+    [migas]="migas()"
+    [etiqueta]="sistema.codigo"
+    etiquetaTipo="chip"
+  >
+    <gm-buscar placeholder="Buscar por código o unidad de medida..." [(valor)]="query" />
+    <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nueva homologación" compacto (click)="abrir()"></button>
+  </gm-encabezado>
+
+  <gm-tabla
+    [datos]="filtrados()"
+    [columnas]="columnas"
+    cabecera="clara"
+    anchoMinimo="960px"
+    [porPagina]="10"
+    [vacio]="vacio()"
+  >
+    <ng-template gmCelda="acciones" let-homologacion>
+      <gm-acciones-fila que="homologación" (editar)="abrir(homologacion)" (eliminar)="eliminar(homologacion)" />
+    </ng-template>
+  </gm-tabla>
+} @else {
+  <gm-encabezado titulo="Sistema no encontrado" />
+  <a gmBoton="neutro" icono="volver" etiqueta="Volver a sistemas facturadores" routerLink="/sistemas-facturadores"></a>
+}
+
+@if (editando() !== null) {
+  <gm-modal
+    [titulo]="editando() ? 'Editar homologación' : 'Nueva homologación'"
+    [etiqueta]="'Sistema · ' + sistema()?.codigo"
+    ancho="680px"
+    (cerrar)="editando.set(null)"
+  >
+    <form (submit)="guardar($event)" novalidate>
+      <gm-seccion titulo="ENTEL" columnas="1fr 2fr">
+        <gm-texto etiqueta="Código" placeholder="Ingresa el código" [(valor)]="codigoEntel" />
+        <gm-texto etiqueta="Unidad de medida" placeholder="Ingresa la unidad de medida" [(valor)]="unidadEntel" />
+      </gm-seccion>
+
+      <gm-seccion titulo="SIN">
+        <gm-lista
+          etiqueta="Unidad de medida"
+          [placeholder]="cargandoUnidades() ? 'Cargando unidades de medida...' : 'Selecciona una unidad de medida'"
+          [opciones]="unidadesSin()"
+          [deshabilitado]="cargandoUnidades()"
+          buscable
+          [(valor)]="unidadSin"
+        />
+      </gm-seccion>
+
+      @if (errorCatalogo()) {
+        <p class="gm-error">{{ errorCatalogo() }}</p>
+      }
+
+      @if (error()) {
+        <p class="gm-error">{{ error() }}</p>
+      }
+      <div class="gm-acciones">
+        <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="editando.set(null)"></button>
+        <button gmBoton="primario" type="submit" etiqueta="Guardar"></button>
+      </div>
+    </form>
+  </gm-modal>
+}
