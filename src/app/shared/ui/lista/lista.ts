@@ -102,17 +102,22 @@ export class GmLista {
   protected readonly posiciones = POSICIONES;
   protected readonly abierta = signal(false);
   protected readonly ancho = signal(0);
-  /** La opción elegida, solo si existe en la lista */
   protected readonly seleccionada = computed(() => this.opciones().find((o) => o.valor === this.valor()));
 
   // ── Buscador ──
   protected readonly filtro = signal('');
-  /** Opciones que coinciden con lo escrito (sin distinguir mayúsculas ni tildes). */
   protected readonly visibles = computed(() => {
     const texto = normalizar(this.filtro());
-    return texto ? this.opciones().filter((o) => normalizar(o.etiqueta).includes(texto)) : this.opciones();
+    if (!texto) return this.opciones();
+    const empiezan: GmOpcionLista[] = [];
+    const contienen: GmOpcionLista[] = [];
+    for (const opcion of this.opciones()) {
+      const etiqueta = normalizar(opcion.etiqueta);
+      if (etiqueta.startsWith(texto)) empiezan.push(opcion);
+      else if (etiqueta.includes(texto)) contienen.push(opcion);
+    }
+    return [...empiezan, ...contienen];
   });
-  /** El listbox falla si recibe un valor que no está entre las opciones visibles. */
   protected readonly seleccionadaVisible = computed(() => this.visibles().some((o) => o.valor === this.valor()));
 
   private readonly boton = viewChild.required<ElementRef<HTMLButtonElement>>('boton');
@@ -124,7 +129,6 @@ export class GmLista {
       this.cerrar();
       return;
     }
-    //menú mide lo mismo que el campo.
     this.ancho.set(this.boton().nativeElement.getBoundingClientRect().width);
     this.filtro.set('');
     this.abierta.set(true);
@@ -140,7 +144,6 @@ export class GmLista {
     if (volverAlCampo) this.boton().nativeElement.focus();
   }
 
-  /** Enter en el buscador elige la primera coincidencia. */
   protected elegirPrimera(): void {
     const primera = this.visibles()[0];
     if (!primera) return;

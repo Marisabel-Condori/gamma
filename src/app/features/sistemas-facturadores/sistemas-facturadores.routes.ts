@@ -1,4 +1,9 @@
 import { Routes } from '@angular/router';
+import { MONEDAS } from './homologaciones/monedas/monedas.config';
+import { UNIDADES_MEDIDA } from './homologaciones/unidades-medida/unidades-medida.config';
+
+const homologacionCatalogo = () =>
+  import('./homologaciones/comun/homologacion-catalogo.page').then((m) => m.HomologacionCatalogoPage);
 
 export const SISTEMAS_ROUTES: Routes = [
   {
@@ -22,8 +27,13 @@ export const SISTEMAS_ROUTES: Routes = [
   },
   {
     path: ':sistemaId/unidades-medida',
-    loadComponent: () =>
-      import('./homologaciones/unidades-medida/unidades-medida.page').then((m) => m.UnidadesMedidaPage),
+    loadComponent: homologacionCatalogo,
+    data: { config: UNIDADES_MEDIDA },
+  },
+  {
+    path: ':sistemaId/monedas',
+    loadComponent: homologacionCatalogo,
+    data: { config: MONEDAS },
   },
 
 ];
