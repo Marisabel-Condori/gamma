@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { ResolveFn } from '@angular/router';
-import { firstValueFrom, timeout } from 'rxjs';
+import { Observable, firstValueFrom, timeout } from 'rxjs';
 import { API_GAMMA_URL, TIEMPO_ESPERA_API } from '../../../core/constants';
 import { GammaRespuesta } from '../../../core/models/gamma-respuesta.model';
 import { createSeed } from './sistemas.mock';
@@ -57,14 +57,24 @@ export class SistemasService {
     }
   }
 
-  async actualizar(idSistema: number, datos: SistemaRequest): Promise<string | null> {
+  actualizar(idSistema: number, datos: SistemaRequest): Promise<string | null> {
+    return this.enviar(
+      this.http.put<GammaRespuesta>(`${API_GAMMA_URL}/sistemas/actualizar`, datos, { params: { id: idSistema } }),
+      'No se pudo actualizar el sistema.',
+    );
+  }
+
+  eliminar(idSistema: number, usuario: string): Promise<string | null> {
+    return this.enviar(
+      this.http.delete<GammaRespuesta>(`${API_GAMMA_URL}/sistemas/eliminar`, { params: { id: idSistema, usuario } }),
+      'No se pudo eliminar el sistema.',
+    );
+  }
+
+  private async enviar(peticion: Observable<GammaRespuesta>, errorPorDefecto: string): Promise<string | null> {
     try {
-      const respuesta = await firstValueFrom(
-        this.http
-          .put<GammaRespuesta>(`${API_GAMMA_URL}/sistemas/actualizar`, datos, { params: { id: idSistema } })
-          .pipe(timeout(TIEMPO_ESPERA_API)),
-      );
-      if (respuesta.codigo !== 'OK') return respuesta.mensaje || 'No se pudo actualizar el sistema.';
+      const respuesta = await firstValueFrom(peticion.pipe(timeout(TIEMPO_ESPERA_API)));
+      if (respuesta.codigo !== 'OK') return respuesta.mensaje || errorPorDefecto;
       void this.recargar();
       return null;
     } catch (e) {

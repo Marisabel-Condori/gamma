@@ -143,7 +143,8 @@ export class SistemasListaPage {
       peligro: true,
     });
     if (!si) return;
-    this.toast.mostrar('Todavía no está disponible: falta el endpoint para eliminar sistemas.');
+    const error = await this.sistemas.eliminar(sistema.idSistema, USUARIO);
+    this.toast.mostrar(error ?? `${sistema.codigo} eliminado.`);
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
