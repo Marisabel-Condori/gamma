@@ -22,7 +22,7 @@ import { SistemasService } from './data/sistemas.service';
 
 const OPCIONES_HOMOLOGAR: GmOpcion[] = [
   { id: 'productos', etiqueta: 'Productos' },
-  { id: 'sucursales', etiqueta: 'Sucursales' },
+  { id: 'sucursales', etiqueta: 'Multicentros' },
   { id: 'unidades-medida', etiqueta: 'Unidades de medida' },
   { id: 'monedas', etiqueta: 'Tipos de moneda' },
   { id: 'metodos-pago', etiqueta: 'Tipo de método de pago' },
@@ -40,6 +40,7 @@ const COLUMNAS: GmColumna<SistemaResponse>[] = [
 const PANTALLAS_LISTAS = [
   'productos',
   'sucursales',
+  'sucursales-sin',
   'unidades-medida',
   'monedas',
   'metodos-pago',

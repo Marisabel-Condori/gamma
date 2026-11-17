@@ -1,16 +1,18 @@
 @if (sistema(); as sistema) {
   <gm-encabezado
-    titulo="Sucursales SIN"
-    tituloMovil="Sucursales SIN"
+    titulo="Puntos de venta"
+    tituloMovil="Puntos de venta"
     volver="/sistemas-facturadores"
     [rutanavegacion]="migas()"
     [etiqueta]="sistema.codigo"
     etiquetaTipo="chip"
     etiquetaEn="movil"
   >
-    <gm-buscar placeholder="Buscar por código o descripción..." [(valor)]="query" />
-    <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nueva sucursal" compacto (click)="abrir()"></button>
+    <gm-buscar placeholder="Buscar por fecha, código o descripción..." [(valor)]="query" />
+    <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nuevo punto de venta" compacto (click)="abrir()"></button>
   </gm-encabezado>
+
+  @if (error()) { <p class="gm-error" role="alert">{{ error() }}</p> }
 
   <gm-tabla
     [datos]="filtradas()"
@@ -33,14 +35,27 @@
 }
 
 @if (editando() !== null) {
-  <gm-modal [titulo]="editando() ? 'Editar sucursal SIN' : 'Nueva sucursal SIN'" (cerrar)="editando.set(null)">
+  <gm-modal [titulo]="editando() ? 'Editar punto de venta' : 'Nuevo punto de venta'" (cerrar)="editando.set(null)">
     <form (submit)="guardar($event)" novalidate>
       <div class="gm-campos">
-        <label class="gm-campo">Código sucursal SIN
-          <input [value]="form().codigo" (input)="campo('codigo', $any($event.target).value)" />
-        </label>
-        <label class="gm-campo">Descripción
+        @if (editando()) {
+          <p><strong>Código sucursal SIN:</strong> {{ form().codigo }}</p>
+        } @else {
+          <label class="gm-campo">Código sucursal SIN
+            <input [value]="form().codigo" (input)="campo('codigo', $any($event.target).value)" />
+          </label>
+        }
+        <label class="gm-campo">Dirección
           <input [value]="form().descripcion" (input)="campo('descripcion', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Municipio
+          <input [value]="form().municipio" (input)="campo('municipio', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Departamento
+          <input [value]="form().departamento" (input)="campo('departamento', $any($event.target).value)" />
+        </label>
+        <label class="gm-campo">Observación
+          <input [value]="form().observacion" (input)="campo('observacion', $any($event.target).value)" />
         </label>
       </div>
       @if (error()) { <p class="gm-error">{{ error() }}</p> }

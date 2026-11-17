@@ -2,4 +2,5 @@
 export const environment = {
   production: false,
   apiBaseUrl: '/api',
+  vortexApiUrl: '/vortex-codigos-service/api',
 };

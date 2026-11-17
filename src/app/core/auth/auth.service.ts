@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import { Observable, catchError, map, of, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 const TOKEN_KEY = 'gamma.auth.token';
@@ -8,20 +8,26 @@ const PROFILE_KEY = 'gamma.auth.profile';
 const API = environment.apiBaseUrl;
 
 interface LoginResponse {
+  codigo?: string;
+  mensaje?: string;
   accessToken?: string;
   token?: string;
+  usuario?: string;
   nombreApellido?: string;
   areaTrabajo?: string;
   empleado?: AuthProfile;
   empleadoRes?: AuthProfile;
+  tokenCookie?: string;
+  responseBody?: LoginResponse;
 }
 
 export interface AuthProfile {
   nombreApellido: string;
   areaTrabajo: string;
+  usuario?: string;
 }
 
-/** Autenticación contra el backend Gamma. El token vive solo durante la pestaña. */
+/** Autenticación contra el backend Gamma, compatible con sesión por token o cookie HttpOnly. */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -38,12 +44,13 @@ export class AuthService {
         return {
           nombreApellido: profile.nombreApellido?.trim() || 'Usuario',
           areaTrabajo: profile.areaTrabajo?.trim() || '',
+          usuario: profile.usuario?.trim() || '',
         };
       }
     } catch {
       // Si el perfil guardado no se puede leer, se usa el nombre genérico.
     }
-    return { nombreApellido: 'Usuario', areaTrabajo: '' };
+    return { nombreApellido: 'Usuario', areaTrabajo: '', usuario: '' };
   }
 
   get iniciales(): string {
@@ -58,19 +65,41 @@ export class AuthService {
       usuario: usuario.trim(),
       password,
     }).pipe(
-      tap((response) => {
-        const token = response?.accessToken ?? response?.token;
-        if (!token) throw new Error('El backend no devolvió un token.');
-        sessionStorage.setItem(TOKEN_KEY, token);
-        const employee = response.empleadoRes ?? response.empleado;
-        const nombreApellido = response.nombreApellido?.trim()
-          || employee?.nombreApellido?.trim()
-          || usuario.trim();
-        const areaTrabajo = response.areaTrabajo?.trim() || employee?.areaTrabajo?.trim() || '';
-        sessionStorage.setItem(PROFILE_KEY, JSON.stringify({ nombreApellido, areaTrabajo }));
+      switchMap((response) => {
+        const body = response?.responseBody ?? response;
+        const token = response?.accessToken ?? response?.token ?? response?.tokenCookie
+          ?? body?.accessToken ?? body?.token;
+
+        if (token) {
+          sessionStorage.setItem(TOKEN_KEY, token);
+          this.guardarPerfil(body, usuario);
+          return of(undefined);
+        }
+
+        if (body?.codigo?.toUpperCase() !== 'OK') {
+          return throwError(() => new Error(body?.mensaje || 'El backend rechazó el inicio de sesión.'));
+        }
+
+        // El backend actual usa una cookie HttpOnly y devuelve el perfil en /auth/me.
+        sessionStorage.setItem(TOKEN_KEY, 'cookie-session');
+        return this.http.get<AuthProfile>(`${API}/auth/me`).pipe(
+          tap((profile) => this.guardarPerfil(profile, usuario)),
+          map(() => undefined),
+        );
       }),
-      map(() => undefined),
     );
+  }
+
+  private guardarPerfil(response: LoginResponse | AuthProfile, usuario: string): void {
+    const body = 'responseBody' in response ? response.responseBody ?? response : response;
+    const profile = body as LoginResponse;
+    const employee = profile.empleadoRes ?? profile.empleado;
+    const nombreApellido = profile.nombreApellido?.trim()
+      || employee?.nombreApellido?.trim()
+      || usuario.trim();
+    const areaTrabajo = profile.areaTrabajo?.trim() || employee?.areaTrabajo?.trim() || '';
+    const usuarioSesion = employee?.usuario?.trim() || profile.usuario?.trim() || usuario.trim();
+    sessionStorage.setItem(PROFILE_KEY, JSON.stringify({ nombreApellido, areaTrabajo, usuario: usuarioSesion }));
   }
 
   logout(): Observable<void> {
@@ -80,8 +109,10 @@ export class AuthService {
       return of(undefined);
     }
 
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.post(`${API}/auth/logout`, {}, { headers }).pipe(
+    const options = token === 'cookie-session'
+      ? {}
+      : { headers: new HttpHeaders({ Authorization: `Bearer ${token}` }) };
+    return this.http.post(`${API}/auth/logout`, {}, options).pipe(
       map(() => undefined),
       catchError(() => of(undefined)),
       tap(() => {

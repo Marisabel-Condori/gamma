@@ -10,6 +10,52 @@ export interface SucursalApiRequest {
   observacion?: string;
 }
 
+export interface SucursalApiResponse {
+  codSucursalSin: number;
+  departamento: string;
+  direccion: string;
+  fechaAlta: string;
+  municipio: string;
+  observacion: string;
+}
+
+export interface PuntoVentaSucursalApiResponse {
+  codigoPuntoVenta: number;
+  nombrePuntoVenta: string;
+  tipoPuntoVenta: string;
+  codigoSucursal: string;
+}
+
+export interface HomologacionSucursalRequest {
+  idSistema: number;
+  codigoMulticentro: string;
+  descripcion: string;
+  codigoPuntoVenta: number;
+  codigoSucursal: string;
+  usuarioAlta: string;
+  usuarioModificacion: string;
+}
+
+export interface HomologacionSucursalUpdateRequest {
+  idSistema: number;
+  codigoMulticentro: string;
+  descripcion: string;
+  codigoPuntoVenta: number;
+  codigoSucursal: string;
+}
+
+export interface HomologacionSucursalApiResponse {
+  idHomSucursal: number;
+  idSistema: number;
+  codigoMulticentro: string;
+  descripcion: string;
+  codigoPuntoVenta: number;
+  codigoSucursal: string;
+  fechaAlta: string;
+  direccionSucursal?: string;
+  nombrePuntoVenta?: string;
+}
+
 /** Parámetros compartidos por las operaciones SIAT de la colección Postman. */
 export interface ParametrosSiat {
   codigoAmbiente: number;
@@ -31,10 +77,26 @@ export interface SolicitudCufd extends SolicitudCuis {
 @Injectable({ providedIn: 'root' })
 export class VortexApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.apiBaseUrl;
+  private readonly baseUrl = environment.vortexApiUrl;
 
   listarSucursales<T = unknown>() {
     return this.http.get<T>(`${this.baseUrl}/sucursales`);
+  }
+
+  listarPuntosVentaSucursal<T = unknown>(codigoSucursal: number) {
+    return this.http.get<T>(`${this.baseUrl}/sucursales/${codigoSucursal}/puntos-venta`);
+  }
+
+  crearHomologacionSucursal<T = unknown>(datos: HomologacionSucursalRequest) {
+    return this.http.post<T>(`${this.baseUrl}/hom-sucursales`, datos);
+  }
+
+  listarHomologacionesSucursal() {
+    return this.http.get<HomologacionSucursalApiResponse[]>(`${this.baseUrl}/hom-sucursales`);
+  }
+
+  actualizarHomologacionSucursal<T = unknown>(idHomSucursal: number, datos: HomologacionSucursalUpdateRequest) {
+    return this.http.put<T>(`${this.baseUrl}/hom-sucursales/${idHomSucursal}`, datos);
   }
 
   listarTodasLasSucursales<T = unknown>() {

@@ -33,6 +33,10 @@ export const routes: Routes = [
         path: 'servicios',
         loadComponent: () => import('./features/servicios/servicios.page').then((m) => m.ServiciosPage),
       },
+      {
+        path: 'puntos-de-venta',
+        loadComponent: () => import('./features/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
+      },
 
       // Direcciones antiguas que siguen funcionando.
       { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
