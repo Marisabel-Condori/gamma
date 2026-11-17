@@ -36,7 +36,7 @@
       }
       <div class="gm-acciones">
         <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="editando.set(null)"></button>
-        <button gmBoton="primario" type="submit" etiqueta="Guardar"></button>
+        <button gmBoton="primario" type="submit" [etiqueta]="guardando() ? 'Guardando...' : 'Guardar'" [disabled]="guardando()"></button>
       </div>
     </form>
   </gm-modal>

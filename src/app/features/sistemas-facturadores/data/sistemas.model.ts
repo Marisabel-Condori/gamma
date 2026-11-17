@@ -16,8 +16,9 @@ export interface SistemaResponse {
 }
 
 export interface SistemaRequest {
-  codigo: string;
+  sistema: string;
   descripcion: string;
+  usuarioAlta: string;
 }
 
 export interface HomologacionProductoResponse {

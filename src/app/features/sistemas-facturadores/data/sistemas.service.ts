@@ -1,13 +1,15 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { firstValueFrom, timeout } from 'rxjs';
 import { API_GAMMA_URL, TIEMPO_ESPERA_API } from '../../../core/constants';
+import { GammaRespuesta } from '../../../core/models/gamma-respuesta.model';
 import { createSeed } from './sistemas.mock';
 import {
   HomologacionProductoRequest,
   HomologacionProductoResponse,
   SistemaFacturadorResponse,
+  SistemaRequest,
   SistemaResponse,
 } from './sistemas.model';
 
@@ -52,6 +54,22 @@ export class SistemasService {
       this.peticion = null;
     } finally {
       this.estadoCargando.set(false);
+    }
+  }
+
+  async actualizar(idSistema: number, datos: SistemaRequest): Promise<string | null> {
+    try {
+      const respuesta = await firstValueFrom(
+        this.http
+          .put<GammaRespuesta>(`${API_GAMMA_URL}/sistemas/actualizar`, datos, { params: { id: idSistema } })
+          .pipe(timeout(TIEMPO_ESPERA_API)),
+      );
+      if (respuesta.codigo !== 'OK') return respuesta.mensaje || 'No se pudo actualizar el sistema.';
+      void this.recargar();
+      return null;
+    } catch (e) {
+      const mensaje = e instanceof HttpErrorResponse ? e.error?.mensaje : null;
+      return mensaje || 'No se pudo conectar con el servidor. Intenta de nuevo.';
     }
   }
 

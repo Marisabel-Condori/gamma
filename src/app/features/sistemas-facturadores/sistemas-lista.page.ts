@@ -37,6 +37,9 @@ const COLUMNAS: GmColumna<SistemaResponse>[] = [
   { id: 'acciones', titulo: 'Acciones', alinear: 'fin', ancho: '120px', movil: 'esquina' },
 ];
 
+// TODO: cambiar por usuario del login
+const USUARIO = 'ADMIN';
+
 const PANTALLAS_LISTAS = [
   'productos',
   'sucursales',
@@ -68,6 +71,7 @@ export class SistemasListaPage {
   readonly editando = signal<string | null>(null);
   readonly form = signal({ codigo: '', descripcion: '' });
   readonly error = signal<string | null>(null);
+  readonly guardando = signal(false);
 
   readonly filtrados = computed(() => {
     const q = this.query().trim().toLowerCase();
@@ -99,9 +103,36 @@ export class SistemasListaPage {
     this.form.update((f) => ({ ...f, [nombre]: valor }));
   }
 
-  guardar(event: Event): void {
+  async guardar(event: Event): Promise<void> {
     event.preventDefault();
-    this.error.set('Todavía no está disponible: falta el endpoint para guardar sistemas.');
+    const id = this.editando();
+    if (id === null || this.guardando()) return;
+    if (!id) {
+      this.error.set('Todavía no está disponible: falta el endpoint para crear sistemas.');
+      return;
+    }
+
+    const sistema = this.form().codigo.trim();
+    const descripcion = this.form().descripcion.trim();
+    if (!sistema || !descripcion) {
+      this.error.set('Completa código y descripción.');
+      return;
+    }
+
+    this.error.set(null);
+    this.guardando.set(true);
+    const error = await this.sistemas.actualizar(Number(id), {
+      sistema,
+      descripcion,
+      usuarioAlta: USUARIO,
+    });
+    this.guardando.set(false);
+    if (error) {
+      this.error.set(error);
+      return;
+    }
+    this.toast.mostrar('Sistema actualizado.');
+    this.editando.set(null);
   }
 
   async eliminar(sistema: SistemaResponse): Promise<void> {
