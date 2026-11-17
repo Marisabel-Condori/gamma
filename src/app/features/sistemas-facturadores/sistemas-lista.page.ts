@@ -76,15 +76,23 @@ export class SistemasListaPage {
       .filter((s) => !q || s.codigo.toLowerCase().includes(q) || s.descripcion.toLowerCase().includes(q));
   });
 
-  readonly conteo = computed(() => conteo(this.filtrados().length, 'sistema', 'sistemas'));
-  readonly vacio = computed(() =>
-    this.query().trim() ? 'No hay resultados para la búsqueda.' : 'Todavía no hay sistemas facturadores.',
+  readonly conteo = computed(() =>
+    this.sistemas.cargando() ? '' : conteo(this.filtrados().length, 'sistema', 'sistemas'),
   );
+  readonly vacio = computed(() => {
+    if (this.sistemas.cargando()) return 'Cargando sistemas facturadores...';
+    if (this.sistemas.error()) return this.sistemas.error()!;
+    return this.query().trim() ? 'No hay resultados para la búsqueda.' : 'Todavía no hay sistemas facturadores.';
+  });
+
+  constructor() {
+    void this.sistemas.recargar();
+  }
 
   abrir(sistema?: SistemaResponse): void {
     this.form.set({ codigo: sistema?.codigo ?? '', descripcion: sistema?.descripcion ?? '' });
     this.error.set(null);
-    this.editando.set(sistema?.id ?? '');
+    this.editando.set(sistema ? String(sistema.idSistema) : '');
   }
 
   campo(nombre: 'codigo' | 'descripcion', valor: string): void {
@@ -93,14 +101,7 @@ export class SistemasListaPage {
 
   guardar(event: Event): void {
     event.preventDefault();
-    const id = this.editando();
-    const error = id ? this.sistemas.updateSistema(id, this.form()) : this.sistemas.createSistema(this.form());
-    if (error) {
-      this.error.set(error);
-      return;
-    }
-    this.toast.mostrar(id ? 'Sistema actualizado.' : 'Sistema creado.');
-    this.editando.set(null);
+    this.error.set('Todavía no está disponible: falta el endpoint para guardar sistemas.');
   }
 
   async eliminar(sistema: SistemaResponse): Promise<void> {
@@ -111,13 +112,12 @@ export class SistemasListaPage {
       peligro: true,
     });
     if (!si) return;
-    this.sistemas.deleteSistema(sistema.id);
-    this.toast.mostrar(`${sistema.codigo} eliminado.`);
+    this.toast.mostrar('Todavía no está disponible: falta el endpoint para eliminar sistemas.');
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
     if (PANTALLAS_LISTAS.includes(opcion)) {
-      void this.router.navigate(['/sistemas-facturadores', sistema.id, opcion]);
+      void this.router.navigate(['/sistemas-facturadores', sistema.idSistema, opcion]);
       return;
     }
     this.toast.mostrar('Esta opción todavía no está disponible.');

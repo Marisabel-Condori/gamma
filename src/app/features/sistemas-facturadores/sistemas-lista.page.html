@@ -3,7 +3,7 @@
   <button gmBoton="primario" type="button" icono="agregar" etiqueta="Crear sistema" compacto (click)="abrir()"></button>
 </gm-encabezado>
 
-<gm-tabla [datos]="filtrados()" [columnas]="columnas" anchoMinimo="720px" [vacio]="vacio()">
+<gm-tabla [datos]="filtrados()" [columnas]="columnas" clave="idSistema" anchoMinimo="720px" [vacio]="vacio()">
   <ng-template gmCelda="homologar" let-sistema>
     <gm-menu-fila etiqueta="Homologar" [opciones]="opcionesHomologar" (elegir)="homologar(sistema, $event)" />
   </ng-template>

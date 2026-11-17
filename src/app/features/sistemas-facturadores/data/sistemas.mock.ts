@@ -1,16 +1,4 @@
-import { HomologacionProductoResponse, SistemaResponse } from './sistemas.model';
-
-const SISTEMAS = [
-  { codigo: 'ZSMART', descripcion: 'ZSMART' },
-  { codigo: 'TTVENTAS', descripcion: 'TTVENTAS' },
-  { codigo: 'SICO', descripcion: 'Sistema de Cobranza Entel' },
-  { codigo: 'SIADIN', descripcion: 'SIADIN' },
-  { codigo: 'SEES', descripcion: 'Servicios Especiales' },
-  { codigo: 'RECINT', descripcion: 'Recarga Internacional' },
-  { codigo: 'MASIVO', descripcion: 'Proceso Masivo de Facturas Postpago' },
-  { codigo: 'GARAN', descripcion: 'GARAN' },
-  { codigo: 'BANCA', descripcion: 'Transacciones desde el WS de la Banca' },
-] as const;
+import { HomologacionProductoResponse } from './sistemas.model';
 
 const MUESTRA_ZSMART = [
   {
@@ -98,21 +86,8 @@ const PRODUCTOS_EXTRA = [
   'PLAN POSTPAGO',
 ] as const;
 
-export interface GammaData {
-  sistemas: SistemaResponse[];
-  homologaciones: HomologacionProductoResponse[];
-}
-
-export function createSeed(): GammaData {
-  const sistemas: SistemaResponse[] = SISTEMAS.map((sistema) => ({
-    ...sistema,
-    id: sistema.codigo,
-  }));
-
-  return {
-    sistemas,
-    homologaciones: createHomologaciones(),
-  };
+export function createSeed(): HomologacionProductoResponse[] {
+  return createHomologaciones();
 }
 
 function createHomologaciones(): HomologacionProductoResponse[] {
