@@ -43,6 +43,12 @@ export interface PuntoVentaSucursalApiResponse {
   sincroniza?: boolean;
 }
 
+export interface PuntoVentaSucursalRequest {
+  nombrePuntoVenta: string;
+  tipoPuntoVenta: string;
+  sincroniza: boolean;
+}
+
 export interface PuntoVentaApiResponse {
   codigoCuis: string;
   codigoPuntoVenta: number;
@@ -99,6 +105,11 @@ export interface ParametrosSiat {
   nit: number;
 }
 
+export interface SolicitudSincronizarPuntosVenta extends ParametrosSiat {
+  codigoModalidad: number;
+  cuis: string;
+}
+
 export interface SolicitudCuis extends ParametrosSiat {
   codigoModalidad: number;
   codigoPuntoVenta: number;
@@ -121,6 +132,10 @@ export class VortexApiService {
 
   listarPuntosVentaSucursal<T = unknown>(codigoSucursal: number) {
     return this.http.get<T>(`${this.baseUrl}/sucursales/${codigoSucursal}/puntos-venta`);
+  }
+
+  crearPuntoVentaSucursal<T = PuntoVentaSucursalApiResponse>(codigoSucursal: number, datos: PuntoVentaSucursalRequest) {
+    return this.http.post<T>(`${this.baseUrl}/sucursales/${codigoSucursal}/puntos-venta`, datos);
   }
 
   listarPuntosVenta<T = PuntoVentaApiResponse[]>() {
@@ -159,7 +174,7 @@ export class VortexApiService {
     return this.http.delete<T>(`${this.baseUrl}/sucursales/${codigo}`);
   }
 
-  sincronizarPuntosVenta<T = unknown>(datos: ParametrosSiat) {
+  sincronizarPuntosVenta<T = unknown>(datos: SolicitudSincronizarPuntosVenta) {
     return this.http.post<T>(`${this.baseUrl}/sucursales/sincronizar-puntos-venta`, datos);
   }
 

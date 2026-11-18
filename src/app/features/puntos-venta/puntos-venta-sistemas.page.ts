@@ -7,8 +7,10 @@ import { conteo as contarRegistros } from '../../shared/utils/texto';
 import {
   CuisCufdVigenteApiResponse,
   PuntoVentaSucursalApiResponse,
+  PuntoVentaSucursalRequest,
   SucursalApiRequest,
   SucursalApiResponse,
+  SolicitudSincronizarPuntosVenta,
   VortexApiService,
 } from '../sistemas-facturadores/homologaciones/sucursales/data/vortex-api.service';
 
@@ -49,7 +51,6 @@ const COLUMNAS_PUNTOS: GmColumna<PuntoVentaSucursalApiResponse>[] = [
   { id: 'codigoCufd', titulo: 'CUFD', ancho: '210px', recortar: true, valor: (p) => p.codigoCufd || p.cufd || '—' },
   { id: 'fechaVigenciaCufd', titulo: 'Fecha vigencia CUFD', ancho: '190px', valor: (p) => formatearFecha(p.fechaVigenciaCufd || p.fechaCufd) },
   { id: 'tipoPuntoVenta', titulo: 'Tipo punto de venta', ancho: '250px', movil: 'subtitulo' },
-  { id: 'sincroniza', titulo: 'Sincroniza', ancho: '120px', alinear: 'centro', valor: (p) => p.sincroniza === undefined ? '—' : p.sincroniza ? 'Sí' : 'No' },
   { id: 'acciones', titulo: 'Acciones', ancho: '160px', movil: 'pie-fin' },
 ];
 
@@ -67,6 +68,7 @@ const COLUMNAS_PUNTOS: GmColumna<PuntoVentaSucursalApiResponse>[] = [
         etiquetaTipo="chip"
       >
         <gm-buscar placeholder="Buscar punto de venta..." [(valor)]="queryPuntos" />
+        <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nuevo registro" compacto (click)="abrirNuevoPunto()"></button>
         <button
           gmBoton="primario"
           type="button"
@@ -101,6 +103,7 @@ const COLUMNAS_PUNTOS: GmColumna<PuntoVentaSucursalApiResponse>[] = [
         [etiqueta]="conteoSucursales()"
       >
         <gm-buscar placeholder="Buscar sucursal..." [(valor)]="query" />
+        <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nuevo registro" compacto (click)="abrirNuevaSucursal()"></button>
       </gm-encabezado>
       @if (error()) {
         <p class="gm-error" role="alert">{{ error() }}</p>
@@ -224,6 +227,101 @@ const COLUMNAS_PUNTOS: GmColumna<PuntoVentaSucursalApiResponse>[] = [
         </form>
       </gm-modal>
     }
+    @if (nuevaSucursalAbierta()) {
+      <gm-modal titulo="Nueva Sucursal SIN" ancho="760px" (cerrar)="nuevaSucursalAbierta.set(false)">
+        <form (submit)="crearSucursal($event)" novalidate>
+          <div class="edicion-sucursal">
+            <label class="edicion-sucursal__fila">
+              <span>Código Sucursal SIN</span>
+              <input [value]="formularioSucursal().codigoSucursalSin" (input)="actualizarFormularioSucursal('codigoSucursalSin', $event)" />
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Descripción SIN</span>
+              <input [value]="formularioSucursal().descripcion" (input)="actualizarFormularioSucursal('descripcion', $event)" />
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Departamento</span>
+              <select [value]="formularioSucursal().departamento" (change)="actualizarFormularioSucursal('departamento', $event)">
+                <option value="">-- Seleccione --</option>
+                @for (departamento of departamentosSucursal(); track departamento) {
+                  <option [value]="departamento">{{ departamento }}</option>
+                }
+              </select>
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Municipio</span>
+              <select [value]="formularioSucursal().municipio" (change)="actualizarFormularioSucursal('municipio', $event)">
+                <option value="">-- Seleccione --</option>
+                @for (municipio of municipiosSucursal(); track municipio) {
+                  <option [value]="municipio">{{ municipio }}</option>
+                }
+              </select>
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Dirección</span>
+              <input [value]="formularioSucursal().direccion" (input)="actualizarFormularioSucursal('direccion', $event)" />
+            </label>
+          </div>
+          @if (errorEdicionSucursal()) {
+            <p class="gm-error" role="alert">{{ errorEdicionSucursal() }}</p>
+          }
+          <div class="gm-acciones">
+            <button gmBoton="primario" type="submit" [disabled]="guardandoSucursal()" [etiqueta]="guardandoSucursal() ? 'Guardando…' : 'Guardar'"></button>
+            <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="nuevaSucursalAbierta.set(false)"></button>
+          </div>
+        </form>
+      </gm-modal>
+    }
+    @if (nuevoPuntoAbierto()) {
+      @if (sucursalSeleccionada(); as sucursal) {
+        <gm-modal titulo="Nuevo Punto de Venta" ancho="620px" (cerrar)="nuevoPuntoAbierto.set(false)">
+          <form (submit)="crearPuntoVenta($event, sucursal)" novalidate>
+            <div class="contexto-nuevo-punto">
+              <strong>EMPRESA: ENTEL</strong>
+              <strong>SUCURSAL: {{ descripcionSucursal(sucursal) }}</strong>
+            </div>
+            <div class="edicion-sucursal">
+              <label class="edicion-sucursal__fila">
+                <span>Descripción</span>
+                <input [value]="formularioPunto().descripcion" (input)="actualizarFormularioPunto('descripcion', $event)" />
+              </label>
+              <label class="edicion-sucursal__fila">
+                <span>Tipo Código Punto Venta</span>
+                <select [value]="formularioPunto().tipo" (change)="actualizarFormularioPunto('tipo', $event)">
+                  <option value="">-- Seleccione --</option>
+                  @for (tipo of tiposPuntoVenta; track tipo) {
+                    <option [value]="tipo">{{ tipo }}</option>
+                  }
+                </select>
+              </label>
+              <label class="edicion-sucursal__fila">
+                <span>Válido a sincronizar</span>
+                <select [value]="formularioPunto().sincroniza" (change)="actualizarFormularioPunto('sincroniza', $event)">
+                  <option value="">-- Seleccione --</option>
+                  <option value="true">Sí</option>
+                  <option value="false">No</option>
+                </select>
+              </label>
+            </div>
+            @if (errorNuevoPunto()) {
+              <p class="gm-error" role="alert">{{ errorNuevoPunto() }}</p>
+            }
+            <div class="gm-acciones">
+              <button gmBoton="primario" type="submit" [disabled]="guardandoNuevoPunto()" [etiqueta]="guardandoNuevoPunto() ? 'Guardando…' : 'Guardar'"></button>
+              <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="nuevoPuntoAbierto.set(false)"></button>
+            </div>
+          </form>
+        </gm-modal>
+      }
+    }
+    @if (sincronizacionExitosa()) {
+      <gm-modal titulo="Sincronización exitosa" ancho="460px" (cerrar)="sincronizacionExitosa.set(false)">
+        <p role="status">La sincronización de puntos de venta fue exitosa.</p>
+        <div class="gm-acciones">
+          <button gmBoton="primario" type="button" etiqueta="Aceptar" (click)="sincronizacionExitosa.set(false)"></button>
+        </div>
+      </gm-modal>
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },
@@ -265,6 +363,14 @@ const COLUMNAS_PUNTOS: GmColumna<PuntoVentaSucursalApiResponse>[] = [
       border: 1px solid var(--linea);
       border-radius: var(--radio-lg);
       overflow: hidden;
+    }
+    .contexto-nuevo-punto {
+      display: grid;
+      gap: 6px;
+      margin: 0 2px 12px;
+      color: var(--tinta-2);
+      font-size: var(--texto-sm);
+      overflow-wrap: anywhere;
     }
     .edicion-sucursal__fila {
       display: grid;
@@ -332,6 +438,21 @@ export class PuntosVentaSistemasPage implements OnInit {
   readonly errorPuntos = signal('');
   readonly errorCodigos = signal('');
   readonly editandoSucursal = signal<SucursalApiResponse | null>(null);
+  readonly nuevaSucursalAbierta = signal(false);
+  readonly sincronizandoPuntos = signal(false);
+  readonly sincronizacionExitosa = signal(false);
+  readonly nuevoPuntoAbierto = signal(false);
+  readonly formularioPunto = signal({ descripcion: '', tipo: '', sincroniza: '' });
+  readonly errorNuevoPunto = signal('');
+  readonly guardandoNuevoPunto = signal(false);
+  readonly tiposPuntoVenta = [
+    'DEFAULT',
+    'PUNTO VENTA VENTANILLA DE COBRANZA',
+    'PUNTO DE VENTA MOVILES',
+    'PUNTO DE VENTA YPFB',
+    'PUNTO DE VENTA CONJUNTA',
+    'PUNTO DE VENTA CAJEROS',
+  ];
   readonly formularioSucursal = signal<FormularioEdicionSucursal>({
     codigoSucursalSin: '', descripcion: '', direccion: '', municipio: '', departamento: '', localidad: '', oficina: '', orgId: '', observacion: '',
   });
@@ -350,9 +471,6 @@ export class PuntosVentaSistemasPage implements OnInit {
       { etiqueta: 'Descripción SIN', valor: sucursal.descripcion?.trim() || [sucursal.direccion, sucursal.departamento].map((v) => v?.trim()).filter(Boolean).join(' ') || '—' },
       { etiqueta: 'Departamento', valor: sucursal.departamento || '—' },
       { etiqueta: 'Municipio', valor: sucursal.municipio || '—' },
-      { etiqueta: 'Localidad', valor: sucursal.localidad || '—' },
-      { etiqueta: 'Oficina', valor: sucursal.oficina || '—' },
-      { etiqueta: 'Org ID', valor: sucursal.orgId === undefined ? '—' : String(sucursal.orgId) },
       { etiqueta: 'Dirección', valor: sucursal.direccion || '—' },
       { etiqueta: 'Fecha de alta', valor: formatearFecha(sucursal.fechaAlta) },
       { etiqueta: 'Observación', valor: sucursal.observacion || '—' },
@@ -458,6 +576,108 @@ export class PuntosVentaSistemasPage implements OnInit {
     });
     this.errorEdicionSucursal.set('');
     this.editandoSucursal.set(sucursal);
+  }
+
+  abrirNuevaSucursal(): void {
+    this.formularioSucursal.set({
+      codigoSucursalSin: '', descripcion: '', direccion: '', municipio: '', departamento: '', localidad: '', oficina: '', orgId: '', observacion: '',
+    });
+    this.errorEdicionSucursal.set('');
+    this.nuevaSucursalAbierta.set(true);
+  }
+
+  crearSucursal(event: Event): void {
+    event.preventDefault();
+    if (this.guardandoSucursal()) return;
+    const formulario = this.formularioSucursal();
+    const codigo = Number(formulario.codigoSucursalSin);
+    if (!Number.isInteger(codigo) || codigo < 0) {
+      this.errorEdicionSucursal.set('Ingresa un código de sucursal SIN válido.');
+      return;
+    }
+    if (this.sucursales().some((sucursal) => sucursal.codSucursalSin === codigo)) {
+      this.errorEdicionSucursal.set('Ya existe una sucursal con ese código SIN.');
+      return;
+    }
+    if (!formulario.descripcion.trim() || !formulario.direccion.trim()) {
+      this.errorEdicionSucursal.set('Completa la descripción y la dirección de la sucursal.');
+      return;
+    }
+    const datos: SucursalApiRequest = {
+      direccion: formulario.direccion.trim(),
+      municipio: formulario.municipio.trim(),
+      departamento: formulario.departamento.trim(),
+      observacion: formulario.observacion.trim(),
+    };
+    this.guardandoSucursal.set(true);
+    this.errorEdicionSucursal.set('');
+    this.vortex.crearSucursal(codigo, datos).subscribe({
+      next: () => {
+        this.sucursales.update((lista) => [...lista, {
+          codSucursalSin: codigo,
+          descripcion: datos.descripcion,
+          direccion: datos.direccion,
+          departamento: datos.departamento,
+          municipio: datos.municipio,
+          localidad: datos.localidad,
+          oficina: datos.oficina,
+          orgId: datos.orgId,
+          fechaAlta: new Date().toISOString(),
+          observacion: datos.observacion ?? '',
+        }]);
+        this.guardandoSucursal.set(false);
+        this.nuevaSucursalAbierta.set(false);
+        this.toast.mostrar('Sucursal SIN creada.');
+      },
+      error: (error: HttpErrorResponse) => {
+        this.guardandoSucursal.set(false);
+        this.errorEdicionSucursal.set(mensajeError(error, 'No se pudo crear la sucursal SIN.'));
+      },
+    });
+  }
+
+  abrirNuevoPunto(): void {
+    this.formularioPunto.set({ descripcion: '', tipo: '', sincroniza: '' });
+    this.errorNuevoPunto.set('');
+    this.nuevoPuntoAbierto.set(true);
+  }
+
+  actualizarFormularioPunto(campo: 'descripcion' | 'tipo' | 'sincroniza', event: Event): void {
+    const valor = (event.target as HTMLInputElement | HTMLSelectElement).value;
+    this.formularioPunto.update((actual) => ({ ...actual, [campo]: valor }));
+  }
+
+  descripcionSucursal(sucursal: SucursalApiResponse): string {
+    return sucursal.descripcion?.trim() || [sucursal.direccion, sucursal.departamento].map((valor) => valor?.trim()).filter(Boolean).join(' · ');
+  }
+
+  crearPuntoVenta(event: Event, sucursal: SucursalApiResponse): void {
+    event.preventDefault();
+    if (this.guardandoNuevoPunto()) return;
+    const formulario = this.formularioPunto();
+    if (!formulario.descripcion.trim() || !formulario.tipo || !formulario.sincroniza) {
+      this.errorNuevoPunto.set('Completa la descripción, el tipo y la opción de sincronización.');
+      return;
+    }
+    const datos: PuntoVentaSucursalRequest = {
+      nombrePuntoVenta: formulario.descripcion.trim(),
+      tipoPuntoVenta: formulario.tipo,
+      sincroniza: formulario.sincroniza === 'true',
+    };
+    this.guardandoNuevoPunto.set(true);
+    this.errorNuevoPunto.set('');
+    this.vortex.crearPuntoVentaSucursal(sucursal.codSucursalSin, datos).subscribe({
+      next: () => {
+        this.guardandoNuevoPunto.set(false);
+        this.nuevoPuntoAbierto.set(false);
+        this.toast.mostrar('Punto de venta creado.');
+        this.cargarPuntos(sucursal);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.guardandoNuevoPunto.set(false);
+        this.errorNuevoPunto.set(mensajeError(error, 'No se pudo crear el punto de venta.'));
+      },
+    });
   }
 
   actualizarFormularioSucursal(campo: keyof FormularioEdicionSucursal, event: Event): void {
@@ -581,7 +801,27 @@ export class PuntosVentaSistemasPage implements OnInit {
   }
 
   sincronizarPuntosVenta(): void {
-    this.toast.mostrar('Para sincronizar se deben configurar los parámetros SIAT de la empresa.');
+    if (this.sincronizandoPuntos()) return;
+    const datos: SolicitudSincronizarPuntosVenta = {
+      codigoAmbiente: 0,
+      codigoModalidad: 0,
+      codigoSistema: 'string',
+      cuis: 'string',
+      nit: 0,
+    };
+    this.sincronizandoPuntos.set(true);
+    this.vortex.sincronizarPuntosVenta(datos).subscribe({
+      next: () => {
+        this.sincronizandoPuntos.set(false);
+        this.sincronizacionExitosa.set(true);
+        const sucursal = this.sucursalSeleccionada();
+        if (sucursal) this.cargarPuntos(sucursal);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.sincronizandoPuntos.set(false);
+        this.toast.mostrar(`La sincronización no funcionó. ${mensajeError(error, 'No se pudieron sincronizar los puntos de venta.')}`);
+      },
+    });
   }
 }
 
