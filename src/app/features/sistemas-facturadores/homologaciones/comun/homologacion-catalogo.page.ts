@@ -17,7 +17,6 @@ import {
   GmTexto,
   Toast,
 } from '../../../../shared/ui';
-import { ahora } from '../../../../shared/utils/fechas';
 import { sinRepetidos } from '../../../../shared/utils/listas';
 import { oracion } from '../../../../shared/utils/texto';
 import { CatalogoSinService } from '../../data/catalogo-sin.service';
@@ -32,7 +31,7 @@ function columnas(concepto: string): GmColumna<Homologacion>[] {
     {
       id: 'fecha',
       titulo: 'Fecha',
-      valor: (homologacion) => `${homologacion.fecha} · ${homologacion.hora}`,
+      valor: (homologacion) => (homologacion.fecha ? `${homologacion.fecha} · ${homologacion.hora}` : '—'),
       sinSalto: true,
       movil: 'pie',
       etiquetaMovil: 'Homologado',
@@ -157,7 +156,7 @@ export class HomologacionCatalogoPage {
     }
 
     const anterior = this.homologaciones().find((homologacion) => homologacion.id === id);
-    const { fecha, hora } = anterior ?? ahora();
+    const { fecha, hora } = anterior ?? { fecha: '', hora: '' };
     const payload = {
       sistemaId: this.sistemaId(),
       fecha,
