@@ -18,32 +18,33 @@ import {
   Toast,
 } from '../../../../shared/ui';
 import { sinRepetidos } from '../../../../shared/utils/listas';
+import { cambiaFormatoFecha } from '../../../../shared/utils/fechas';
 import { oracion } from '../../../../shared/utils/texto';
 import { CatalogoSinService } from '../../data/catalogo-sin.service';
 import { SistemasService } from '../../data/sistemas.service';
-import { ConfigHomologacion, HomologacionCatalogo } from './homologacion-catalogo.model';
+import { ConfigHomologacion, HomologacionCatalogoResponse } from './homologacion-catalogo.model';
 import { HomologacionCatalogoService } from './homologacion-catalogo.service';
 
-type Homologacion = HomologacionCatalogo;
+type Homologacion = HomologacionCatalogoResponse;
 
 function columnas(concepto: string): GmColumna<Homologacion>[] {
   return [
     {
-      id: 'fecha',
+      id: 'fechaAlta',
       titulo: 'Fecha',
-      valor: (homologacion) => (homologacion.fecha ? `${homologacion.fecha} · ${homologacion.hora}` : '—'),
+      valor: (homologacion) => cambiaFormatoFecha(homologacion.fechaAlta),
       sinSalto: true,
       movil: 'pie',
       etiquetaMovil: 'Homologado',
     },
-    { id: 'codigoEntel', titulo: 'Código', grupo: 'ENTEL', ancho: '140px', etiquetaMovil: 'Código ENTEL' },
+    { id: 'codigo', titulo: 'Código', grupo: 'ENTEL', ancho: '140px', etiquetaMovil: 'Código ENTEL' },
     {
-      id: 'descripcionEntel',
+      id: 'descripcion',
       titulo: concepto,
       grupo: 'ENTEL',
       destacar: true,
       movil: 'titulo',
-      valorMovil: (homologacion) => oracion(homologacion.descripcionEntel),
+      valorMovil: (homologacion) => oracion(homologacion.descripcion),
     },
     { id: 'codigoSin', titulo: 'Código', grupo: 'SIN', ancho: '140px', etiquetaMovil: 'Código SIN' },
     {
@@ -78,7 +79,7 @@ function columnas(concepto: string): GmColumna<Homologacion>[] {
 })
 export class HomologacionCatalogoPage {
   private readonly sistemas = inject(SistemasService);
-  private readonly datos = inject(HomologacionCatalogoService);
+  private readonly api = inject(HomologacionCatalogoService);
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
 
@@ -86,19 +87,25 @@ export class HomologacionCatalogoPage {
   readonly sistemaId = input.required<string>();
 
   readonly columnas = columnas(this.config.concepto);
-  private readonly homologaciones = this.datos.lista(this.config);
-  private readonly catalogo = inject(CatalogoSinService).clasificador(this.config.endpointCatalogo);
+  private readonly catalogo = inject(CatalogoSinService).clasificador(this.config.endpoint);
 
   readonly query = signal('');
 
-  // ── Formulario del modal ──
+  /** null = modal cerrado; '' = crear; id = editar. */
   readonly editando = signal<string | null>(null);
   readonly codigoEntel = signal('');
   readonly descripcionEntel = signal('');
   readonly codigoSin = signal('');
   readonly error = signal<string | null>(null);
+  readonly guardando = signal(false);
 
-  // ── Catálogo del SIN ──
+  readonly sistema = computed(
+    () => this.sistemas.sistemas().find((s) => String(s.idSistema) === this.sistemaId()) ?? null,
+  );
+
+  private readonly listado = this.api.listar(this.config, () => this.sistema()?.idSistema);
+  private readonly homologaciones = computed(() => (this.listado.hasValue() ? (this.listado.value()?.data ?? []) : []));
+
   private readonly listaCatalogo = computed(() =>
     sinRepetidos(this.catalogo.hasValue() ? (this.catalogo.value()?.data ?? []) : [], (c) => String(c.codigoClasificador)),
   );
@@ -112,8 +119,6 @@ export class HomologacionCatalogoPage {
     this.catalogo.error() ? 'No se pudo cargar el catálogo del SIN. Cierra el modal e intenta de nuevo.' : null,
   );
 
-  readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
-
   readonly rutanavegacion = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
     { etiqueta: `Homologación de ${this.config.conceptoPlural} de ${this.sistema()?.codigo ?? 'sistema'}` },
@@ -121,58 +126,60 @@ export class HomologacionCatalogoPage {
 
   readonly filtrados = computed(() => {
     const q = this.query().trim().toLowerCase();
-    return this.homologaciones()
-      .filter((homologacion) => homologacion.sistemaId === this.sistemaId())
-      .filter(
-        (homologacion) =>
-          !q ||
-          [homologacion.codigoEntel, homologacion.descripcionEntel, homologacion.codigoSin, homologacion.descripcionSin]
-            .join(' ')
-            .toLowerCase()
-            .includes(q),
-      );
+    if (!q) return this.homologaciones();
+    return this.homologaciones().filter((homologacion) =>
+      [homologacion.codigo, homologacion.descripcion, homologacion.codigoSin, homologacion.descripcionSin]
+        .join(' ')
+        .toLowerCase()
+        .includes(q),
+    );
   });
 
-  readonly vacio = computed(() => (this.query() ? 'No hay resultados para la búsqueda.' : this.config.vacio));
+  readonly vacio = computed(() => {
+    if (this.listado.isLoading()) return 'Cargando homologaciones...';
+    if (this.listado.error()) return 'No se pudieron cargar las homologaciones.';
+    if (this.listado.hasValue() && !this.listado.value()?.exito) {
+      return this.listado.value()?.mensaje || 'No se pudieron cargar las homologaciones.';
+    }
+    return this.query() ? 'No hay resultados para la búsqueda.' : this.config.vacio;
+  });
 
   abrir(homologacion?: Homologacion): void {
-    this.codigoEntel.set(homologacion?.codigoEntel ?? '');
-    this.descripcionEntel.set(homologacion?.descripcionEntel ?? '');
+    this.codigoEntel.set(homologacion?.codigo ?? '');
+    this.descripcionEntel.set(homologacion?.descripcion ?? '');
     this.codigoSin.set(homologacion?.codigoSin ?? '');
     this.error.set(null);
     if (this.catalogo.error()) this.catalogo.reload();
-    this.editando.set(homologacion?.id ?? '');
+    this.editando.set(homologacion ? String(homologacion.idHomologacion) : '');
   }
 
-  guardar(event: Event): void {
+  async guardar(event: Event): Promise<void> {
     event.preventDefault();
     const id = this.editando();
-    if (id === null) return;
+    const sistema = this.sistema();
+    if (id === null || !sistema || this.guardando()) return;
 
+    const codigo = this.codigoEntel().trim();
+    const descripcion = this.descripcionEntel().trim();
     const elegido = this.listaCatalogo().find((c) => String(c.codigoClasificador) === this.codigoSin());
-    if (!this.codigoEntel().trim() || !this.descripcionEntel().trim() || !elegido) {
+    if (!codigo || !descripcion || !elegido) {
       this.error.set('Completa todos los campos de la homologación.');
       return;
     }
 
-    const anterior = this.homologaciones().find((homologacion) => homologacion.id === id);
-    const { fecha, hora } = anterior ?? { fecha: '', hora: '' };
-    const payload = {
-      sistemaId: this.sistemaId(),
-      fecha,
-      hora,
-      codigoEntel: this.codigoEntel(),
-      descripcionEntel: this.descripcionEntel(),
-      codigoSin: String(elegido.codigoClasificador),
-      descripcionSin: elegido.descripcion,
-    };
+    const datos = { idSistema: sistema.idSistema, codigo, descripcion, codigoSin: elegido.codigoClasificador };
+
+    this.error.set(null);
+    this.guardando.set(true);
     const error = id
-      ? this.datos.actualizar(this.config, id, payload)
-      : this.datos.crear(this.config, payload);
+      ? await this.api.actualizar(this.config, { ...datos, idHomologacion: Number(id) })
+      : await this.api.crear(this.config, datos);
+    this.guardando.set(false);
     if (error) {
       this.error.set(error);
       return;
     }
+    this.listado.reload();
     this.toast.mostrar(id ? 'Homologación actualizada.' : 'Homologación creada.');
     this.editando.set(null);
   }
@@ -180,12 +187,13 @@ export class HomologacionCatalogoPage {
   async eliminar(homologacion: Homologacion): Promise<void> {
     const si = await this.confirmar.preguntar({
       titulo: 'Eliminar homologación',
-      mensaje: `¿Está seguro de que desea eliminar ${homologacion.descripcionEntel}?`,
+      mensaje: `¿Está seguro de que desea eliminar ${homologacion.descripcion}?`,
       aceptar: 'Eliminar',
       peligro: true,
     });
     if (!si) return;
-    this.datos.eliminar(this.config, homologacion.id);
-    this.toast.mostrar('Homologación eliminada.');
+    const error = await this.api.eliminar(this.config, homologacion.idHomologacion);
+    if (!error) this.listado.reload();
+    this.toast.mostrar(error ?? 'Homologación eliminada.');
   }
 }

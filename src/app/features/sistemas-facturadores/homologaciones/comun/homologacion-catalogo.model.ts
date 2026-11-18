@@ -1,19 +1,26 @@
-
-export interface HomologacionCatalogo {
-  id: string;
-  sistemaId: string;
-  fecha: string;
-  hora: string;
-  codigoEntel: string;
-  descripcionEntel: string;
+export interface HomologacionCatalogoResponse {
+  idHomologacion: number;
+  idSistema: number;
+  codigo: string;
+  descripcion: string;
   codigoSin: string;
   descripcionSin: string;
+  fechaAlta: string;
+  fechaModificacion?: string;
 }
 
-export type HomologacionCatalogoRequest = Omit<HomologacionCatalogo, 'id'>;
+export interface HomologacionCatalogoRequest {
+  idSistema: number;
+  codigo: string;
+  descripcion: string;
+  codigoSin: number;
+}
+
+export interface ActualizarHomologacionCatalogoRequest extends HomologacionCatalogoRequest {
+  idHomologacion: number;
+}
 
 export interface ConfigHomologacion {
-  tipo: string;
   titulo: string;
   tituloMovil: string;
   concepto: string;
@@ -21,6 +28,5 @@ export interface ConfigHomologacion {
   vacio: string;
   placeholderEntel: string;
   placeholderSin: string;
-  endpointCatalogo: string;
-  ejemplo: HomologacionCatalogo[];
+  endpoint: string;
 }
