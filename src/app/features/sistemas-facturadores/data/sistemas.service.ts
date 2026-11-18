@@ -57,6 +57,13 @@ export class SistemasService {
     }
   }
 
+  crear(datos: SistemaRequest): Promise<string | null> {
+    return this.enviar(
+      this.http.post<GammaRespuesta>(`${API_GAMMA_URL}/sistemas/adicionar`, datos),
+      'No se pudo crear el sistema.',
+    );
+  }
+
   actualizar(idSistema: number, datos: SistemaRequest): Promise<string | null> {
     return this.enviar(
       this.http.put<GammaRespuesta>(`${API_GAMMA_URL}/sistemas/actualizar`, datos, { params: { id: idSistema } }),

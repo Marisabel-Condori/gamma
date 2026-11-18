@@ -2,7 +2,7 @@ export interface SistemaFacturadorResponse {
   idSistema: number;
   sistema: string;
   descripcion: string;
-  fechaAlta: string;
+  fechaAlta?: string;
   usuarioAlta: string;
   fechaModificacion?: string;
   usuarioModificacion?: string;

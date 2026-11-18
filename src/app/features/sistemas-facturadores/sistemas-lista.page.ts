@@ -107,10 +107,6 @@ export class SistemasListaPage {
     event.preventDefault();
     const id = this.editando();
     if (id === null || this.guardando()) return;
-    if (!id) {
-      this.error.set('Todavía no está disponible: falta el endpoint para crear sistemas.');
-      return;
-    }
 
     const sistema = this.form().codigo.trim();
     const descripcion = this.form().descripcion.trim();
@@ -121,17 +117,14 @@ export class SistemasListaPage {
 
     this.error.set(null);
     this.guardando.set(true);
-    const error = await this.sistemas.actualizar(Number(id), {
-      sistema,
-      descripcion,
-      usuarioAlta: USUARIO,
-    });
+    const datos = { sistema, descripcion, usuarioAlta: USUARIO };
+    const error = id ? await this.sistemas.actualizar(Number(id), datos) : await this.sistemas.crear(datos);
     this.guardando.set(false);
     if (error) {
       this.error.set(error);
       return;
     }
-    this.toast.mostrar('Sistema actualizado.');
+    this.toast.mostrar(id ? 'Sistema actualizado.' : 'Sistema creado.');
     this.editando.set(null);
   }
 
