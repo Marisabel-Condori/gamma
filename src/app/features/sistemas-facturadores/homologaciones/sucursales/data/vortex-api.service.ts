@@ -4,9 +4,14 @@ import { environment } from '../../../../../../environments/environment';
 
 /** Campos que acepta el servicio REST para crear o modificar una sucursal. */
 export interface SucursalApiRequest {
+  codigoSucursalSin?: number;
+  descripcion?: string;
   direccion: string;
   municipio: string;
   departamento: string;
+  localidad?: string;
+  oficina?: string;
+  orgId?: string | number;
   observacion?: string;
 }
 
@@ -17,6 +22,10 @@ export interface SucursalApiResponse {
   fechaAlta: string;
   municipio: string;
   observacion: string;
+  descripcion?: string;
+  localidad?: string;
+  oficina?: string;
+  orgId?: number | string;
 }
 
 export interface PuntoVentaSucursalApiResponse {
@@ -24,6 +33,33 @@ export interface PuntoVentaSucursalApiResponse {
   nombrePuntoVenta: string;
   tipoPuntoVenta: string;
   codigoSucursal: string;
+  codigoCuis?: string;
+  codigoCufd?: string;
+  cufd?: string;
+  fechaConsulta?: string;
+  fechaVigenciaCuis?: string;
+  fechaVigenciaCufd?: string;
+  fechaCufd?: string;
+  sincroniza?: boolean;
+}
+
+export interface PuntoVentaApiResponse {
+  codigoCuis: string;
+  codigoPuntoVenta: number;
+  codigoSucursal: string;
+  fechaConsulta?: string;
+  fechaVigenciaCuis: string;
+  nombrePuntoVenta: string;
+  tipoPuntoVenta: string;
+}
+
+export interface CuisCufdVigenteApiResponse {
+  codigoCufd: string;
+  codigoCuis: string;
+  codigoPuntoVenta: number;
+  codigoSucursal: number | string;
+  fechaVigenciaCufd: string;
+  fechaVigenciaCuis: string;
 }
 
 export interface HomologacionSucursalRequest {
@@ -87,6 +123,10 @@ export class VortexApiService {
     return this.http.get<T>(`${this.baseUrl}/sucursales/${codigoSucursal}/puntos-venta`);
   }
 
+  listarPuntosVenta<T = PuntoVentaApiResponse[]>() {
+    return this.http.get<T>(`${this.baseUrl}/sucursales/puntos-venta`);
+  }
+
   crearHomologacionSucursal<T = unknown>(datos: HomologacionSucursalRequest) {
     return this.http.post<T>(`${this.baseUrl}/hom-sucursales`, datos);
   }
@@ -135,7 +175,7 @@ export class VortexApiService {
     return this.http.post<T>(`${this.baseUrl}/facturacion-codigos/cufd`, datos);
   }
 
-  listarCuisCufdVigentes<T = unknown>() {
+  listarCuisCufdVigentes<T = CuisCufdVigenteApiResponse[]>() {
     return this.http.get<T>(`${this.baseUrl}/facturacion-codigos/cuis-cufd`);
   }
 }
