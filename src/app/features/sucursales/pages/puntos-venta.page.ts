@@ -60,19 +60,10 @@ import { PuntosVentaState } from '../state/puntos-venta.state';
       } @else {
         <app-page-header title="Puntos de venta" subtitle="No se encontró la sucursal seleccionada." [backLink]="backLink()" backLabel="Volver a sucursales" />
       }
-      @if (reprocessTarget(); as target) {
+      @if (reprocessTarget()) {
         <app-modal class="points-reprocess-modal" [title]="'Reproceso ' + reprocessKind()" (closed)="closeReprocess()">
           <div class="system-chip reprocess-system"><strong>Sistemas SIN</strong></div>
-          <app-search-field class="reprocess-search" placeholder="Buscar sistema SIN, código, CUIS o CUFD..." [value]="reprocessQuery()" (valueChange)="onReprocessQuery($event)" />
-          @if (showReprocessRow()) {
-          <div class="table-wrap reprocess-table-wrap"><table class="homo-table reprocess-table">
-            <thead><tr><th>Sistema SIN</th><th>Código sistema SIN</th><th>CUIS</th>@if (reprocessKind() === 'CUIS') { <th>Reproceso</th> } @else { <th>CUFD</th> }</tr></thead>
-            <tbody><tr><td>GWSFE</td><td>6D32BF2BE623402486D98B7</td><td>{{ target.cuis }}</td>@if (reprocessKind() === 'CUIS') { <td><app-icon-button icon="sync" label="Reprocesar CUIS" (pressed)="reprocess()" /></td> } @else { <td><span class="reprocess-value">{{ target.cufd }}</span></td> }</tr></tbody>
-          </table></div>
-          <div class="pager reprocess-pager"><span>Mostrando 1–1 de 1 registros</span><div class="pager-pages"><button type="button" class="pager-btn current">1</button></div><label class="pager-size">Por página:<select><option>5</option></select></label></div>
-          } @else {
-            <app-empty-state message="No hay resultados para la búsqueda." />
-          }
+          <app-empty-state message="No hay sistemas SIN disponibles." />
         </app-modal>
       }
     </section>
@@ -93,12 +84,6 @@ export class PuntosVentaPage {
   readonly query = signal('');
   readonly reprocessTarget = signal<PuntoVenta | null>(null);
   readonly reprocessKind = signal<'CUIS' | 'CUFD'>('CUFD');
-  readonly reprocessQuery = signal('');
-  readonly showReprocessRow = computed(() => {
-    const target = this.reprocessTarget();
-    const query = this.reprocessQuery().trim().toLowerCase();
-    return !!target && (!query || `gwsfe 6d32bf2be623402486d98b7 ${target.cuis} ${target.cufd}`.toLowerCase().includes(query));
-  });
   readonly page = signal(1);
   readonly pageSize = signal(10);
   readonly sistema = computed(() => this.gamma.sistemas().find(item => item.id === this.sistemaId()) ?? null);
@@ -134,7 +119,6 @@ export class PuntosVentaPage {
   sync(): void { this.toast.show('Puntos de venta sincronizados.'); }
   notify(action: string): void { this.toast.show(`${action} seleccionada.`); }
   openReprocess(row: PuntoVenta, kind: 'CUIS' | 'CUFD'): void { this.reprocessKind.set(kind); this.reprocessQuery.set(''); this.reprocessTarget.set(row); }
-  onReprocessQuery(value: string): void { this.reprocessQuery.set(value); }
-  closeReprocess(): void { this.reprocessTarget.set(null); this.reprocessQuery.set(''); }
+  closeReprocess(): void { this.reprocessTarget.set(null); }
   reprocess(): void { this.toast.show(`Solicitud de reproceso ${this.reprocessKind()} enviada.`); this.closeReprocess(); }
 }

@@ -11,7 +11,7 @@
   <gm-estado-vacio [mensaje]="vacio()" />
 } @else if (!esMovil()) {
   <!-- ── Escritorio ── -->
-  <div class="marco" [class]="cabecera()">
+  <div class="marco" [class]="cabecera()" [class.compacta]="compacta()">
     <table [style.min-width]="anchoMinimo()">
       <colgroup>
         @for (columna of columnas(); track columna.id) {
@@ -26,6 +26,7 @@
               [attr.rowspan]="cabeceras().hayGrupos && !bloque.esGrupo ? 2 : null"
               [class]="bloque.esGrupo ? 'centro' : bloque.columna?.alinear"
               [class.ultimo]="ultimo"
+              [class.fija-derecha]="bloque.columna?.fijaDerecha"
             >
               {{ bloque.titulo }}
             </th>
@@ -34,7 +35,7 @@
         @if (cabeceras().hayGrupos) {
           <tr>
             @for (columna of cabeceras().abajo; track columna.id) {
-              <th [class]="columna.alinear">{{ columna.titulo }}</th>
+              <th [class]="columna.alinear" [class.fija-derecha]="columna.fijaDerecha">{{ columna.titulo }}</th>
             }
           </tr>
         }
@@ -50,6 +51,7 @@
                 [class.destacar]="columna.destacar"
                 [class.sin-salto]="columna.sinSalto"
                 [class.corte]="cortes().has(columna.id)"
+                [class.fija-derecha]="columna.fijaDerecha"
               >
                 <ng-container *ngTemplateOutlet="celda; context: { $implicit: columna, fila }" />
               </td>

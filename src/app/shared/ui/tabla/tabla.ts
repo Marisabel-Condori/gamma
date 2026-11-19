@@ -42,6 +42,8 @@ export class GmTabla<T extends object> {
   readonly cabecera = input<'oscura' | 'clara'>('oscura');
   /** Ancho a partir del cual aparece el scroll horizontal en escritorio. */
   readonly anchoMinimo = input('0');
+  /** Reduce relleno y tipografía para tablas con muchas columnas. */
+  readonly compacta = input(false);
   /** 0 = sin paginación. */
   readonly porPagina = input(0);
   readonly vacio = input('No hay resultados.');

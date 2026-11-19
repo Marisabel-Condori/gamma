@@ -6,16 +6,51 @@
 
 // ── Escritorio ──────────────────────────────
 .marco {
+  position: relative;
   overflow-x: auto;
   background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: var(--radio-xl);
 }
 
+th.fija-derecha,
+td.fija-derecha {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  box-shadow: -8px 0 10px -10px rgb(20 35 55 / 55%);
+}
+
+.oscura th.fija-derecha {
+  background: var(--tabla-oscura);
+}
+
+.clara th.fija-derecha {
+  background: var(--tabla-clara);
+}
+
+tbody td.fija-derecha {
+  background: var(--superficie);
+}
+
+tbody tr:hover td.fija-derecha {
+  background: var(--marca-tenue);
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--texto-sm);
+}
+
+.marco.compacta th,
+.marco.compacta td {
+  padding-inline: 7px;
+  font-size: var(--texto-xs);
+}
+
+.marco.compacta th {
+  padding-block: 7px;
 }
 
 th,

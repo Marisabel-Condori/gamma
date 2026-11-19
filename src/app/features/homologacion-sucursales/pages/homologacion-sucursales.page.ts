@@ -5,28 +5,6 @@ import { GammaState } from '../../../core/state/gamma-state';
 import { PageHeaderComponent, Crumb } from '../../../shared/ui/page-header.component';
 import { SearchFieldComponent } from '../../../shared/ui/search-field.component';
 
-interface PuntoVenta {
-  codigo: string;
-  descripcion: string;
-  cuis: string;
-  vigenciaCuis: string;
-  cufd: string;
-  vigenciaCufd: string;
-  tipo: string;
-  sincroniza: string;
-}
-
-const PUNTOS_VENTA: PuntoVenta[] = [
-  { codigo: '9', descripcion: 'BANCO ECOFUTURO', cuis: '97D9DD6B', vigenciaCuis: '01/06/2027 10:00:16', cufd: 'CUFD-2026-11-09', vigenciaCufd: '13/11/2026 09:06:11', tipo: 'PUNTO VENTA VENTANILLA DE COBRANZA', sincroniza: 'No' },
-  { codigo: '8', descripcion: 'BANCO SOL', cuis: '793D66E3', vigenciaCuis: '01/06/2027 10:00:15', cufd: 'CUFD-2026-11-08', vigenciaCufd: '13/11/2026 09:06:10', tipo: 'PUNTO VENTA VENTANILLA DE COBRANZA', sincroniza: 'No' },
-  { codigo: '7', descripcion: 'BANCO GANADERO', cuis: '784FE0AF', vigenciaCuis: '01/06/2027 10:00:13', cufd: 'CUFD-2026-11-07', vigenciaCufd: '13/11/2026 09:06:09', tipo: 'PUNTO VENTA VENTANILLA DE COBRANZA', sincroniza: 'No' },
-  { codigo: '6', descripcion: 'BANCO DE CREDITO BCP', cuis: '64185D2B', vigenciaCuis: '01/06/2027 10:00:11', cufd: 'CUFD-2026-11-06', vigenciaCufd: '13/11/2026 09:06:08', tipo: 'PUNTO VENTA VENTANILLA DE COBRANZA', sincroniza: 'No' },
-  { codigo: '58', descripcion: 'TODOTIX S.R.L.', cuis: 'F12E592F', vigenciaCuis: '16/06/2027 14:29:01', cufd: 'CUFD-2026-11-58', vigenciaCufd: '13/11/2026 09:06:49', tipo: 'PUNTO VENTA VENTANILLA DE COBRANZA', sincroniza: 'No' },
-  { codigo: '57', descripcion: 'CRECER I.F.D.', cuis: '656372E0', vigenciaCuis: '22/12/2026 15:26:33', cufd: 'CUFD-2026-11-57', vigenciaCufd: '13/11/2026 09:06:48', tipo: 'PUNTO VENTA VENTANILLA DE COBRANZA', sincroniza: 'No' },
-  { codigo: '56', descripcion: 'VPAY', cuis: 'BE287D39', vigenciaCuis: '22/12/2026 15:07:35', cufd: 'CUFD-2026-11-56', vigenciaCufd: '13/11/2026 09:06:47', tipo: 'PUNTO VENTA VENTANILLA DE COBRANZA', sincroniza: 'No' },
-  { codigo: '55', descripcion: 'KITEXPERIENCE PAQUETES VARIOS', cuis: 'AFCDCC3F', vigenciaCuis: '26/03/2027 10:00:07', cufd: 'CUFD-2026-11-55', vigenciaCufd: '13/11/2026 09:06:46', tipo: 'PUNTO VENTA VENTANILLA DE COBRANZA', sincroniza: 'No' },
-];
-
 @Component({
   selector: 'app-homologacion-sucursales-page',
   imports: [RouterLink, PageHeaderComponent, SearchFieldComponent],
@@ -89,10 +67,7 @@ export class HomologacionSucursalesPage {
     const sistemaId = this.params().get('sistemaId');
     return this.state.sistemas().find((item) => item.id === sistemaId) ?? null;
   });
-  readonly puntosVenta = computed(() => {
-    const query = normalize(this.query());
-    return PUNTOS_VENTA.filter((point) => !query || Object.values(point).some((value) => normalize(value).includes(query)));
-  });
+  readonly puntosVenta = computed(() => []);
   readonly crumbs = computed<Crumb[]>(() => [
     { label: 'Sistemas Facturadores', link: '/sistemasFacturadores' },
     {
@@ -108,6 +83,4 @@ export class HomologacionSucursalesPage {
   }
 }
 
-function normalize(value: string): string {
-  return value.trim().toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }

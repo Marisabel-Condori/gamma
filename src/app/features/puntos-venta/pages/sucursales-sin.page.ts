@@ -14,11 +14,12 @@ import {
   GmModal,
   GmTabla,
   Toast,
-} from '../../../../../shared/ui';
-import { SistemasService } from '../../../data/sistemas.service';
+} from '../../../shared/ui';
+import { SistemasService } from '../../sistemas-facturadores/data/sistemas.service';
 import { HomologacionSucursal } from '../data/sucursales.model';
-import { SucursalesService } from '../data/sucursales.service';
-import { SucursalApiResponse, VortexApiService } from '../data/vortex-api.service';
+import { SucursalesState } from '../data/sucursales.state';
+import { SucursalesApiService } from '../data/sucursales-api.service';
+import { SucursalApiResponse } from '../data/puntos-venta.model';
 
 interface SucursalSin extends HomologacionSucursal {
   fechaAlta: string;
@@ -45,8 +46,8 @@ const COLUMNAS: GmColumna<SucursalSin>[] = [
 })
 export class SucursalesSinPage implements OnInit {
   private readonly sistemas = inject(SistemasService);
-  private readonly vortex = inject(VortexApiService);
-  private readonly datos = inject(SucursalesService);
+  private readonly sucursalesApi = inject(SucursalesApiService);
+  private readonly datos = inject(SucursalesState);
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
 
@@ -61,7 +62,7 @@ export class SucursalesSinPage implements OnInit {
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
   readonly migas = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
-    { etiqueta: `Puntos de venta de ${this.sistema()?.codigo ?? 'sistema'}` },
+    { etiqueta: `Sucursales SIN de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);
   readonly filtradas = computed(() => {
     const q = this.query().trim().toLowerCase();
@@ -102,7 +103,7 @@ export class SucursalesSinPage implements OnInit {
       const actual = this.sucursales().find((s) => s.id === id);
       if (!actual) return;
       this.error.set(null);
-      this.vortex.actualizarSucursal(Number(actual.codigo), {
+      this.sucursalesApi.actualizar(Number(actual.codigo), {
         direccion: form.descripcion.trim(),
         municipio: form.municipio.trim(),
         departamento: form.departamento.trim(),
@@ -145,7 +146,7 @@ export class SucursalesSinPage implements OnInit {
       peligro: true,
     });
     if (!si) return;
-    this.vortex.eliminarSucursal(Number(sucursal.codigo)).subscribe({
+    this.sucursalesApi.eliminar(Number(sucursal.codigo)).subscribe({
       next: () => {
         this.datos.eliminar(sucursal.id);
         this.sucursales.update((lista) => lista.filter((item) => item.id !== sucursal.id));
@@ -156,7 +157,7 @@ export class SucursalesSinPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.vortex.listarSucursales<SucursalApiResponse[]>().pipe(
+    this.sucursalesApi.listar<SucursalApiResponse[]>().pipe(
       catchError((error: HttpErrorResponse) => {
         this.error.set(mensajeErrorApi(error, 'No se pudieron cargar las sucursales SIN.'));
         return of([] as SucursalApiResponse[]);

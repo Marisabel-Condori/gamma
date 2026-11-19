@@ -20,23 +20,13 @@ import {
 } from '../../../../shared/ui';
 import { SistemasService } from '../../data/sistemas.service';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { HomologacionMulticentro } from './data/sucursales.model';
-import { HomologacionSucursalApiResponse, HomologacionSucursalRequest, HomologacionSucursalUpdateRequest, PuntoVentaSucursalApiResponse, SucursalApiResponse, VortexApiService } from './data/vortex-api.service';
+import { HomologacionMulticentro, HomologacionSucursalApiResponse, HomologacionSucursalRequest, HomologacionSucursalUpdateRequest } from './data/multicentros.model';
+import { PuntoVentaSucursalApiResponse, SucursalApiResponse } from '../../../puntos-venta/data/puntos-venta.model';
+import { PuntosVentaService } from '../../../puntos-venta/data/puntos-venta.service';
+import { SucursalesApiService } from '../../../puntos-venta/data/sucursales-api.service';
+import { MulticentrosService } from './data/multicentros.service';
 
 type Multicentro = HomologacionMulticentro;
-
-// IDs numéricos solicitados por el endpoint de homologación del backend.
-const IDS_SISTEMA_VORTEX: Record<string, number> = {
-  ZSMART: 1,
-  TTVENTAS: 2,
-  SICO: 3,
-  SIADIN: 4,
-  SEES: 5,
-  RECINT: 6,
-  MASIVO: 7,
-  GARAN: 8,
-  BANCA: 9,
-};
 
 const COLUMNAS: GmColumna<Multicentro>[] = [
   { id: 'fecha', titulo: 'Fecha Homologación', ancho: '190px', sinSalto: true, movil: 'pie', valor: (m) => formatearFecha(m.fecha) },
@@ -50,23 +40,25 @@ const COLUMNAS: GmColumna<Multicentro>[] = [
 ];
 
 @Component({
-  selector: 'gm-sucursales-homologadas-page',
+  selector: 'gm-multicentros-page',
   imports: [RouterLink, GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmModal, GmSeccion, GmLista],
-  templateUrl: './sucursales-homologadas.page.html',
+  templateUrl: './multicentros.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },
 })
-export class SucursalesHomologadasPage implements OnInit {
+export class MulticentrosPage implements OnInit {
   private readonly sistemas = inject(SistemasService);
   private readonly auth = inject(AuthService);
-  private readonly vortex = inject(VortexApiService);
+  private readonly multicentrosApi = inject(MulticentrosService);
+  private readonly puntosApi = inject(PuntosVentaService);
+  private readonly sucursalesApi = inject(SucursalesApiService);
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
 
   readonly sistemaId = input.required<string>();
   readonly columnas = COLUMNAS;
   readonly query = signal('');
-  readonly homologaciones = signal<Multicentro[]>(restaurarHomologaciones());
+  readonly homologaciones = signal<Multicentro[]>([]);
   readonly editando = signal<string | null>(null);
   readonly formulario = signal({ codigoEntel: '', multicentroEntel: '', codigoSucursalSin: '', descripcionSin: '', codigoPuntoVentaSin: '', puntoVentaSin: '' });
   readonly fechaHomologacion = signal('');
@@ -98,7 +90,7 @@ export class SucursalesHomologadasPage implements OnInit {
 
   readonly rutanavegacion = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
-    { etiqueta: `Multicentros de ${this.sistema()?.codigo ?? 'sistema'}` },
+    { etiqueta: `Multicentro de ${this.sistema()?.codigo ?? 'sistema'}` },
   ]);
 
   readonly filtradas = computed(() => {
@@ -117,20 +109,22 @@ export class SucursalesHomologadasPage implements OnInit {
   }
 
   private cargarHomologaciones(): void {
-    this.vortex.listarHomologacionesSucursal().pipe(
+    const sistema = this.sistema();
+    if (!sistema) {
+      this.toast.mostrar('No se encontró el sistema facturador seleccionado.');
+      return;
+    }
+    this.multicentrosApi.listar(sistema.idSistema).pipe(
       catchError((error: HttpErrorResponse) => {
         this.toast.mostrar(mensajeError(error, 'No se pudieron cargar las homologaciones.'));
         return of(null);
       }),
     ).subscribe((respuestas) => {
       if (!respuestas) return;
-      const filas = respuestas.flatMap((respuesta) => {
-        const sistemaId = Object.entries(IDS_SISTEMA_VORTEX)
-          .find(([, id]) => id === respuesta.idSistema)?.[0];
-        return sistemaId ? [convertirHomologacion(respuesta, sistemaId)] : [];
-      });
+      const filas = respuestas
+        .filter((respuesta) => respuesta.idSistema === sistema.idSistema)
+        .map((respuesta) => convertirHomologacion(respuesta, sistema.id));
       this.homologaciones.set(filas);
-      guardarHomologaciones(filas);
     });
   }
 
@@ -157,7 +151,7 @@ export class SucursalesHomologadasPage implements OnInit {
     });
 
     this.cargandoSucursales.set(true);
-    this.vortex.listarSucursales<SucursalApiResponse[]>().pipe(
+    this.sucursalesApi.listar<SucursalApiResponse[]>().pipe(
       catchError((error: HttpErrorResponse) => {
         this.error.set(mensajeError(error, 'No se pudo cargar el listado de sucursales SIN.'));
         return of([] as SucursalApiResponse[]);
@@ -214,7 +208,7 @@ export class SucursalesHomologadasPage implements OnInit {
   private cargarPuntosVenta(codigoSucursal: number, codigoSeleccionado = ''): void {
     this.cargandoPuntosVenta.set(true);
     this.error.set('');
-    this.vortex.listarPuntosVentaSucursal<PuntoVentaSucursalApiResponse[]>(codigoSucursal).pipe(
+    this.puntosApi.listarPorSucursal<PuntoVentaSucursalApiResponse[]>(codigoSucursal).pipe(
       catchError((error: HttpErrorResponse) => {
         this.error.set(mensajeError(error, 'No se pudo cargar el listado de puntos de venta.'));
         return of([] as PuntoVentaSucursalApiResponse[]);
@@ -260,9 +254,9 @@ export class SucursalesHomologadasPage implements OnInit {
     }
 
     const sistema = this.sistema();
-    const idSistema = sistema ? IDS_SISTEMA_VORTEX[sistema.codigo] : undefined;
+    const idSistema = sistema?.idSistema;
     if (idSistema === undefined) {
-      this.error.set(`Falta configurar el ID numérico del sistema ${sistema?.codigo ?? ''} requerido por el backend.`);
+      this.error.set(`No se encontró el ID del sistema ${sistema?.codigo ?? ''} requerido por el backend.`);
       return;
     }
 
@@ -295,8 +289,8 @@ export class SucursalesHomologadasPage implements OnInit {
     this.guardando.set(true);
     this.error.set('');
     const solicitud = existente
-      ? this.vortex.actualizarHomologacionSucursal(existente.idHomSucursal!, datosActualizacion)
-      : this.vortex.crearHomologacionSucursal(datosCreacion);
+      ? this.multicentrosApi.actualizar(existente.idHomSucursal!, datosActualizacion)
+      : this.multicentrosApi.crear(datosCreacion);
     solicitud.pipe(
       catchError((error: HttpErrorResponse) => {
         this.error.set(mensajeError(error, 'No se pudo guardar la homologación.'));
@@ -321,29 +315,9 @@ export class SucursalesHomologadasPage implements OnInit {
     if (!confirmar) return;
     this.homologaciones.update((lista) => {
       const siguiente = lista.filter((item) => item.id !== multicentro.id);
-      guardarHomologaciones(siguiente);
       return siguiente;
     });
     this.toast.mostrar('Homologación eliminada.');
-  }
-}
-
-const CLAVE_HOMOLOGACIONES = 'gamma.multicentros.homologaciones.v1';
-
-function restaurarHomologaciones(): Multicentro[] {
-  try {
-    const datos = JSON.parse(sessionStorage.getItem(CLAVE_HOMOLOGACIONES) ?? '[]') as unknown;
-    return Array.isArray(datos) ? datos as Multicentro[] : [];
-  } catch {
-    return [];
-  }
-}
-
-function guardarHomologaciones(datos: Multicentro[]): void {
-  try {
-    sessionStorage.setItem(CLAVE_HOMOLOGACIONES, JSON.stringify(datos));
-  } catch {
-    // La lista permanece en memoria si el almacenamiento del navegador no está disponible.
   }
 }
 

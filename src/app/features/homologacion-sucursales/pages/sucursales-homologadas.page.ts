@@ -23,27 +23,13 @@ type BranchDialog = 'form' | 'delete' | null;
 type BranchForm = Omit<SucursalHomologada, 'id' | 'fecha'>;
 
 const EMPTY_FORM: BranchForm = {
-  codigo: '', descripcion: '', codigoSin: '', descripcionSin: '', puntoCodigo: '0', puntoDescripcion: 'punto de venta default',
+  codigo: '', descripcion: '', codigoSin: '', descripcionSin: '', puntoCodigo: '', puntoDescripcion: '',
 };
-
-const SUCURSALES: SucursalHomologada[] = [
-  { id: 'sh-1', fecha: '11/07/2025 20:29:15', codigo: '6571', descripcion: 'Multicentro Entel Center', codigoSin: '129', descripcionSin: 'ZONA: CASCO VIEJO, CALLE: MERCADO, NRO.: S/N, TELEFONO: 72059053', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-  { id: 'sh-2', fecha: '04/07/2025 21:21:31', codigo: '159', descripcion: 'Multicentro Cobija', codigoSin: '126', descripcionSin: 'ZONA: CENTRAL, AVENIDA: TCNL. ENRIQUE FERNANDEZ CORNEJO, NRO.: 129, TELEFONO: 72039064', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-  { id: 'sh-3', fecha: '23/04/2025 15:10:04', codigo: '6511', descripcion: 'Multicentro Magdalena', codigoSin: '128', descripcionSin: 'CALLE: NATANIEL GARCIA NRO SN ZONA 27 DE MAYO ESQUINA 6 DE AGOSTO', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-  { id: 'sh-4', fecha: '15/10/2024 10:10:10', codigo: '6512', descripcion: 'Multicentro Mi Tren', codigoSin: '127', descripcionSin: 'CALLE: TARATA NRO. S/N ZONA/BARRIO: SUR', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-  { id: 'sh-5', fecha: '31/05/2024 13:15:08', codigo: '6451', descripcion: 'Multicentro Bello Horizonte', codigoSin: '125', descripcionSin: 'Urbanización Los Tocos, Distrito 7, Manzano M2, Lote N°10, Av. J. C. Equina Av. Esteban Ribera', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-  { id: 'sh-6', fecha: '15/12/2023 15:08:12', codigo: '6071', descripcion: 'Multicentro Cielo Mall', codigoSin: '123', descripcionSin: 'CALLE JORGE CARRASCO NRO. 200 EDIF.: CIELO MALL PISO: PB. DEPTO.: 1 ZONA/BARRIO: 12 DE OCTUBRE', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-  { id: 'sh-7', fecha: '10/09/2023 20:00:20', codigo: '4436', descripcion: 'PRUEBAS ZSMART', codigoSin: '1', descripcionSin: 'ZONA: CENTRAL, CALLE: FEDERICO ZUAZO, TIPO DE ESTABLECIMIENTO: EDIFICIO TOWER, NRO.: 1771', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-  { id: 'sh-8', fecha: '28/04/2022 19:50:21', codigo: '5331', descripcion: 'AGENCIA VIRTUAL CONO SUR CBBA', codigoSin: '1', descripcionSin: 'ZONA: CENTRAL, CALLE: FEDERICO ZUAZO, TIPO DE ESTABLECIMIENTO: EDIFICIO TOWER, NRO.: 1771', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-  { id: 'sh-9', fecha: '28/04/2022 19:50:21', codigo: '5190', descripcion: 'OFICINA REGIONAL TDE BENI', codigoSin: '1', descripcionSin: 'ZONA: CENTRAL, CALLE: FEDERICO ZUAZO, TIPO DE ESTABLECIMIENTO: EDIFICIO TOWER, NRO.: 1771', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-  { id: 'sh-10', fecha: '28/04/2022 19:50:21', codigo: '5188', descripcion: 'OFICINA REGIONAL TDE PANDO', codigoSin: '1', descripcionSin: 'ZONA: CENTRAL, CALLE: FEDERICO ZUAZO, TIPO DE ESTABLECIMIENTO: EDIFICIO TOWER, NRO.: 1771', puntoCodigo: '0', puntoDescripcion: 'punto de venta default' },
-];
 
 @Component({
   selector: 'app-sucursales-homologadas-page',
   imports: [RouterLink, PageHeaderComponent, SearchFieldComponent, IconButtonComponent, ModalComponent],
   templateUrl: './sucursales-homologadas.page.html',
-  styleUrl: './sucursales-homologadas.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SucursalesHomologadasPage {
@@ -51,7 +37,7 @@ export class SucursalesHomologadasPage {
   private readonly route = inject(ActivatedRoute);
   private readonly params = toSignal(this.route.paramMap, { initialValue: this.route.snapshot.paramMap });
 
-  readonly rows = signal([...SUCURSALES]);
+  readonly rows = signal<SucursalHomologada[]>([]);
   readonly query = signal('');
   readonly page = signal(1);
   readonly pageSize = signal(10);

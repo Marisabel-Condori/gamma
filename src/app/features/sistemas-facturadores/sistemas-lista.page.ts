@@ -19,10 +19,11 @@ import {
 import { conteo } from '../../shared/utils/texto';
 import { SistemaResponse } from './data/sistemas.model';
 import { SistemasService } from './data/sistemas.service';
+import { AuthService } from '../../core/auth/auth.service';
 
 const OPCIONES_HOMOLOGAR: GmOpcion[] = [
   { id: 'productos', etiqueta: 'Productos' },
-  { id: 'sucursales', etiqueta: 'Multicentros' },
+  { id: 'sucursales', etiqueta: 'Multicentro' },
   { id: 'unidades-medida', etiqueta: 'Unidades de medida' },
   { id: 'monedas', etiqueta: 'Tipos de moneda' },
   { id: 'metodos-pago', etiqueta: 'Tipo de método de pago' },
@@ -36,9 +37,6 @@ const COLUMNAS: GmColumna<SistemaResponse>[] = [
   { id: 'homologar', titulo: 'Homologar', alinear: 'centro', ancho: '120px', movil: 'pie' },
   { id: 'acciones', titulo: 'Acciones', alinear: 'fin', ancho: '120px', movil: 'esquina' },
 ];
-
-// TODO: cambiar por usuario del login
-const USUARIO = 'ADMIN';
 
 const PANTALLAS_LISTAS = [
   'productos',
@@ -60,6 +58,7 @@ const PANTALLAS_LISTAS = [
 })
 export class SistemasListaPage {
   private readonly sistemas = inject(SistemasService);
+  private readonly auth = inject(AuthService);
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
   private readonly router = inject(Router);
@@ -118,7 +117,7 @@ export class SistemasListaPage {
 
     this.error.set(null);
     this.guardando.set(true);
-    const datos = { sistema, descripcion, usuarioAlta: USUARIO };
+    const datos = { sistema, descripcion, usuarioAlta: this.auth.perfil.usuario || this.auth.perfil.nombreApellido };
     const error = id ? await this.sistemas.actualizar(Number(id), datos) : await this.sistemas.crear(datos);
     this.guardando.set(false);
     if (error) {
@@ -137,7 +136,7 @@ export class SistemasListaPage {
       peligro: true,
     });
     if (!si) return;
-    const error = await this.sistemas.eliminar(sistema.idSistema, USUARIO);
+    const error = await this.sistemas.eliminar(sistema.idSistema, this.auth.perfil.usuario || this.auth.perfil.nombreApellido);
     this.toast.mostrar(error ?? `${sistema.codigo} eliminado.`);
   }
 
