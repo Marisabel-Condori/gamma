@@ -37,6 +37,9 @@ const COLUMNAS: GmColumna<SistemaResponse>[] = [
   { id: 'acciones', titulo: 'Acciones', alinear: 'fin', ancho: '120px', movil: 'esquina' },
 ];
 
+// TODO: cambiar por usuario del login
+const USUARIO = 'ADMIN';
+
 const PANTALLAS_LISTAS = [
   'productos',
   'sucursales',
@@ -69,6 +72,7 @@ export class SistemasListaPage {
   readonly editando = signal<string | null>(null);
   readonly form = signal({ codigo: '', descripcion: '' });
   readonly error = signal<string | null>(null);
+  readonly guardando = signal(false);
 
   readonly filtrados = computed(() => {
     const q = this.query().trim().toLowerCase();
@@ -77,25 +81,46 @@ export class SistemasListaPage {
       .filter((s) => !q || s.codigo.toLowerCase().includes(q) || s.descripcion.toLowerCase().includes(q));
   });
 
-  readonly conteo = computed(() => conteo(this.filtrados().length, 'sistema', 'sistemas'));
-  readonly vacio = computed(() =>
-    this.query().trim() ? 'No hay resultados para la búsqueda.' : 'Todavía no hay sistemas facturadores.',
+  readonly conteo = computed(() =>
+    this.sistemas.cargando() ? '' : conteo(this.filtrados().length, 'sistema', 'sistemas'),
   );
+  readonly vacio = computed(() => {
+    if (this.sistemas.cargando()) return 'Cargando sistemas facturadores...';
+    if (this.sistemas.error()) return this.sistemas.error()!;
+    return this.query().trim() ? 'No hay resultados para la búsqueda.' : 'Todavía no hay sistemas facturadores.';
+  });
+
+  constructor() {
+    void this.sistemas.recargar();
+  }
 
   abrir(sistema?: SistemaResponse): void {
     this.form.set({ codigo: sistema?.codigo ?? '', descripcion: sistema?.descripcion ?? '' });
     this.error.set(null);
-    this.editando.set(sistema?.id ?? '');
+    this.editando.set(sistema ? String(sistema.idSistema) : '');
   }
 
   campo(nombre: 'codigo' | 'descripcion', valor: string): void {
     this.form.update((f) => ({ ...f, [nombre]: valor }));
   }
 
-  guardar(event: Event): void {
+  async guardar(event: Event): Promise<void> {
     event.preventDefault();
     const id = this.editando();
-    const error = id ? this.sistemas.updateSistema(id, this.form()) : this.sistemas.createSistema(this.form());
+    if (id === null || this.guardando()) return;
+
+    const sistema = this.form().codigo.trim();
+    const descripcion = this.form().descripcion.trim();
+    if (!sistema || !descripcion) {
+      this.error.set('Completa código y descripción.');
+      return;
+    }
+
+    this.error.set(null);
+    this.guardando.set(true);
+    const datos = { sistema, descripcion, usuarioAlta: USUARIO };
+    const error = id ? await this.sistemas.actualizar(Number(id), datos) : await this.sistemas.crear(datos);
+    this.guardando.set(false);
     if (error) {
       this.error.set(error);
       return;
@@ -112,13 +137,13 @@ export class SistemasListaPage {
       peligro: true,
     });
     if (!si) return;
-    this.sistemas.deleteSistema(sistema.id);
-    this.toast.mostrar(`${sistema.codigo} eliminado.`);
+    const error = await this.sistemas.eliminar(sistema.idSistema, USUARIO);
+    this.toast.mostrar(error ?? `${sistema.codigo} eliminado.`);
   }
 
   homologar(sistema: SistemaResponse, opcion: string): void {
     if (PANTALLAS_LISTAS.includes(opcion)) {
-      void this.router.navigate(['/sistemas-facturadores', sistema.id, opcion]);
+      void this.router.navigate(['/sistemas-facturadores', sistema.idSistema, opcion]);
       return;
     }
     this.toast.mostrar('Esta opción todavía no está disponible.');

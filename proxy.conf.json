@@ -11,5 +11,13 @@
     "headers": {
       "X-Tunnel-Skip-AntiPhishing-Page": "true"
     }
+  },
+  "/Gamma": {
+    "target": "https://nonfunctioning-nongracefully-nixon.ngrok-free.dev",
+    "secure": true,
+    "changeOrigin": true,
+    "headers": {
+      "ngrok-skip-browser-warning": "true"
+    }
   }
 }

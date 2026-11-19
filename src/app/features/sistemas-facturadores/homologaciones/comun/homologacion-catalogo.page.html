@@ -14,6 +14,7 @@
   <gm-tabla
     [datos]="filtrados()"
     [columnas]="columnas"
+    clave="idHomologacion"
     cabecera="clara"
     anchoMinimo="960px"
     [porPagina]="10"
@@ -61,7 +62,7 @@
       }
       <div class="gm-acciones">
         <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="editando.set(null)"></button>
-        <button gmBoton="primario" type="submit" etiqueta="Guardar"></button>
+        <button gmBoton="primario" type="submit" [etiqueta]="guardando() ? 'Guardando...' : 'Guardar'" [disabled]="guardando()"></button>
       </div>
     </form>
   </gm-modal>
