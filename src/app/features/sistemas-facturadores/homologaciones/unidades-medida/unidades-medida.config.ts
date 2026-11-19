@@ -9,4 +9,5 @@ export const UNIDADES_MEDIDA: ConfigHomologacion = {
   placeholderEntel: 'Ingresa la unidad de medida',
   placeholderSin: 'Selecciona una unidad de medida',
   endpoint: 'unidadDeMedida',
+  campoId: 'idUnidadDeMedida',
 };

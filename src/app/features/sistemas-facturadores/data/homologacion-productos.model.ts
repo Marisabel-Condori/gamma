@@ -15,8 +15,8 @@ export interface HomologacionProductoRequest {
   idSistema: number;
   codigo: string;
   descripcion: string;
-  codigoActividadSin: string;
-  codigoProductoServicioSin: number;
+  idActividadSin: number;
+  idProductoServicioSin: number;
 }
 
 export interface ActualizarHomologacionProductoRequest extends HomologacionProductoRequest {

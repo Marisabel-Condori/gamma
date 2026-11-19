@@ -35,7 +35,7 @@ export interface GmRutaNavegacion {
         @if (volver() && esMovil()) {
           <a class="volver" aria-label="Volver" [routerLink]="volver()"><gm-icono nombre="atras" /></a>
         }
-        <h1>{{ esMovil() ? (tituloMovil() ?? titulo()) : titulo() }}</h1>
+        <h2>{{ esMovil() ? (tituloMovil() ?? titulo()) : titulo() }}</h2>
         @if (etiquetaJuntoAlTitulo()) {
           <span class="etiqueta" [class.chip]="etiquetaTipo() === 'chip'">{{ etiqueta() }}</span>
         }

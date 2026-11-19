@@ -9,4 +9,5 @@ export const MONEDAS: ConfigHomologacion = {
   placeholderEntel: 'Ingresa el tipo de moneda',
   placeholderSin: 'Selecciona un tipo de moneda',
   endpoint: 'moneda',
+  campoId: 'idMoneda',
 };

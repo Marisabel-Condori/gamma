@@ -7,6 +7,7 @@ export interface ClasificadorSin {
   codigoClasificador: number;
   descripcion: string;
   fechaAlta: string;
+  [campoId: string]: string | number;
 }
 
 @Injectable({ providedIn: 'root' })
