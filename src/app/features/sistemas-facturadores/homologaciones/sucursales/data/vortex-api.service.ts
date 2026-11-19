@@ -17,6 +17,7 @@ export interface SucursalApiRequest {
 
 export interface SucursalApiResponse {
   codSucursalSin: number;
+  codigoCuis?: string;
   departamento: string;
   direccion: string;
   fechaAlta: string;
@@ -47,6 +48,18 @@ export interface PuntoVentaSucursalRequest {
   nombrePuntoVenta: string;
   tipoPuntoVenta: string;
   sincroniza: boolean;
+}
+
+export interface RegistrarPuntoVentaRequest {
+  codigoAmbiente: number;
+  codigoModalidad: number;
+  codigoSistema: string;
+  codigoSucursal: number;
+  codigoTipoPuntoVenta: number;
+  cuis: string;
+  descripcion: string;
+  nit: number;
+  nombrePuntoVenta: string;
 }
 
 export interface PuntoVentaApiResponse {
@@ -136,6 +149,10 @@ export class VortexApiService {
 
   crearPuntoVentaSucursal<T = PuntoVentaSucursalApiResponse>(codigoSucursal: number, datos: PuntoVentaSucursalRequest) {
     return this.http.post<T>(`${this.baseUrl}/sucursales/${codigoSucursal}/puntos-venta`, datos);
+  }
+
+  registrarPuntoVenta<T = PuntoVentaSucursalApiResponse>(datos: RegistrarPuntoVentaRequest) {
+    return this.http.post<T>(`${this.baseUrl}/facturacion-operaciones/registro-punto-venta`, datos);
   }
 
   listarPuntosVenta<T = PuntoVentaApiResponse[]>() {

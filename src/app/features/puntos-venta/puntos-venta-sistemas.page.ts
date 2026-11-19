@@ -7,7 +7,7 @@ import { conteo as contarRegistros } from '../../shared/utils/texto';
 import {
   CuisCufdVigenteApiResponse,
   PuntoVentaSucursalApiResponse,
-  PuntoVentaSucursalRequest,
+  RegistrarPuntoVentaRequest,
   SucursalApiRequest,
   SucursalApiResponse,
   SolicitudSincronizarPuntosVenta,
@@ -289,17 +289,9 @@ const COLUMNAS_PUNTOS: GmColumna<PuntoVentaSucursalApiResponse>[] = [
                 <span>Tipo Código Punto Venta</span>
                 <select [value]="formularioPunto().tipo" (change)="actualizarFormularioPunto('tipo', $event)">
                   <option value="">-- Seleccione --</option>
-                  @for (tipo of tiposPuntoVenta; track tipo) {
-                    <option [value]="tipo">{{ tipo }}</option>
+                @for (tipo of tiposPuntoVenta; track tipo.codigo) {
+                    <option [value]="tipo.codigo">{{ tipo.nombre }}</option>
                   }
-                </select>
-              </label>
-              <label class="edicion-sucursal__fila">
-                <span>Válido a sincronizar</span>
-                <select [value]="formularioPunto().sincroniza" (change)="actualizarFormularioPunto('sincroniza', $event)">
-                  <option value="">-- Seleccione --</option>
-                  <option value="true">Sí</option>
-                  <option value="false">No</option>
                 </select>
               </label>
             </div>
@@ -442,16 +434,16 @@ export class PuntosVentaSistemasPage implements OnInit {
   readonly sincronizandoPuntos = signal(false);
   readonly sincronizacionExitosa = signal(false);
   readonly nuevoPuntoAbierto = signal(false);
-  readonly formularioPunto = signal({ descripcion: '', tipo: '', sincroniza: '' });
+  readonly formularioPunto = signal({ descripcion: '', tipo: '' });
   readonly errorNuevoPunto = signal('');
   readonly guardandoNuevoPunto = signal(false);
   readonly tiposPuntoVenta = [
-    'DEFAULT',
-    'PUNTO VENTA VENTANILLA DE COBRANZA',
-    'PUNTO DE VENTA MOVILES',
-    'PUNTO DE VENTA YPFB',
-    'PUNTO DE VENTA CONJUNTA',
-    'PUNTO DE VENTA CAJEROS',
+    { codigo: 1, nombre: 'PUNTO VENTA COMISIONISTA' },
+    { codigo: 2, nombre: 'PUNTO VENTA VENTANILLA DE COBRANZA' },
+    { codigo: 3, nombre: 'PUNTO DE VENTA MOVILES' },
+    { codigo: 4, nombre: 'PUNTO DE VENTA YPFB' },
+    { codigo: 5, nombre: 'PUNTO DE VENTA CAJEROS' },
+    { codigo: 6, nombre: 'PUNTO DE VENTA CONJUNTA' },
   ];
   readonly formularioSucursal = signal<FormularioEdicionSucursal>({
     codigoSucursalSin: '', descripcion: '', direccion: '', municipio: '', departamento: '', localidad: '', oficina: '', orgId: '', observacion: '',
@@ -637,12 +629,12 @@ export class PuntosVentaSistemasPage implements OnInit {
   }
 
   abrirNuevoPunto(): void {
-    this.formularioPunto.set({ descripcion: '', tipo: '', sincroniza: '' });
+    this.formularioPunto.set({ descripcion: '', tipo: '' });
     this.errorNuevoPunto.set('');
     this.nuevoPuntoAbierto.set(true);
   }
 
-  actualizarFormularioPunto(campo: 'descripcion' | 'tipo' | 'sincroniza', event: Event): void {
+  actualizarFormularioPunto(campo: 'descripcion' | 'tipo', event: Event): void {
     const valor = (event.target as HTMLInputElement | HTMLSelectElement).value;
     this.formularioPunto.update((actual) => ({ ...actual, [campo]: valor }));
   }
@@ -655,18 +647,31 @@ export class PuntosVentaSistemasPage implements OnInit {
     event.preventDefault();
     if (this.guardandoNuevoPunto()) return;
     const formulario = this.formularioPunto();
-    if (!formulario.descripcion.trim() || !formulario.tipo || !formulario.sincroniza) {
-      this.errorNuevoPunto.set('Completa la descripción, el tipo y la opción de sincronización.');
+    if (!formulario.descripcion.trim() || !formulario.tipo) {
+      this.errorNuevoPunto.set('Completa la descripción y selecciona el tipo de punto de venta.');
       return;
     }
-    const datos: PuntoVentaSucursalRequest = {
+    const cuis = sucursal.codigoCuis?.trim()
+      || this.puntosVenta().find((punto) => String(punto.codigoSucursal) === String(sucursal.codSucursalSin) && punto.codigoCuis?.trim())?.codigoCuis?.trim()
+      || '';
+    if (!cuis) {
+      this.errorNuevoPunto.set('La sucursal no tiene un CUIS disponible para registrar el punto de venta.');
+      return;
+    }
+    const datos: RegistrarPuntoVentaRequest = {
+      codigoAmbiente: 2,
+      codigoModalidad: 1,
+      codigoSistema: '37465CC640F6326702D7',
+      codigoSucursal: sucursal.codSucursalSin,
+      codigoTipoPuntoVenta: Number(formulario.tipo),
+      cuis,
+      descripcion: formulario.descripcion.trim(),
+      nit: 1020703023,
       nombrePuntoVenta: formulario.descripcion.trim(),
-      tipoPuntoVenta: formulario.tipo,
-      sincroniza: formulario.sincroniza === 'true',
     };
     this.guardandoNuevoPunto.set(true);
     this.errorNuevoPunto.set('');
-    this.vortex.crearPuntoVentaSucursal(sucursal.codSucursalSin, datos).subscribe({
+    this.vortex.registrarPuntoVenta(datos).subscribe({
       next: () => {
         this.guardandoNuevoPunto.set(false);
         this.nuevoPuntoAbierto.set(false);
