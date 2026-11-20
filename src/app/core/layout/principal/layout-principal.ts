@@ -16,6 +16,9 @@ export class LayoutPrincipal {
   readonly perfilAbierto = signal(false);
   readonly menuAbierto = signal(false);
 
+  readonly perfil = this.auth.perfil;
+  readonly iniciales = this.auth.iniciales;
+
   abrirCerrarPerfil(): void {
     this.menuAbierto.set(false);
     this.perfilAbierto.update((abierto) => !abierto);
@@ -32,8 +35,7 @@ export class LayoutPrincipal {
   }
 
   salir(): void {
-    this.auth.logout();
     this.cerrar();
-    void this.router.navigate(['/login']);
+    this.auth.logout().subscribe(() => void this.router.navigateByUrl('/login'));
   }
 }

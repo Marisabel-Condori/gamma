@@ -21,16 +21,22 @@ export const SISTEMAS_ROUTES: Routes = [
       import('./homologaciones/productos/productos-homologados.page').then((m) => m.ProductosHomologadosPage),
   },
   {
-    path: ':sistemaId/sucursales',
+    path: ':sistemaId/multicentros',
     resolve: { sistemasCargados: cargarSistemas },
     loadComponent: () =>
-      import('./homologaciones/sucursales/sucursales-homologadas.page').then((m) => m.SucursalesHomologadasPage),
+      import('./homologaciones/multicentros/multicentros.page').then((m) => m.MulticentrosPage),
   },
   {
-    path: ':sistemaId/sucursales/:sucursalId/puntos-venta',
+    path: ':sistemaId/sucursales-sin',
     resolve: { sistemasCargados: cargarSistemas },
     loadComponent: () =>
-      import('./homologaciones/sucursales/puntos-venta/puntos-venta.page').then((m) => m.PuntosVentaPage),
+      import('./homologaciones/sucursales-sin/sucursales-sin.page').then((m) => m.SucursalesSinPage),
+  },
+  {
+    path: ':sistemaId/sucursales-sin/:sucursalId/puntos-venta',
+    resolve: { sistemasCargados: cargarSistemas },
+    loadComponent: () =>
+      import('./homologaciones/sucursales-sin/puntos-venta/puntos-venta-homologados.page').then((m) => m.PuntosVentaHomologadosPage),
   },
   {
     path: ':sistemaId/unidades-medida',

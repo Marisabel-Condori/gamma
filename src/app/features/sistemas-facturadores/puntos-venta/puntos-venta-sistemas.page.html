@@ -1,0 +1,268 @@
+    @if (sucursalSeleccionada(); as sucursal) {
+      <gm-encabezado
+        titulo="Puntos de venta"
+        tituloMovil="Puntos de venta"
+        volver="/puntos-de-venta"
+        [rutanavegacion]="migas()"
+        [etiqueta]="'Sucursal ' + sucursal.codSucursalSin"
+        etiquetaTipo="chip"
+      >
+        <gm-buscar placeholder="Buscar punto de venta..." [valor]="queryPuntos()" (valorChange)="queryPuntos.set($event)" />
+        <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nuevo registro" compacto (click)="abrirNuevoPunto()"></button>
+        <button
+          gmBoton="primario"
+          type="button"
+          icono="sincronizar"
+          etiqueta="Sincronizar Puntos Venta"
+          (click)="sincronizarPuntosVenta()"
+        ></button>
+      </gm-encabezado>
+      @if (errorPuntos()) {
+        <p class="gm-error" role="alert">{{ errorPuntos() }}</p>
+      }
+      @if (errorCodigos()) {
+        <p class="gm-muted" role="status">No se pudieron cargar los datos vigentes CUIS/CUFD: {{ errorCodigos() }}</p>
+      }
+      <gm-tabla
+        [datos]="filtradosPuntos()"
+        [columnas]="columnasPuntos"
+        cabecera="clara"
+        anchoMinimo="0"
+        [compacta]="true"
+        [porPagina]="10"
+        [vacio]="vacioPuntos()"
+      >
+        <ng-template gmCelda="acciones" let-punto>
+          <button gmBoton="peligro" chico type="button" icono="eliminar" [attr.aria-label]="'Cerrar punto de venta ' + punto.codigoPuntoVenta" (click)="eliminarPuntoVenta(punto)"></button>
+        </ng-template>
+      </gm-tabla>
+    } @else {
+      <gm-encabezado
+        titulo="Puntos de venta"
+        tituloMovil="Puntos de venta"
+        [rutanavegacion]="migas()"
+        [etiqueta]="conteoSucursales()"
+      >
+        <gm-buscar placeholder="Buscar sucursal..." [valor]="query()" (valorChange)="query.set($event)" />
+        <button gmBoton="primario" type="button" icono="agregar" etiqueta="Nuevo registro" compacto (click)="abrirNuevaSucursal()"></button>
+      </gm-encabezado>
+      @if (error()) {
+        <p class="gm-error" role="alert">{{ error() }}</p>
+      }
+      <gm-tabla
+        [datos]="filtradas()"
+        [columnas]="columnasSucursales"
+        anchoMinimo="720px"
+        [porPagina]="10"
+        [vacio]="vacioSucursales()"
+      >
+        <ng-template gmCelda="puntosVenta" let-sucursal>
+          <button
+            gmBoton
+            chico
+            icono="tienda"
+            [etiqueta]="etiquetaPuntos(sucursal.codSucursalSin)"
+            [disabled]="estaCargandoPuntos(sucursal.codSucursalSin)"
+            [attr.aria-label]="'Ver puntos de venta de la sucursal ' + sucursal.codSucursalSin"
+            (click)="mostrarPuntos(sucursal)"
+          ></button>
+        </ng-template>
+        <ng-template gmCelda="acciones" let-sucursal>
+          <div class="acciones-punto">
+            <button
+              gmBoton
+              chico
+              type="button"
+              icono="menu"
+              [attr.aria-label]="'Ver detalle de sucursal ' + sucursal.codSucursalSin"
+              (click)="abrirDetalleSucursal(sucursal)"
+            ></button>
+            <gm-acciones-fila que="sucursal SIN" (editar)="abrirEdicionSucursal(sucursal)" (eliminar)="eliminarSucursal(sucursal)" />
+          </div>
+        </ng-template>
+      </gm-tabla>
+    }
+    @if (detalleSucursalSeleccionada(); as sucursal) {
+      <gm-modal titulo="Detalle de sucursal SIN" ancho="820px" (cerrar)="detalleSucursalSeleccionada.set(null)">
+        <dl class="detalle-sucursal">
+          @for (campo of camposDetalleSucursal(); track campo.etiqueta) {
+            <div class="detalle-sucursal__fila">
+              <dt>{{ campo.etiqueta }}</dt>
+              <dd>{{ campo.valor }}</dd>
+            </div>
+          }
+        </dl>
+        <div class="gm-acciones">
+          <button gmBoton="primario" type="button" etiqueta="Cerrar" (click)="detalleSucursalSeleccionada.set(null)"></button>
+        </div>
+      </gm-modal>
+    }
+    @if (editandoSucursal(); as sucursal) {
+      <gm-modal titulo="Modificar sucursal SIN" ancho="760px" (cerrar)="editandoSucursal.set(null)">
+        <form (submit)="guardarSucursal($event)" novalidate>
+          <div class="edicion-sucursal">
+            <label class="edicion-sucursal__fila">
+              <span>Código sucursal SIN</span>
+              <input [value]="formularioSucursal().codigoSucursalSin" (input)="actualizarFormularioSucursal('codigoSucursalSin', $event)" />
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Descripción SIN</span>
+              <input [value]="formularioSucursal().descripcion" (input)="actualizarFormularioSucursal('descripcion', $event)" />
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Departamento</span>
+              <select [value]="formularioSucursal().departamento" (change)="actualizarFormularioSucursal('departamento', $event)">
+                <option value="">-- Seleccione --</option>
+                @for (departamento of departamentosSucursal(); track departamento) {
+                  <option [value]="departamento">{{ departamento }}</option>
+                }
+              </select>
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Municipio</span>
+              <select [value]="formularioSucursal().municipio" (change)="actualizarFormularioSucursal('municipio', $event)">
+                <option value="">-- Seleccione --</option>
+                @for (municipio of municipiosSucursal(); track municipio) {
+                  <option [value]="municipio">{{ municipio }}</option>
+                }
+              </select>
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Localidad</span>
+              <select [value]="formularioSucursal().localidad" (change)="actualizarFormularioSucursal('localidad', $event)">
+                <option value="">-- Seleccione --</option>
+                @for (localidad of localidadesSucursal(); track localidad) {
+                  <option [value]="localidad">{{ localidad }}</option>
+                }
+              </select>
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Oficina</span>
+              <select [value]="formularioSucursal().oficina" (change)="actualizarFormularioSucursal('oficina', $event)">
+                <option value="">-- Seleccione --</option>
+                @for (oficina of oficinasSucursal(); track oficina) {
+                  <option [value]="oficina">{{ oficina }}</option>
+                }
+              </select>
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Org ID</span>
+              <input [value]="formularioSucursal().orgId" (input)="actualizarFormularioSucursal('orgId', $event)" />
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Dirección</span>
+              <input [value]="formularioSucursal().direccion" (input)="actualizarFormularioSucursal('direccion', $event)" />
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Observación</span>
+              <input [value]="formularioSucursal().observacion" (input)="actualizarFormularioSucursal('observacion', $event)" />
+            </label>
+          </div>
+          @if (errorEdicionSucursal()) {
+            <p class="gm-error" role="alert">{{ errorEdicionSucursal() }}</p>
+          }
+          <div class="gm-acciones">
+            <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="editandoSucursal.set(null)"></button>
+            <button gmBoton="primario" type="submit" [disabled]="guardandoSucursal()" [etiqueta]="guardandoSucursal() ? 'Guardando…' : 'Guardar'"></button>
+          </div>
+        </form>
+      </gm-modal>
+    }
+    @if (nuevaSucursalAbierta()) {
+      <gm-modal titulo="Nueva Sucursal SIN" ancho="760px" (cerrar)="nuevaSucursalAbierta.set(false)">
+        <form (submit)="crearSucursal($event)" novalidate>
+          <div class="edicion-sucursal">
+            <label class="edicion-sucursal__fila">
+              <span>Código Sucursal SIN</span>
+              <input [value]="formularioSucursal().codigoSucursalSin" (input)="actualizarFormularioSucursal('codigoSucursalSin', $event)" />
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Departamento</span>
+              <select [value]="formularioSucursal().departamento" (change)="actualizarFormularioSucursal('departamento', $event)">
+                <option value="">-- Seleccione --</option>
+                @for (departamento of departamentosSucursal(); track departamento) {
+                  <option [value]="departamento">{{ departamento }}</option>
+                }
+              </select>
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Municipio</span>
+              <select [value]="formularioSucursal().municipio" (change)="actualizarFormularioSucursal('municipio', $event)">
+                <option value="">-- Seleccione --</option>
+                @for (municipio of municipiosSucursal(); track municipio) {
+                  <option [value]="municipio">{{ municipio }}</option>
+                }
+              </select>
+            </label>
+            <label class="edicion-sucursal__fila">
+              <span>Dirección</span>
+              <input [value]="formularioSucursal().direccion" (input)="actualizarDireccionNuevaSucursal($event)" />
+            </label>
+          </div>
+          @if (errorEdicionSucursal()) {
+            <p class="gm-error" role="alert">{{ errorEdicionSucursal() }}</p>
+          }
+          <div class="gm-acciones">
+            <button gmBoton="primario" type="submit" [disabled]="guardandoSucursal()" [etiqueta]="guardandoSucursal() ? 'Guardando…' : 'Guardar'"></button>
+            <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="nuevaSucursalAbierta.set(false)"></button>
+          </div>
+        </form>
+      </gm-modal>
+    }
+    @if (sucursalCreadaExitosa()) {
+      <gm-modal titulo="Registro exitoso" ancho="460px" (cerrar)="sucursalCreadaExitosa.set(false)">
+        <p role="status">La sucursal SIN fue registrada con éxito.</p>
+        <div class="gm-acciones">
+          <button gmBoton="primario" type="button" etiqueta="Aceptar" (click)="sucursalCreadaExitosa.set(false)"></button>
+        </div>
+      </gm-modal>
+    }
+    @if (nuevoPuntoAbierto()) {
+      @if (sucursalSeleccionada(); as sucursal) {
+        <gm-modal titulo="Nuevo Punto de Venta" ancho="680px" (cerrar)="nuevoPuntoAbierto.set(false)">
+          <form (submit)="crearPuntoVenta($event, sucursal)" novalidate>
+            <div class="contexto-nuevo-punto">
+              <div class="contexto-nuevo-punto__empresa">
+                <span>Empresa</span>
+                <strong>ENTEL</strong>
+              </div>
+              <div class="contexto-nuevo-punto__sucursal">
+                <span>Sucursal SIN · {{ sucursal.codSucursalSin }}</span>
+                <strong>{{ descripcionSucursal(sucursal) }}</strong>
+                <small>CUIS: {{ sucursal.codigoCuis || 'Se usará el CUIS vigente de la sucursal' }}</small>
+              </div>
+            </div>
+            <div class="nuevo-punto-formulario">
+              <label class="nuevo-punto-formulario__campo">
+                <span>Nombre y descripción del punto de venta</span>
+                <input [value]="formularioPunto().descripcion" (input)="actualizarFormularioPunto('descripcion', $event)" />
+              </label>
+              <label class="nuevo-punto-formulario__campo">
+                <span>Tipo de punto de venta</span>
+                <select [value]="formularioPunto().tipo" (change)="actualizarFormularioPunto('tipo', $event)">
+                  <option value="">-- Seleccione --</option>
+                  @for (tipo of tiposPuntoVenta; track tipo.codigo) {
+                    <option [value]="tipo.codigo">{{ tipo.nombre }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+            @if (errorNuevoPunto()) {
+              <p class="gm-error" role="alert">{{ errorNuevoPunto() }}</p>
+            }
+            <div class="gm-acciones">
+              <button gmBoton="primario" type="submit" [disabled]="guardandoNuevoPunto()" [etiqueta]="guardandoNuevoPunto() ? 'Guardando…' : 'Guardar'"></button>
+              <button gmBoton="neutro" type="button" etiqueta="Cancelar" (click)="nuevoPuntoAbierto.set(false)"></button>
+            </div>
+          </form>
+        </gm-modal>
+      }
+    }
+    @if (sincronizacionExitosa()) {
+      <gm-modal titulo="Sincronización exitosa" ancho="460px" (cerrar)="sincronizacionExitosa.set(false)">
+        <p role="status">La sincronización de puntos de venta fue exitosa.</p>
+        <div class="gm-acciones">
+          <button gmBoton="primario" type="button" etiqueta="Aceptar" (click)="sincronizacionExitosa.set(false)"></button>
+        </div>
+      </gm-modal>
+    }

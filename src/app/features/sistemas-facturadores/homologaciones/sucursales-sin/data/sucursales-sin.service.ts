@@ -1,13 +1,11 @@
 import { Injectable, signal } from '@angular/core';
-import { crearPuntosVenta, crearSucursales } from './sucursales.mock';
-import { HomologacionSucursal, HomologacionSucursalRequest, PuntoVenta } from './sucursales.model';
+import { HomologacionSucursal, HomologacionSucursalRequest, PuntoVenta } from './sucursales-sin.model';
 
-const CLAVE = 'gamma.sucursales.v2';
 
 @Injectable({ providedIn: 'root' })
-export class SucursalesService {
-  readonly sucursales = signal<HomologacionSucursal[]>(restaurar());
-  readonly puntosVenta = signal<PuntoVenta[]>(crearPuntosVenta());
+export class SucursalesSinService {
+  readonly sucursales = signal<HomologacionSucursal[]>([]);
+  readonly puntosVenta = signal<PuntoVenta[]>([]);
 
   puntosDe(sucursalId: string): PuntoVenta[] {
     return this.puntosVenta().filter((p) => p.sucursalId === sucursalId);
@@ -44,11 +42,6 @@ export class SucursalesService {
   private guardar(receta: (lista: HomologacionSucursal[]) => HomologacionSucursal[]): void {
     this.sucursales.update((lista) => {
       const siguiente = receta(lista);
-      try {
-        sessionStorage.setItem(CLAVE, JSON.stringify(siguiente));
-      } catch {
-        // Si el navegador bloquea el almacenamiento, los datos siguen en memoria.
-      }
       return siguiente;
     });
   }
@@ -58,12 +51,3 @@ function limpiar(datos: HomologacionSucursalRequest): HomologacionSucursalReques
   return { ...datos, codigo: datos.codigo.trim(), descripcion: datos.descripcion.trim() };
 }
 
-function restaurar(): HomologacionSucursal[] {
-  try {
-    const guardado = JSON.parse(sessionStorage.getItem(CLAVE) ?? 'null') as unknown;
-    if (Array.isArray(guardado)) return guardado as HomologacionSucursal[];
-  } catch {
-    // Datos dañados: se usan los de ejemplo.
-  }
-  return crearSucursales();
-}

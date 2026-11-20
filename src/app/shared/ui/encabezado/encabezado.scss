@@ -34,12 +34,12 @@
   min-width: 0;
 }
 
-h1 {
+h2 {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: var(--texto-4xl);
+  font-size: var(--texto-2xl);
   font-weight: var(--peso-negrita);
   line-height: var(--interlineado-titulo);
   letter-spacing: -0.03em;
@@ -104,9 +104,9 @@ h1 {
   gap: 6px;
 }
 
-:host(.movil) h1 {
+:host(.movil) h2 {
   flex: 1;
-  font-size: var(--texto-3xl);
+  font-size: var(--texto-2xl);
   font-weight: var(--peso-extra);
 }
 

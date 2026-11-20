@@ -17,6 +17,8 @@ export interface GmColumna<T = any> {
   sinSalto?: boolean;
   /** Textos largos (tokens, direcciones): se cortan con "…" y se ven completos al pasar el mouse. */
   recortar?: boolean;
+  /** Mantiene la columna visible pegada al borde derecho al desplazar la tabla. */
+  fijaDerecha?: boolean;
 
   /** Lugar en la tarjeta móvil. Por defecto: 'detalle'. */
   movil?: GmLugarMovil;

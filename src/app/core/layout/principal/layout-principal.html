@@ -26,15 +26,22 @@
       <gm-icono nombre="sistemas" />
       Sistemas Facturadores
     </a>
+    <a routerLink="/puntos-de-venta" routerLinkActive="activo" (click)="cerrar()">
+      <gm-icono nombre="servicios" />
+      Puntos de venta
+    </a>
     <a routerLink="/servicios" routerLinkActive="activo" (click)="cerrar()">
       <gm-icono nombre="servicios" />
       Servicios
     </a>
   </nav>
   <div class="perfil">
-    <button type="button" class="avatar" aria-label="Sesión de MC" (click)="abrirCerrarPerfil()">
-      MC
-    </button>
+    <button
+      type="button"
+      class="avatar"
+      [attr.aria-label]="'Sesión de ' + perfil().nombreApellido"
+      (click)="abrirCerrarPerfil()"
+    >{{ iniciales() }}</button>
     @if (perfilAbierto()) {
       <button
         type="button"
@@ -44,8 +51,8 @@
       ></button>
       <div class="popover">
         <div class="aviso">
-          <strong>MC</strong>
-          <p>Profesional Desarrollo de aplicaciones.</p>
+          <strong>{{ perfil().nombreApellido }}</strong>
+          <p>{{ perfil().areaTrabajo }}</p>
         </div>
         <button type="button" class="salir" (click)="salir()">Cerrar sesión</button>
       </div>

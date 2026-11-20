@@ -20,3 +20,4 @@ export interface SistemaRequest {
   descripcion: string;
   usuarioAlta: string;
 }
+

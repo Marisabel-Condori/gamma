@@ -7,12 +7,21 @@
       "X-Tunnel-Skip-AntiPhishing-Page": "true"
     }
   },
+  "/vortex-codigos-service": {
+    "target": "https://fslpvnlj-8080.brs.devtunnels.ms",
+    "secure": true,
+    "changeOrigin": true,
+    "headers": {
+      "X-Tunnel-Skip-AntiPhishing-Page": "true"
+    }
+  },
   "/Gamma": {
     "target": "https://nonfunctioning-nongracefully-nixon.ngrok-free.dev",
     "secure": true,
     "changeOrigin": true,
     "headers": {
       "ngrok-skip-browser-warning": "true"
-    }
+    },
+    "cookieDomainRewrite": ""
   }
 }

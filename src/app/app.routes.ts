@@ -14,6 +14,7 @@ export const routes: Routes = [
       },
     ],
   },
+  { path: '', pathMatch: 'full', redirectTo: 'login' },
   {
     path: '',
     component: LayoutPrincipal,
@@ -33,6 +34,16 @@ export const routes: Routes = [
         path: 'servicios',
         loadComponent: () => import('./features/servicios/servicios.page').then((m) => m.ServiciosPage),
       },
+      {
+        path: 'puntos-de-venta',
+        loadComponent: () =>
+          import('./features/sistemas-facturadores/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
+      },
+      {
+        path: 'puntos-de-venta/:codigoSucursal',
+        loadComponent: () =>
+          import('./features/sistemas-facturadores/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
+      },
 
       // Direcciones antiguas que siguen funcionando.
       { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
@@ -50,5 +61,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: 'inicio' },
+  { path: '**', redirectTo: 'login' },
 ];

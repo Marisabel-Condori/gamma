@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, httpResource } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, firstValueFrom, timeout } from 'rxjs';
-import { API_URL, TIEMPO_ESPERA_API } from '../../../../core/constants';
+import { API_VORTEX_URL, TIEMPO_ESPERA_API } from '../../../../../environments/environment';
 import { ApiRespuesta } from '../../../../core/models/api-respuesta.model';
 import {
   ActualizarHomologacionCatalogoRequest,
@@ -57,5 +57,5 @@ export class HomologacionCatalogoService {
 }
 
 function url(config: ConfigHomologacion): string {
-  return `${API_URL}/homologacion/${config.endpoint}`;
+  return `${API_VORTEX_URL}/homologacion/${config.endpoint}`;
 }

@@ -13,9 +13,8 @@ import {
   Toast,
 } from '../../../../../shared/ui';
 import { SistemasService } from '../../../data/sistemas.service';
-import { SISTEMAS_SIN } from '../data/sucursales.mock';
-import { PuntoVenta, SistemaSin } from '../data/sucursales.model';
-import { SucursalesService } from '../data/sucursales.service';
+import { PuntoVenta, SistemaSin } from '../data/sucursales-sin.model';
+import { SucursalesSinService } from '../data/sucursales-sin.service';
 
 type Codigo = 'CUIS' | 'CUFD';
 
@@ -40,15 +39,15 @@ const COLUMNAS: GmColumna<PuntoVenta>[] = [
 ];
 
 @Component({
-  selector: 'gm-puntos-venta-page',
+  selector: 'gm-puntos-venta-homologados-page',
   imports: [RouterLink, GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmModal],
-  templateUrl: './puntos-venta.page.html',
+  templateUrl: './puntos-venta-homologados.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },
 })
-export class PuntosVentaPage {
+export class PuntosVentaHomologadosPage {
   private readonly sistemas = inject(SistemasService);
-  private readonly datos = inject(SucursalesService);
+  private readonly datos = inject(SucursalesSinService);
   private readonly toast = inject(Toast);
 
   readonly sistemaId = input.required<string>();
@@ -59,7 +58,7 @@ export class PuntosVentaPage {
 
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
   readonly sucursal = computed(() => this.datos.sucursales().find((s) => s.id === this.sucursalId()) ?? null);
-  readonly volver = computed(() => `/sistemas-facturadores/${this.sistemaId()}/sucursales`);
+  readonly volver = computed(() => `/sistemas-facturadores/${this.sistemaId()}/sucursales-sin`);
 
   readonly rutanavegacion = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },
@@ -87,14 +86,7 @@ export class PuntosVentaPage {
   readonly reproceso = signal<{ punto: PuntoVenta; codigo: Codigo } | null>(null);
   readonly queryReproceso = signal('');
 
-  readonly sistemasSin = computed(() => {
-    const r = this.reproceso();
-    const q = this.queryReproceso().trim().toLowerCase();
-    if (!r) return [];
-    return SISTEMAS_SIN.filter(
-      (s) => !q || `${s.nombre} ${s.codigo} ${r.punto.cuis} ${r.punto.cufd}`.toLowerCase().includes(q),
-    );
-  });
+  readonly sistemasSin = computed<SistemaSin[]>(() => []);
 
   readonly columnasReproceso = computed<GmColumna<SistemaSin>[]>(() => {
     const r = this.reproceso();
