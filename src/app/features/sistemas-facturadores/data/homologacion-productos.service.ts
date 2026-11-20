@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, httpResource } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, firstValueFrom, timeout } from 'rxjs';
-import { API_URL, TIEMPO_ESPERA_API } from '../../../core/constants';
+import { API_VORTEX_URL, TIEMPO_ESPERA_API } from '../../../../environments/environment';
 import { ApiRespuesta } from '../../../core/models/api-respuesta.model';
 import {
   ActualizarHomologacionProductoRequest,
@@ -9,7 +9,7 @@ import {
   HomologacionProductoResponse,
 } from './homologacion-productos.model';
 
-const URL = `${API_URL}/homologacion/productosServicios`;
+const URL = `${API_VORTEX_URL}/homologacion/productosServicios`;
 
 @Injectable({ providedIn: 'root' })
 export class HomologacionProductosService {

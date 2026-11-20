@@ -14,12 +14,12 @@ import {
   GmModal,
   GmTabla,
   Toast,
-} from '../../../shared/ui';
-import { SistemasService } from '../../sistemas-facturadores/data/sistemas.service';
-import { HomologacionSucursal } from '../data/sucursales.model';
-import { SucursalesState } from '../data/sucursales.state';
-import { SucursalesApiService } from '../data/sucursales-api.service';
-import { SucursalApiResponse } from '../data/puntos-venta.model';
+} from '../../../../shared/ui';
+import { SistemasService } from '../../data/sistemas.service';
+import { HomologacionSucursal } from './data/sucursales-sin.model';
+import { SucursalesSinService } from './data/sucursales-sin.service';
+import { SucursalesService } from '../../data/sucursales.service';
+import { SucursalApiResponse } from '../../data/puntos-venta.model';
 
 interface SucursalSin extends HomologacionSucursal {
   fechaAlta: string;
@@ -46,8 +46,8 @@ const COLUMNAS: GmColumna<SucursalSin>[] = [
 })
 export class SucursalesSinPage implements OnInit {
   private readonly sistemas = inject(SistemasService);
-  private readonly sucursalesApi = inject(SucursalesApiService);
-  private readonly datos = inject(SucursalesState);
+  private readonly sucursalesApi = inject(SucursalesService);
+  private readonly datos = inject(SucursalesSinService);
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
 

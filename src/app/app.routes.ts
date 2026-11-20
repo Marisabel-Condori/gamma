@@ -37,12 +37,12 @@ export const routes: Routes = [
       {
         path: 'puntos-de-venta',
         loadComponent: () =>
-          import('./features/puntos-venta/pages/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
+          import('./features/sistemas-facturadores/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
       },
       {
         path: 'puntos-de-venta/:codigoSucursal',
         loadComponent: () =>
-          import('./features/puntos-venta/pages/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
+          import('./features/sistemas-facturadores/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
       },
 
       // Direcciones antiguas que siguen funcionando.

@@ -1,12 +1,13 @@
 import { HttpResourceRef, httpResource } from '@angular/common/http';
 import { Injectable, Injector, inject, runInInjectionContext } from '@angular/core';
-import { API_URL, TIEMPO_ESPERA_API } from '../../../core/constants';
+import { API_VORTEX_URL, TIEMPO_ESPERA_API } from '../../../../environments/environment';
 import { ApiRespuesta } from '../../../core/models/api-respuesta.model';
 
 export interface ClasificadorSin {
   codigoClasificador: number;
   descripcion: string;
   fechaAlta: string;
+  [campoId: string]: string | number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -19,7 +20,7 @@ export class CatalogoSinService {
     if (!recurso) {
       recurso = runInInjectionContext(this.injector, () =>
         httpResource<ApiRespuesta<ClasificadorSin[]>>(() => ({
-          url: `${API_URL}/catalogos/${endpoint}`,
+          url: `${API_VORTEX_URL}/catalogos/${endpoint}`,
           timeout: TIEMPO_ESPERA_API,
         })),
       );

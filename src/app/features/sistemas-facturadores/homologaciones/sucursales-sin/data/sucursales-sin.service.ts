@@ -1,9 +1,9 @@
 import { Injectable, signal } from '@angular/core';
-import { HomologacionSucursal, HomologacionSucursalRequest, PuntoVenta } from './sucursales.model';
+import { HomologacionSucursal, HomologacionSucursalRequest, PuntoVenta } from './sucursales-sin.model';
 
 
 @Injectable({ providedIn: 'root' })
-export class SucursalesState {
+export class SucursalesSinService {
   readonly sucursales = signal<HomologacionSucursal[]>([]);
   readonly puntosVenta = signal<PuntoVenta[]>([]);
 

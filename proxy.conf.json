@@ -1,8 +1,11 @@
 {
-  "/api": {
-    "target": "http://127.0.0.1:8080/Gamma",
-    "secure": false,
-    "changeOrigin": true
+  "/vortex-codigos": {
+    "target": "https://qb41v4jz-8080.brs.devtunnels.ms",
+    "secure": true,
+    "changeOrigin": true,
+    "headers": {
+      "X-Tunnel-Skip-AntiPhishing-Page": "true"
+    }
   },
   "/vortex-codigos-service": {
     "target": "https://fslpvnlj-8080.brs.devtunnels.ms",
@@ -18,6 +21,7 @@
     "changeOrigin": true,
     "headers": {
       "ngrok-skip-browser-warning": "true"
-    }
+    },
+    "cookieDomainRewrite": ""
   }
 }

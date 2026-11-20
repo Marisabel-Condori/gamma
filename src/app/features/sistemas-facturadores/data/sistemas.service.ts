@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { Observable, firstValueFrom, timeout } from 'rxjs';
-import { API_GAMMA_URL, TIEMPO_ESPERA_API } from '../../../core/constants';
+import { API_GAMMA_URL, TIEMPO_ESPERA_API } from '../../../../environments/environment';
 import { GammaRespuesta } from '../../../core/models/gamma-respuesta.model';
 import {
   SistemaFacturadorResponse,

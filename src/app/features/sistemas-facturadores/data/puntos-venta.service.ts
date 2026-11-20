@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { API_VORTEX_SERVICE_URL } from '../../../../environments/environment';
 import {
   CierrePuntoVentaRequest,
   CuisCufdVigenteApiResponse,
@@ -17,7 +17,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class PuntosVentaService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.vortexApiUrl;
+  private readonly baseUrl = API_VORTEX_SERVICE_URL;
 
   listarPorSucursal<T = unknown>(codigoSucursal: number) {
     return this.http.get<T>(`${this.baseUrl}/sucursales/${codigoSucursal}/puntos-venta`);

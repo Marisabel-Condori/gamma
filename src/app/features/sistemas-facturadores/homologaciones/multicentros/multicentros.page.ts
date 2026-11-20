@@ -19,14 +19,16 @@ import {
   Toast,
 } from '../../../../shared/ui';
 import { SistemasService } from '../../data/sistemas.service';
-import { AuthService } from '../../../../core/auth/auth.service';
 import { HomologacionMulticentro, HomologacionSucursalApiResponse, HomologacionSucursalRequest, HomologacionSucursalUpdateRequest } from './data/multicentros.model';
-import { PuntoVentaSucursalApiResponse, SucursalApiResponse } from '../../../puntos-venta/data/puntos-venta.model';
-import { PuntosVentaService } from '../../../puntos-venta/data/puntos-venta.service';
-import { SucursalesApiService } from '../../../puntos-venta/data/sucursales-api.service';
+import { PuntoVentaSucursalApiResponse, SucursalApiResponse } from '../../data/puntos-venta.model';
+import { PuntosVentaService } from '../../data/puntos-venta.service';
+import { SucursalesService } from '../../data/sucursales.service';
 import { MulticentrosService } from './data/multicentros.service';
 
 type Multicentro = HomologacionMulticentro;
+
+// TODO: cambiar por usuario del login
+const USUARIO = 'ADMIN';
 
 const COLUMNAS: GmColumna<Multicentro>[] = [
   { id: 'fecha', titulo: 'Fecha Homologación', ancho: '190px', sinSalto: true, movil: 'pie', valor: (m) => formatearFecha(m.fecha) },
@@ -48,10 +50,9 @@ const COLUMNAS: GmColumna<Multicentro>[] = [
 })
 export class MulticentrosPage implements OnInit {
   private readonly sistemas = inject(SistemasService);
-  private readonly auth = inject(AuthService);
   private readonly multicentrosApi = inject(MulticentrosService);
   private readonly puntosApi = inject(PuntosVentaService);
-  private readonly sucursalesApi = inject(SucursalesApiService);
+  private readonly sucursalesApi = inject(SucursalesService);
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);
 
@@ -272,7 +273,6 @@ export class MulticentrosPage implements OnInit {
       puntoVentaSin: formulario.puntoVentaSin.trim(),
     };
 
-    const usuario = this.auth.perfil.usuario || this.auth.perfil.nombreApellido;
     const datosActualizacion: HomologacionSucursalUpdateRequest = {
       idSistema,
       codigoMulticentro: multicentro.codigoEntel,
@@ -282,7 +282,7 @@ export class MulticentrosPage implements OnInit {
     };
     const datosCreacion: HomologacionSucursalRequest = {
       ...datosActualizacion,
-      usuarioAlta: usuario,
+      usuarioAlta: USUARIO,
       usuarioModificacion: '',
     };
 

@@ -39,9 +39,9 @@
                 <rect x="3.5" y="10" width="17" height="11" rx="2" stroke="currentColor" stroke-width="1.8" />
                 <path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
               </svg>
-              <input id="password" name="password" [type]="showPassword ? 'text' : 'password'" class="login-custom-input" placeholder="Ingrese su contraseña" [(ngModel)]="password" autocomplete="current-password" required />
-              <button type="button" class="login-eye-toggle" (click)="togglePassword()" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-                @if (showPassword) {
+              <input id="password" name="password" [type]="showPassword() ? 'text' : 'password'" class="login-custom-input" placeholder="Ingrese su contraseña" [(ngModel)]="password" autocomplete="current-password" required />
+              <button type="button" class="login-eye-toggle" (click)="togglePassword()" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                @if (showPassword()) {
                   <svg class="login-eye-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8m-7.7 3.2C3.4 14.1 2.5 12 2.5 12S6 5 12 5c1.2 0 2.3.3 3.3.7m2.1 1.5C20.3 9.1 21.5 12 21.5 12s-3.5 7-9.5 7c-1 0-2-.2-2.9-.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 } @else {
                   <svg class="login-eye-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8" /></svg>
@@ -50,12 +50,12 @@
             </div>
           </div>
 
-          @if (mensajeError) {
-            <p class="login-error-container" role="alert">{{ mensajeError }}</p>
+          @if (mensajeError()) {
+            <p class="login-error-container" role="alert">{{ mensajeError() }}</p>
           }
 
-          <button class="login-submit-button" type="submit" [disabled]="!username || !password || loading">
-            @if (loading) { <span class="login-btn-spinner" aria-hidden="true"></span> }
+          <button class="login-submit-button" type="submit" [disabled]="!username || !password || loading()">
+            @if (loading()) { <span class="login-btn-spinner" aria-hidden="true"></span> }
             @else {
               <span>Iniciar sesión</span>
               <svg class="login-submit-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>

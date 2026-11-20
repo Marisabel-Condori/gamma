@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { environment } from '../../../../../../environments/environment';
+import { API_VORTEX_SERVICE_URL } from '../../../../../../environments/environment';
 import { HomologacionSucursalApiResponse, HomologacionSucursalRequest, HomologacionSucursalUpdateRequest } from './multicentros.model';
 
 @Injectable({ providedIn: 'root' })
 export class MulticentrosService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.vortexApiUrl;
+  private readonly baseUrl = API_VORTEX_SERVICE_URL;
 
   listar(idSistema: number) {
     return this.http.get<HomologacionSucursalApiResponse[]>(`${this.baseUrl}/hom-sucursales/${idSistema}`);

@@ -39,9 +39,9 @@
     <button
       type="button"
       class="avatar"
-      [attr.aria-label]="'Sesión de ' + perfilNombre"
+      [attr.aria-label]="'Sesión de ' + perfil().nombreApellido"
       (click)="abrirCerrarPerfil()"
-    >{{ perfilIniciales }}</button>
+    >{{ iniciales() }}</button>
     @if (perfilAbierto()) {
       <button
         type="button"
@@ -51,8 +51,8 @@
       ></button>
       <div class="popover">
         <div class="aviso">
-          <strong>{{ perfilNombre }}</strong>
-          <p>{{ perfilArea }}</p>
+          <strong>{{ perfil().nombreApellido }}</strong>
+          <p>{{ perfil().areaTrabajo }}</p>
         </div>
         <button type="button" class="salir" (click)="salir()">Cerrar sesión</button>
       </div>

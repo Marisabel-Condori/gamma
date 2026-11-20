@@ -5,7 +5,7 @@ import { catchError, forkJoin, of } from 'rxjs';
 import { Confirmar, GmAccionesFila, GmBoton, GmBuscar, GmCelda, GmColumna, GmEncabezado, GmModal, GmRutaNavegacion, GmTabla, Toast } from '../../../shared/ui';
 import { conteo as contarRegistros } from '../../../shared/utils/texto';
 import { PuntosVentaService } from '../data/puntos-venta.service';
-import { SucursalesApiService } from '../data/sucursales-api.service';
+import { SucursalesService } from '../data/sucursales.service';
 import {
   CierrePuntoVentaRequest,
   CuisCufdVigenteApiResponse,
@@ -214,7 +214,7 @@ const COLUMNAS_PUNTOS: GmColumna<PuntoVentaSucursalApiResponse>[] = [
   `,
 })
 export class PuntosVentaSistemasPage implements OnInit {
-  private readonly sucursalesApi = inject(SucursalesApiService);
+  private readonly sucursalesApi = inject(SucursalesService);
   private readonly puntosApi = inject(PuntosVentaService);
   private readonly toast = inject(Toast);
   private readonly confirmar = inject(Confirmar);

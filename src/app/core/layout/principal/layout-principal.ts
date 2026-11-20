@@ -16,17 +16,8 @@ export class LayoutPrincipal {
   readonly perfilAbierto = signal(false);
   readonly menuAbierto = signal(false);
 
-  get perfilNombre(): string {
-    return this.auth.perfil.nombreApellido;
-  }
-
-  get perfilArea(): string {
-    return this.auth.perfil.areaTrabajo;
-  }
-
-  get perfilIniciales(): string {
-    return this.auth.iniciales;
-  }
+  readonly perfil = this.auth.perfil;
+  readonly iniciales = this.auth.iniciales;
 
   abrirCerrarPerfil(): void {
     this.menuAbierto.set(false);

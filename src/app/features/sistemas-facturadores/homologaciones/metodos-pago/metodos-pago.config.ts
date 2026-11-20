@@ -9,4 +9,5 @@ export const METODOS_PAGO: ConfigHomologacion = {
   placeholderEntel: 'Ingresa el tipo de método de pago',
   placeholderSin: 'Selecciona un tipo de método de pago',
   endpoint: 'metodoPago',
+  campoId: 'idMetodoPago',
 };

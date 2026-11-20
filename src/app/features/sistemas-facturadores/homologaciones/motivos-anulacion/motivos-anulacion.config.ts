@@ -9,4 +9,5 @@ export const MOTIVOS_ANULACION: ConfigHomologacion = {
   placeholderEntel: 'Ingresa el motivo de anulación',
   placeholderSin: 'Selecciona un motivo de anulación',
   endpoint: 'motivoAnulacion',
+  campoId: 'idMotivoAnulacion',
 };

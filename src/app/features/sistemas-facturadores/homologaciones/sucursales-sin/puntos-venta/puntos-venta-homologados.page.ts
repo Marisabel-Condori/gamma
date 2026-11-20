@@ -11,10 +11,10 @@ import {
   GmModal,
   GmTabla,
   Toast,
-} from '../../../shared/ui';
-import { SistemasService } from '../../sistemas-facturadores/data/sistemas.service';
-import { PuntoVenta, SistemaSin } from '../data/sucursales.model';
-import { SucursalesState } from '../data/sucursales.state';
+} from '../../../../../shared/ui';
+import { SistemasService } from '../../../data/sistemas.service';
+import { PuntoVenta, SistemaSin } from '../data/sucursales-sin.model';
+import { SucursalesSinService } from '../data/sucursales-sin.service';
 
 type Codigo = 'CUIS' | 'CUFD';
 
@@ -47,7 +47,7 @@ const COLUMNAS: GmColumna<PuntoVenta>[] = [
 })
 export class PuntosVentaHomologadosPage {
   private readonly sistemas = inject(SistemasService);
-  private readonly datos = inject(SucursalesState);
+  private readonly datos = inject(SucursalesSinService);
   private readonly toast = inject(Toast);
 
   readonly sistemaId = input.required<string>();
@@ -58,7 +58,7 @@ export class PuntosVentaHomologadosPage {
 
   readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
   readonly sucursal = computed(() => this.datos.sucursales().find((s) => s.id === this.sucursalId()) ?? null);
-  readonly volver = computed(() => `/sistemas-facturadores/${this.sistemaId()}/sucursales`);
+  readonly volver = computed(() => `/sistemas-facturadores/${this.sistemaId()}/sucursales-sin`);
 
   readonly rutanavegacion = computed<GmRutaNavegacion[]>(() => [
     { etiqueta: 'Sistemas Facturadores', enlace: '/sistemas-facturadores' },

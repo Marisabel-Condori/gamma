@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { API_VORTEX_SERVICE_URL } from '../../../../environments/environment';
 import { SucursalApiRequest } from './puntos-venta.model';
 
 @Injectable({ providedIn: 'root' })
-export class SucursalesApiService {
+export class SucursalesService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.vortexApiUrl;
+  private readonly baseUrl = API_VORTEX_SERVICE_URL;
 
   listar<T = unknown>() { return this.http.get<T>(`${this.baseUrl}/sucursales`); }
   listarTodas<T = unknown>() { return this.http.get<T>(`${this.baseUrl}/sucursales/todas`); }

@@ -197,8 +197,9 @@ export class ProductosHomologadosPage {
 
     const codigo = this.codigoEntel().trim();
     const descripcion = this.productoEntel().trim();
+    const actividad = this.listaActividades().find((a) => a.codigoCaeb === this.actividad());
     const producto = this.listaProductos().find((p) => String(p.codigoProducto) === this.productoSin());
-    if (!codigo || !descripcion || !this.actividad() || !producto) {
+    if (!codigo || !descripcion || !actividad || !producto) {
       this.error.set('Completa todos los campos de la homologación.');
       return;
     }
@@ -207,8 +208,8 @@ export class ProductosHomologadosPage {
       idSistema: sistema.idSistema,
       codigo,
       descripcion,
-      codigoActividadSin: this.actividad(),
-      codigoProductoServicioSin: producto.codigoProducto,
+      idActividadSin: actividad.idActividades,
+      idProductoServicioSin: producto.idProductosServicios,
     };
 
     this.error.set(null);

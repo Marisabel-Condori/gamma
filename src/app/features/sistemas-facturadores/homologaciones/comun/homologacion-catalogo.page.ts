@@ -17,7 +17,6 @@ import {
   GmTexto,
   Toast,
 } from '../../../../shared/ui';
-import { sinRepetidos } from '../../../../shared/utils/listas';
 import { cambiaFormatoFecha } from '../../../../shared/utils/fechas';
 import { oracion } from '../../../../shared/utils/texto';
 import { CatalogoSinService } from '../../data/catalogo-sin.service';
@@ -95,7 +94,7 @@ export class HomologacionCatalogoPage {
   readonly editando = signal<string | null>(null);
   readonly codigoEntel = signal('');
   readonly descripcionEntel = signal('');
-  readonly codigoSin = signal('');
+  readonly idSin = signal('');
   readonly error = signal<string | null>(null);
   readonly guardando = signal(false);
 
@@ -106,12 +105,10 @@ export class HomologacionCatalogoPage {
   private readonly listado = this.api.listar(this.config, () => this.sistema()?.idSistema);
   private readonly homologaciones = computed(() => (this.listado.hasValue() ? (this.listado.value()?.data ?? []) : []));
 
-  private readonly listaCatalogo = computed(() =>
-    sinRepetidos(this.catalogo.hasValue() ? (this.catalogo.value()?.data ?? []) : [], (c) => String(c.codigoClasificador)),
-  );
+  private readonly listaCatalogo = computed(() => (this.catalogo.hasValue() ? (this.catalogo.value()?.data ?? []) : []));
 
   readonly opcionesSin = computed<GmOpcionLista[]>(() =>
-    this.listaCatalogo().map((c) => ({ valor: String(c.codigoClasificador), etiqueta: c.descripcion })),
+    this.listaCatalogo().map((c) => ({ valor: String(c[this.config.campoId]), etiqueta: c.descripcion })),
   );
 
   readonly cargandoCatalogo = computed(() => this.catalogo.isLoading());
@@ -147,7 +144,7 @@ export class HomologacionCatalogoPage {
   abrir(homologacion?: Homologacion): void {
     this.codigoEntel.set(homologacion?.codigo ?? '');
     this.descripcionEntel.set(homologacion?.descripcion ?? '');
-    this.codigoSin.set(homologacion?.codigoSin ?? '');
+    this.idSin.set(homologacion ? String(homologacion.idSin) : '');
     this.error.set(null);
     if (this.catalogo.error()) this.catalogo.reload();
     this.editando.set(homologacion ? String(homologacion.idHomologacion) : '');
@@ -161,13 +158,13 @@ export class HomologacionCatalogoPage {
 
     const codigo = this.codigoEntel().trim();
     const descripcion = this.descripcionEntel().trim();
-    const elegido = this.listaCatalogo().find((c) => String(c.codigoClasificador) === this.codigoSin());
+    const elegido = this.listaCatalogo().find((c) => String(c[this.config.campoId]) === this.idSin());
     if (!codigo || !descripcion || !elegido) {
       this.error.set('Completa todos los campos de la homologación.');
       return;
     }
 
-    const datos = { idSistema: sistema.idSistema, codigo, descripcion, codigoSin: elegido.codigoClasificador };
+    const datos = { idSistema: sistema.idSistema, codigo, descripcion, idSin: Number(elegido[this.config.campoId]) };
 
     this.error.set(null);
     this.guardando.set(true);

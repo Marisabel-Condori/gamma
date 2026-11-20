@@ -3,7 +3,8 @@ export interface HomologacionCatalogoResponse {
   idSistema: number;
   codigo: string;
   descripcion: string;
-  codigoSin: string;
+  idSin: number;
+  codigoSin: number;
   descripcionSin: string;
   fechaAlta: string;
   fechaModificacion?: string;
@@ -13,7 +14,7 @@ export interface HomologacionCatalogoRequest {
   idSistema: number;
   codigo: string;
   descripcion: string;
-  codigoSin: number;
+  idSin: number;
 }
 
 export interface ActualizarHomologacionCatalogoRequest extends HomologacionCatalogoRequest {
@@ -29,4 +30,5 @@ export interface ConfigHomologacion {
   placeholderEntel: string;
   placeholderSin: string;
   endpoint: string;
+  campoId: string;
 }
