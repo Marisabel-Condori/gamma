@@ -39,7 +39,7 @@
         <gm-icono nombre="conciliar" />
         Conciliar prepago
       </a>
-      <a class="subitem" (click)="pendiente('Conciliar postpago')">
+      <a class="subitem" routerLink="/vistas/conciliar-postpago" routerLinkActive="activo" (click)="cerrar()">
         <gm-icono nombre="conciliar" />
         Conciliar postpago
       </a>
@@ -73,7 +73,7 @@
             <gm-icono nombre="conciliar" />
             Conciliar prepago
           </a>
-          <a cdkMenuItem (cdkMenuItemTriggered)="pendiente('Conciliar postpago')">
+          <a cdkMenuItem routerLink="/vistas/conciliar-postpago" routerLinkActive="activo">
             <gm-icono nombre="conciliar" />
             Conciliar postpago
           </a>

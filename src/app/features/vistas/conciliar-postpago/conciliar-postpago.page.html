@@ -1,0 +1,41 @@
+<gm-encabezado titulo="Conciliación de facturas postpago" tituloMovil="Postpago" [rutanavegacion]="rutanavegacion" />
+
+<form class="filtros" (submit)="consultar($event)" novalidate>
+  <gm-seccion columnas="150px auto">
+    <gm-texto etiqueta="Periodo" placeholder="AAAAMM" [maxlength]="6" [valor]="periodo()" (valorChange)="periodo.set($event)" />
+    <div class="botones">
+      <button gmBoton="primario" type="submit" icono="buscar" etiqueta="Consultar"></button>
+    </div>
+  </gm-seccion>
+</form>
+
+@if (consultado()) {
+  <gm-tabla [datos]="sistemas()" [columnas]="columnasSistemas" clave="sistema" cabecera="clara" [compacta]="true" vacio="Sin datos para el periodo.">
+    <ng-template gmCelda="cantidadDiferencia" let-fila>
+      @let dif = diferenciaCantidad(fila);
+      <span [class.diferencia]="dif">{{ cantidad(dif) }}</span>
+    </ng-template>
+    <ng-template gmCelda="montoDiferencia" let-fila>
+      @let dif = diferenciaMonto(fila);
+      <span [class.diferencia]="dif">{{ monto(dif) }}</span>
+    </ng-template>
+  </gm-tabla>
+
+  <div class="totales">
+    <span>Totales</span>
+    <span>Cantidad SFE: <strong>{{ totalCantidad() }}</strong></span>
+    <span>Monto SFE: <strong>Bs {{ totalMonto() }}</strong></span>
+  </div>
+
+  <h3>Facturas con diferencia</h3>
+  <gm-tabla
+    [datos]="facturas()"
+    [columnas]="columnasFacturas"
+    clave="id"
+    cabecera="clara"
+    anchoMinimo="1100px"
+    [compacta]="true"
+    [porPagina]="10"
+    vacio="Sin facturas con diferencia."
+  />
+}
