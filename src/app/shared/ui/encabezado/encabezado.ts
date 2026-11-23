@@ -23,9 +23,11 @@ export interface GmRutaNavegacion {
         @for (rutanavegacion of rutanavegacion(); track rutanavegacion.etiqueta; let ultima = $last) {
           @if (rutanavegacion.enlace && !ultima) {
             <a [routerLink]="rutanavegacion.enlace">{{ rutanavegacion.etiqueta }}</a>
-            <span>/</span>
           } @else {
             <span>{{ rutanavegacion.etiqueta }}</span>
+          }
+          @if (!ultima) {
+            <span>/</span>
           }
         }
       </nav>

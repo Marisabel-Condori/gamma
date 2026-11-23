@@ -30,10 +30,36 @@
       <gm-icono nombre="servicios" />
       Puntos de venta
     </a>
-    <a routerLink="/servicios" routerLinkActive="activo" (click)="cerrar()">
-      <gm-icono nombre="servicios" />
-      Servicios
-    </a>
+    @if (esMovil()) {
+      <span class="grupo" [class.activo]="enAdmin()">
+        <gm-icono nombre="admin" />
+        Admin
+      </span>
+      <a class="subitem" routerLink="/admin/buscar-factura" routerLinkActive="activo" (click)="cerrar()">
+        <gm-icono nombre="factura" />
+        Buscar factura
+      </a>
+    } @else {
+      <button
+        type="button"
+        class="desplegable"
+        [class.activo]="enAdmin()"
+        [cdkMenuTriggerFor]="menuAdmin"
+        [cdkMenuPosition]="posicionesMenu"
+      >
+        <gm-icono nombre="admin" />
+        Admin
+        <gm-icono nombre="desplegar" />
+      </button>
+      <ng-template #menuAdmin>
+        <div class="submenu" cdkMenu>
+          <a cdkMenuItem routerLink="/admin/buscar-factura" routerLinkActive="activo">
+            <gm-icono nombre="factura" />
+            Buscar factura
+          </a>
+        </div>
+      </ng-template>
+    }
   </nav>
   <div class="perfil">
     <button
@@ -60,7 +86,7 @@
   </div>
 </header>
 
-<main>
+<main [class.ancha]="paginaAncha()">
   <router-outlet />
 </main>
 <footer class="pie">GAMMA · Sistema Base de Facturación Electrónica</footer>

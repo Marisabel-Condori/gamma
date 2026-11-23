@@ -19,6 +19,14 @@ const ICONOS = {
   tienda: 'store',
   sincronizar: 'sync',
   desplegar: 'expand_more',
+  admin: 'admin_panel_settings',
+  factura: 'receipt_long',
+  imprimir: 'print',
+  pdf: 'picture_as_pdf',
+  detalle: 'list_alt',
+  ver: 'zoom_in',
+  calendario: 'calendar_month',
+  limpiar: 'filter_alt_off',
 } as const;
 
 export type GmIconoNombre = keyof typeof ICONOS;

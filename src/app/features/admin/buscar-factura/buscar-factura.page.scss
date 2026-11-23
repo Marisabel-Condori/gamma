@@ -1,0 +1,18 @@
+.filtros {
+  margin-bottom: 18px;
+  padding: 4px 18px 18px;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-xl);
+}
+
+.botones {
+  display: flex;
+  align-self: end;
+  gap: 8px;
+}
+
+.acciones {
+  display: inline-flex;
+  gap: 6px;
+}

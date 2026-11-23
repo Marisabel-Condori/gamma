@@ -36,6 +36,7 @@ let siguienteId = 0;
         [attr.aria-labelledby]="id + '-etiqueta'"
         [attr.aria-expanded]="abierta()"
         [class.vacia]="!seleccionada()"
+        [attr.title]="seleccionada()?.etiqueta ?? null"
         [disabled]="deshabilitado()"
         (click)="alternar()"
       >

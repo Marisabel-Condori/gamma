@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: var(--control-lg);
+  padding: 0 12px;
+  border: 1px solid var(--linea-fuerte);
+  border-radius: var(--radio-md);
+  background: var(--superficie);
+  font-weight: var(--peso-normal);
+  text-align: left;
+}
+
+.control[aria-expanded='true'] {
+  border-color: var(--marca);
+  box-shadow: 0 0 0 3px var(--marca-suave);
+}
+
+.control.vacia {
+  color: var(--tinta-3);
+}
+
+.texto {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.control gm-icono {
+  color: var(--tinta-3);
+  font-size: var(--icono-md);
+}
+
+// ── Panel ──
+.panel {
+  width: 280px;
+  padding: 10px;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.flecha {
+  display: inline-grid;
+  place-items: center;
+  width: var(--control-sm);
+  height: var(--control-sm);
+  border: 0;
+  border-radius: var(--radio-md);
+  background: var(--apagado);
+  font-size: var(--icono-md);
+  cursor: pointer;
+}
+
+.flecha:hover {
+  background: var(--marca-suave);
+  color: var(--marca);
+}
+
+.dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.dia-semana {
+  padding: 4px 0;
+  color: var(--tinta-3);
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-negrita);
+  text-align: center;
+}
+
+.dia {
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: var(--radio-md);
+  background: transparent;
+  font-size: var(--texto-md);
+  cursor: pointer;
+}
+
+.dia:hover {
+  background: var(--marca-tenue);
+  color: var(--marca);
+}
+
+.dia.hoy {
+  border-color: var(--linea-fuerte);
+}
+
+.dia.elegido {
+  background: var(--marca);
+  color: var(--superficie);
+  font-weight: var(--peso-negrita);
+}

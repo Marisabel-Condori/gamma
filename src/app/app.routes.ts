@@ -31,8 +31,10 @@ export const routes: Routes = [
           import('./features/sistemas-facturadores/sistemas-facturadores.routes').then((m) => m.SISTEMAS_ROUTES),
       },
       {
-        path: 'servicios',
-        loadComponent: () => import('./features/servicios/servicios.page').then((m) => m.ServiciosPage),
+        path: 'admin/buscar-factura',
+        data: { paginaAncha: true },
+        loadComponent: () =>
+          import('./features/admin/buscar-factura/buscar-factura.page').then((m) => m.BuscarFacturaPage),
       },
       {
         path: 'puntos-de-venta',
@@ -43,21 +45,6 @@ export const routes: Routes = [
         path: 'puntos-de-venta/:codigoSucursal',
         loadComponent: () =>
           import('./features/sistemas-facturadores/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
-      },
-
-      // Direcciones antiguas que siguen funcionando.
-      { path: 'sistemasFacturadores', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
-      { path: 'sistemasFacturadores/entel', pathMatch: 'full', redirectTo: 'sistemas-facturadores' },
-      {
-        path: 'sistemasFacturadores/:sistemaId/productos',
-        redirectTo: ({ params }) => `/sistemas-facturadores/${params['sistemaId']}/productos`,
-      },
-      {
-        path: 'sistemasFacturadores/:origen/:sistemaId/productos',
-        redirectTo: ({ params }) => {
-          const sistemaId = (params['sistemaId'] ?? '').replace(/^entel-/, '');
-          return `/sistemas-facturadores/${sistemaId}/productos`;
-        },
       },
     ],
   },

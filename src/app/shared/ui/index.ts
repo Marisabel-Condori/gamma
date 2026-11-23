@@ -13,6 +13,7 @@ export type { GmIconoNombre } from './icono/icono';
 export { GmMenuFila } from './menu-fila/menu-fila';
 export type { GmOpcion } from './menu-fila/menu-fila';
 export { GmLista } from './lista/lista';
+export { GmFecha } from './fecha/fecha';
 export type { GmOpcionLista } from './lista/lista';
 export { GmModal } from './modal/modal';
 export { GmPaginador } from './paginador/paginador';

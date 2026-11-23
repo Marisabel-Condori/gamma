@@ -12,6 +12,10 @@ main {
   margin: 26px auto 8px;
 }
 
+main.ancha {
+  width: 95%;
+}
+
 .barra {
   position: sticky;
   top: 0;
@@ -57,7 +61,8 @@ nav {
   min-width: 0;
 }
 
-nav a {
+nav a,
+.desplegable {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -70,15 +75,24 @@ nav a {
   white-space: nowrap;
 }
 
-nav a gm-icono {
+nav a gm-icono,
+.desplegable gm-icono {
   font-size: var(--icono-lg);
 }
 
-nav a.activo {
+.desplegable {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+nav a.activo,
+.desplegable.activo {
   font-weight: var(--peso-negrita);
 }
 
-nav a.activo::after {
+nav a.activo::after,
+.desplegable.activo::after {
   content: '';
   position: absolute;
   left: 0;
@@ -87,6 +101,38 @@ nav a.activo::after {
   height: 3px;
   border-radius: var(--radio-pill);
   background: var(--marca);
+}
+
+.submenu {
+  min-width: 220px;
+  padding: 4px;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+}
+
+.submenu a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radio-sm);
+  color: var(--tinta);
+  font-weight: var(--peso-semi);
+  text-decoration: none;
+}
+
+.submenu a gm-icono {
+  font-size: var(--icono-md);
+}
+
+.submenu a:hover,
+.submenu a:focus-visible,
+.submenu a.activo {
+  background: var(--marca-tenue);
+  color: var(--marca);
+  outline: none;
 }
 
 .perfil {
@@ -161,7 +207,8 @@ nav a.activo::after {
 }
 
 @media (max-width: $movil) {
-  main {
+  main,
+  main.ancha {
     width: calc(100% - var(--pagina-margen-movil));
     margin-top: 20px;
   }
@@ -242,6 +289,25 @@ nav a.activo::after {
   nav a {
     padding: 14px 10px;
     border-bottom: 1px solid var(--linea);
+  }
+
+  .grupo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 10px 6px;
+    color: var(--tinta-3);
+    font-size: var(--texto-sm);
+    font-weight: var(--peso-negrita);
+    text-transform: uppercase;
+  }
+
+  .grupo gm-icono {
+    font-size: var(--icono-md);
+  }
+
+  nav a.subitem {
+    padding-left: 28px;
   }
 
   nav a.activo::after {

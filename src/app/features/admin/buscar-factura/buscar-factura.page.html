@@ -1,0 +1,67 @@
+<gm-encabezado
+  titulo="Consulta de facturas"
+  tituloMovil="Facturas"
+  [rutanavegacion]="rutanavegacion"
+/>
+
+<form class="filtros" (submit)="buscar($event)" novalidate>
+  <gm-seccion columnas="118px 132px minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1fr) 130px minmax(0, 1.6fr) auto">
+    <gm-lista
+      etiqueta="Origen"
+      [opciones]="origenes"
+      [valor]="filtro().origen"
+      (valorChange)="campo('origen', $event)"
+    />
+    <gm-lista
+      etiqueta="Recepción"
+      [opciones]="recepciones"
+      [valor]="filtro().recepcion"
+      (valorChange)="campo('recepcion', $event)"
+    />
+    <gm-texto
+      etiqueta="Nro. factura"
+      placeholder="Número"
+      [valor]="filtro().numeroFactura"
+      (valorChange)="campo('numeroFactura', $event)"
+    />
+    <gm-texto
+      etiqueta="Razón social"
+      placeholder="Nombre"
+      [valor]="filtro().razonSocial"
+      (valorChange)="campo('razonSocial', $event)"
+    />
+    <gm-texto
+      etiqueta="Documento"
+      placeholder="Nro doc"
+      [valor]="filtro().numeroDocumento"
+      (valorChange)="campo('numeroDocumento', $event)"
+    />
+    <gm-fecha etiqueta="Periodo" [valor]="filtro().periodo" (valorChange)="campo('periodo', $event)" />
+    <gm-texto etiqueta="CUF" placeholder="Código único" [valor]="filtro().cuf" (valorChange)="campo('cuf', $event)" />
+    <div class="botones">
+      <button gmBoton="neutro" type="button" icono="limpiar" aria-label="Limpiar filtros" title="Limpiar filtros" (click)="limpiar()"></button>
+      <button gmBoton="primario" type="submit" icono="buscar" etiqueta="Buscar"></button>
+    </div>
+  </gm-seccion>
+</form>
+
+<gm-tabla
+  [datos]="facturas()"
+  [columnas]="columnas"
+  clave="idFactura"
+  cabecera="clara"
+  anchoMinimo="1240px"
+  [compacta]="true"
+  [porPagina]="10"
+  [vacio]="vacio()"
+>
+  <ng-template gmCelda="acciones" let-factura>
+    <div class="acciones">
+      <button gmBoton chico icono="imprimir" type="button" aria-label="Imprimir" (click)="accion('imprimir', factura)"></button>
+      <button gmBoton chico icono="pdf" type="button" aria-label="Descargar PDF" (click)="accion('descargar PDF', factura)"></button>
+      <button gmBoton chico icono="detalle" type="button" aria-label="Ver detalle" (click)="accion('ver detalle', factura)"></button>
+      <button gmBoton chico icono="ver" type="button" aria-label="Ver factura" (click)="accion('ver', factura)"></button>
+      <button gmBoton="peligro" chico icono="eliminar" type="button" aria-label="Anular" (click)="accion('anular', factura)"></button>
+    </div>
+  </ng-template>
+</gm-tabla>
