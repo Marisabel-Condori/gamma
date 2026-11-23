@@ -22,9 +22,10 @@ const ICONOS = {
   admin: 'admin_panel_settings',
   factura: 'receipt_long',
   imprimir: 'print',
-  pdf: 'picture_as_pdf',
-  detalle: 'list_alt',
-  ver: 'zoom_in',
+  xml: 'code',
+  siat: 'qr_code_2',
+  ver: 'visibility',
+  bitacora: 'history',
   calendario: 'calendar_month',
   limpiar: 'filter_alt_off',
 } as const;

@@ -57,11 +57,24 @@
 >
   <ng-template gmCelda="acciones" let-factura>
     <div class="acciones">
-      <button gmBoton chico icono="imprimir" type="button" aria-label="Imprimir" (click)="accion('imprimir', factura)"></button>
-      <button gmBoton chico icono="pdf" type="button" aria-label="Descargar PDF" (click)="accion('descargar PDF', factura)"></button>
-      <button gmBoton chico icono="detalle" type="button" aria-label="Ver detalle" (click)="accion('ver detalle', factura)"></button>
-      <button gmBoton chico icono="ver" type="button" aria-label="Ver factura" (click)="accion('ver', factura)"></button>
-      <button gmBoton="peligro" chico icono="eliminar" type="button" aria-label="Anular" (click)="accion('anular', factura)"></button>
+      <button gmBoton chico icono="imprimir" type="button" aria-label="Imprimir" title="Imprimir" (click)="accion('imprimir', factura)"></button>
+      <button gmBoton chico icono="xml" type="button" aria-label="Descargar XML" title="Descargar XML" (click)="accion('descargar XML', factura)"></button>
+      <a
+        gmBoton
+        chico
+        icono="siat"
+        [href]="urlSiat(factura)"
+        target="_blank"
+        rel="noopener"
+        aria-label="Consultar en Impuestos Nacionales (SIAT)"
+        title="Consultar en Impuestos Nacionales (SIAT)"
+      ></a>
+      <button gmBoton chico icono="ver" type="button" aria-label="Ver factura" title="Ver factura" (click)="verDetalle(factura)"></button>
+      <button gmBoton="peligro" chico icono="eliminar" type="button" aria-label="Anular" title="Anular" (click)="accion('anular', factura)"></button>
     </div>
   </ng-template>
 </gm-tabla>
+
+@if (detalle(); as factura) {
+  <gm-detalle-factura [detalle]="factura" (cerrar)="detalle.set(null)" />
+}

@@ -13,7 +13,8 @@ import {
   GmTexto,
   Toast,
 } from '../../../shared/ui';
-import { FacturaResponse, FiltroFacturas } from './data/facturas.model';
+import { DetalleFacturaResponse, FacturaResponse, FiltroFacturas } from './data/facturas.model';
+import { GmDetalleFactura } from './detalle-factura/detalle-factura';
 
 type Factura = FacturaResponse;
 
@@ -42,6 +43,9 @@ const COLUMNAS: GmColumna<Factura>[] = [
 
 const TODOS = 'TODOS';
 
+const SIAT_CONSULTA_QR = 'https://siat.impuestos.gob.bo/consulta/QR';
+const NIT_EMISOR = '1020703023';
+
 // Temporal: fila de ejemplo con mis datos Marisabel...
 const EJEMPLO: Factura = {
   idFactura: 1,
@@ -52,11 +56,42 @@ const EJEMPLO: Factura = {
   numeroDocumento: '10928881',
   tipoDocumento: 'CI',
   fecha: '2026/10/25 09:17:17',
-  cuf: '45D6DEA7127982ABCCD29A9D3DFCB25BCB3A6B6C29267A3DE08B4BF',
+  cuf: '45D6DEA7127982ABCCD29A9D3DFCB25BCB3A6B6C29267A3DE08B4BF74',
   montoTotal: 10,
   estado: 'OK',
   tipoEmision: 'ONLINE',
   usuario: '1',
+};
+
+const EJEMPLO_DETALLE: DetalleFacturaResponse = {
+  idFactura: 1,
+  fecha: '2026/10/25 09:17:17',
+  numeroFactura: '23908832',
+  razonSocial: 'MARISABEL CONDORI CANO',
+  tipoDocumento: 'CI',
+  numeroDocumento: '10928881',
+  complemento: '',
+  descuento: 0,
+  montoTotal: 10,
+  montoSujetoIva: 10,
+  sistema: 'BANCA',
+  transaccion: 'COB_242791896',
+  sucursal: 'Multicentro Tower',
+  puntoVenta: 'BANCO UNION',
+  items: [
+    {
+      codigo: '24',
+      descripcion: 'Recarga Prepago - 71204974 - GSM - BONIFICACION BS. 10',
+      cantidad: 1,
+      precio: 10,
+      subtotal: 10,
+    },
+  ],
+  contactos: [
+    { tipo: 'CELULAR', valor: '71204974' },
+    { tipo: 'EMAIL', valor: 'mari.17ymy@gmail.com' },
+  ],
+  mensajes: [],
 };
 
 const ORIGENES: GmOpcionLista[] = [
@@ -92,7 +127,7 @@ const FILTRO_INICIAL: FiltroFacturas = {
 
 @Component({
   selector: 'gm-buscar-factura-page',
-  imports: [GmEncabezado, GmSeccion, GmTexto, GmLista, GmFecha, GmBoton, GmTabla, GmCelda],
+  imports: [GmEncabezado, GmSeccion, GmTexto, GmLista, GmFecha, GmBoton, GmTabla, GmCelda, GmDetalleFactura],
   templateUrl: './buscar-factura.page.html',
   styleUrl: './buscar-factura.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -113,6 +148,7 @@ export class BuscarFacturaPage {
   readonly filtro = signal<FiltroFacturas>({ ...FILTRO_INICIAL });
   readonly facturas = signal<Factura[]>([]);
   readonly buscado = signal(false);
+  readonly detalle = signal<DetalleFacturaResponse | null>(null);
 
   readonly vacio = computed(() =>
     this.buscado()
@@ -134,6 +170,15 @@ export class BuscarFacturaPage {
     this.filtro.set({ ...FILTRO_INICIAL });
     this.facturas.set([]);
     this.buscado.set(false);
+  }
+
+  urlSiat(factura: Factura): string {
+    const parametros = new URLSearchParams({ nit: NIT_EMISOR, cuf: factura.cuf, numero: factura.numeroFactura, t: '2' });
+    return `${SIAT_CONSULTA_QR}?${parametros}`;
+  }
+
+  verDetalle(factura: Factura): void {
+    this.detalle.set(EJEMPLO_DETALLE);
   }
 
   accion(nombre: string, factura: Factura): void {

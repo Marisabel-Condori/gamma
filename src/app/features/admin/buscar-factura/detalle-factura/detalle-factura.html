@@ -1,0 +1,69 @@
+@let factura = detalle();
+<gm-modal titulo="Detalle de factura" ancho="920px" (cerrar)="cerrar.emit()">
+  <div class="datos">
+    <dl>
+      <dt>Fecha</dt>
+      <dd>{{ factura.fecha }}</dd>
+      <dt>Nro. factura</dt>
+      <dd>{{ factura.numeroFactura }}</dd>
+      <dt>Razón social</dt>
+      <dd>{{ factura.razonSocial }}</dd>
+      <dt>Tipo documento</dt>
+      <dd>{{ factura.tipoDocumento }}</dd>
+      <dt>NIT/CI/CEX</dt>
+      <dd>{{ factura.numeroDocumento }}</dd>
+      <dt>Complemento</dt>
+      <dd>{{ factura.complemento || '—' }}</dd>
+    </dl>
+    <dl>
+      <dt>Descuento</dt>
+      <dd>{{ bs(factura.descuento) }}</dd>
+      <dt>Monto total</dt>
+      <dd>{{ bs(factura.montoTotal) }}</dd>
+      <dt>Sujeto a IVA</dt>
+      <dd>{{ bs(factura.montoSujetoIva) }}</dd>
+    </dl>
+    <dl>
+      <dt>Sistema</dt>
+      <dd>{{ factura.sistema }}</dd>
+      <dt>Transacción</dt>
+      <dd>{{ factura.transaccion }}</dd>
+      <dt>Sucursal</dt>
+      <dd>{{ factura.sucursal }}</dd>
+      <dt>Punto de venta</dt>
+      <dd>{{ factura.puntoVenta }}</dd>
+      <dt>Bitácora</dt>
+      <dd>
+        <button gmBoton chico icono="bitacora" type="button" aria-label="Ver bitácora" title="Ver bitácora" (click)="verBitacora()"></button>
+      </dd>
+    </dl>
+  </div>
+
+  <gm-tabla
+    [datos]="factura.items"
+    [columnas]="columnasItems"
+    clave="codigo"
+    cabecera="clara"
+    [compacta]="true"
+    vacio="Sin detalle."
+  />
+
+  <div class="listas">
+    <section>
+      <h3>Medios de contacto</h3>
+      @if (factura.contactos.length) {
+        <gm-tabla [datos]="factura.contactos" [columnas]="columnasContactos" clave="tipo" cabecera="clara" [compacta]="true" />
+      } @else {
+        <p class="sin-datos">Sin medios de contacto.</p>
+      }
+    </section>
+    <section>
+      <h3>Mensajes de la transacción</h3>
+      @if (factura.mensajes.length) {
+        <gm-tabla [datos]="factura.mensajes" [columnas]="columnasMensajes" clave="codigo" cabecera="clara" [compacta]="true" />
+      } @else {
+        <p class="sin-datos">Sin mensajes.</p>
+      }
+    </section>
+  </div>
+</gm-modal>
