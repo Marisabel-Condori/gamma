@@ -4,7 +4,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { GmConfirmar, GmIcono, GmToast, Pantalla } from '../../../shared/ui';
+import { GmConfirmar, GmIcono, GmToast, Pantalla, Toast } from '../../../shared/ui';
 import { AuthService } from '../../auth/auth.service';
 
 const POSICIONES_MENU: ConnectedPosition[] = [
@@ -21,6 +21,7 @@ const POSICIONES_MENU: ConnectedPosition[] = [
 export class LayoutPrincipal {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toast = inject(Toast);
   readonly perfilAbierto = signal(false);
   readonly menuAbierto = signal(false);
 
@@ -28,6 +29,7 @@ export class LayoutPrincipal {
   readonly posicionesMenu = POSICIONES_MENU;
   private readonly navegacion = toSignal(this.router.events.pipe(filter((evento) => evento instanceof NavigationEnd)));
 
+  readonly enVistas = computed(() => (this.navegacion(), this.router.url.startsWith('/vistas')));
   readonly enAdmin = computed(() => (this.navegacion(), this.router.url.startsWith('/admin')));
   /** Pantallas con muchos datos piden más ancho con `data: { paginaAncha: true }` en su ruta. */
   readonly paginaAncha = computed(() => (this.navegacion(), rutaFinal(this.router.routerState.snapshot.root).data['paginaAncha'] === true));
@@ -48,6 +50,11 @@ export class LayoutPrincipal {
   cerrar(): void {
     this.menuAbierto.set(false);
     this.perfilAbierto.set(false);
+  }
+
+  pendiente(pantalla: string): void {
+    this.cerrar();
+    this.toast.mostrar(`Pendiente ${pantalla}.`);
   }
 
   salir(): void {

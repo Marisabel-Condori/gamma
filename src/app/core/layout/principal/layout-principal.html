@@ -31,6 +31,22 @@
       Puntos de venta
     </a>
     @if (esMovil()) {
+      <span class="grupo" [class.activo]="enVistas()">
+        <gm-icono nombre="vistas" />
+        Vistas
+      </span>
+      <a class="subitem" routerLink="/vistas/conciliar-prepago" routerLinkActive="activo" (click)="cerrar()">
+        <gm-icono nombre="conciliar" />
+        Conciliar prepago
+      </a>
+      <a class="subitem" (click)="pendiente('Conciliar postpago')">
+        <gm-icono nombre="conciliar" />
+        Conciliar postpago
+      </a>
+      <a class="subitem" (click)="pendiente('Conciliación SIAT')">
+        <gm-icono nombre="conciliarSiat" />
+        Conciliación SIAT
+      </a>
       <span class="grupo" [class.activo]="enAdmin()">
         <gm-icono nombre="admin" />
         Admin
@@ -40,6 +56,33 @@
         Buscar factura
       </a>
     } @else {
+      <button
+        type="button"
+        class="desplegable"
+        [class.activo]="enVistas()"
+        [cdkMenuTriggerFor]="menuVistas"
+        [cdkMenuPosition]="posicionesMenu"
+      >
+        <gm-icono nombre="vistas" />
+        Vistas
+        <gm-icono nombre="desplegar" />
+      </button>
+      <ng-template #menuVistas>
+        <div class="submenu" cdkMenu>
+          <a cdkMenuItem routerLink="/vistas/conciliar-prepago" routerLinkActive="activo">
+            <gm-icono nombre="conciliar" />
+            Conciliar prepago
+          </a>
+          <a cdkMenuItem (cdkMenuItemTriggered)="pendiente('Conciliar postpago')">
+            <gm-icono nombre="conciliar" />
+            Conciliar postpago
+          </a>
+          <a cdkMenuItem (cdkMenuItemTriggered)="pendiente('Conciliación SIAT')">
+            <gm-icono nombre="conciliarSiat" />
+            Conciliación SIAT
+          </a>
+        </div>
+      </ng-template>
       <button
         type="button"
         class="desplegable"

@@ -1,0 +1,65 @@
+<gm-encabezado titulo="Conciliación de facturas prepago" tituloMovil="Prepago" [rutanavegacion]="rutanavegacion" />
+
+<form class="filtros" (submit)="consultar($event)" novalidate>
+  <gm-seccion columnas="150px auto">
+    <gm-texto etiqueta="Periodo" placeholder="AAAAMM" [maxlength]="6" [valor]="periodo()" (valorChange)="periodo.set($event)" />
+    <div class="botones">
+      <button gmBoton="primario" type="submit" icono="buscar" etiqueta="Consultar"></button>
+      <button gmBoton="neutro" type="button" icono="conciliar" etiqueta="Detalle diferencias" (click)="detalleDiferencias()"></button>
+    </div>
+  </gm-seccion>
+</form>
+
+@if (dias().length) {
+  <div class="marco">
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="3" class="dia">Día</th>
+          @for (origen of origenes; track origen) {
+            <th colspan="5" class="origen">{{ origen }}</th>
+          }
+        </tr>
+        <tr>
+          @for (origen of origenes; track origen) {
+            <th colspan="2" class="origen-inicio">Cantidad</th>
+            <th colspan="2">Monto</th>
+            <th rowspan="2" class="num">Dif.</th>
+          }
+        </tr>
+        <tr>
+          @for (origen of origenes; track origen) {
+            <th class="num origen-inicio">SFE</th>
+            <th class="num">LPT</th>
+            <th class="num">SFE</th>
+            <th class="num">LPT</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (fila of dias(); track fila.dia) {
+          <tr>
+            <td class="dia">{{ fila.dia }}</td>
+            @for (origen of origenes; track origen) {
+              @if (fila.origenes[origen]; as datos) {
+                @let distintaCantidad = datos.cantidadSfe !== datos.cantidadLpt;
+                @let dif = diferencia(datos);
+                <td class="num origen-inicio" [class.distinto]="distintaCantidad">{{ cantidad(datos.cantidadSfe) }}</td>
+                <td class="num" [class.distinto]="distintaCantidad">{{ cantidad(datos.cantidadLpt) }}</td>
+                <td class="num">{{ monto(datos.montoSfe) }}</td>
+                <td class="num">{{ monto(datos.montoLpt) }}</td>
+                <td class="num" [class.diferencia]="dif !== 0">{{ monto(dif) }}</td>
+              } @else {
+                <td class="origen-inicio"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              }
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

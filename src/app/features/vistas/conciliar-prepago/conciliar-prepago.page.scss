@@ -1,0 +1,77 @@
+.filtros {
+  margin-bottom: 18px;
+  padding: 4px 18px 18px;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-xl);
+}
+
+.botones {
+  display: flex;
+  align-self: end;
+  gap: 8px;
+}
+
+.marco {
+  overflow-x: auto;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-xl);
+}
+
+table {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+  font-size: var(--texto-xs);
+}
+
+th,
+td {
+  padding: 5px 8px;
+  white-space: nowrap;
+}
+
+thead th {
+  background: var(--tabla-clara);
+  color: var(--tinta);
+  font-weight: var(--peso-negrita);
+  text-align: center;
+}
+
+th.origen {
+  font-size: var(--texto-sm);
+}
+
+tbody tr + tr td {
+  border-top: 1px solid var(--linea);
+}
+
+tbody tr:hover td {
+  background: var(--marca-tenue);
+}
+
+.dia {
+  font-weight: var(--peso-negrita);
+  text-align: center;
+}
+
+td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.origen-inicio {
+  border-left: 1px solid var(--linea-fuerte);
+}
+
+td.distinto {
+  color: var(--peligro);
+  font-weight: var(--peso-semi);
+}
+
+tbody tr td.diferencia {
+  background: var(--peligro);
+  color: #fff;
+  font-weight: var(--peso-negrita);
+}
