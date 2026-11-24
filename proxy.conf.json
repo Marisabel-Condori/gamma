@@ -1,14 +1,17 @@
 {
-  "/vortex-codigos": {
-    "target": "https://qb41v4jz-8080.brs.devtunnels.ms",
+  "/vortex-codigos-service": {
+    "target": "https://fslpvnlj-8080.brs.devtunnels.ms/vortex-codigos-service",
     "secure": true,
     "changeOrigin": true,
+    "pathRewrite": {
+      "^/vortex-codigos-service": ""
+    },
     "headers": {
       "X-Tunnel-Skip-AntiPhishing-Page": "true"
     }
   },
-  "/vortex-codigos-service": {
-    "target": "https://fslpvnlj-8080.brs.devtunnels.ms",
+  "/vortex-codigos": {
+    "target": "https://qb41v4jz-8080.brs.devtunnels.ms",
     "secure": true,
     "changeOrigin": true,
     "headers": {
