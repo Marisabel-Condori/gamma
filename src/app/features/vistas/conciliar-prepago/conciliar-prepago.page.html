@@ -1,11 +1,11 @@
 <gm-encabezado titulo="Conciliación de facturas prepago" tituloMovil="Prepago" [rutanavegacion]="rutanavegacion" />
 
 <form class="filtros" (submit)="consultar($event)" novalidate>
-  <gm-seccion columnas="150px auto">
-    <gm-texto etiqueta="Periodo" placeholder="AAAAMM" [maxlength]="6" [valor]="periodo()" (valorChange)="periodo.set($event)" />
+  <gm-seccion columnas="150px auto" columnasMovil="minmax(0, 1fr) auto">
+    <gm-fecha etiqueta="Periodo" [soloMes]="true" [ocultarEtiqueta]="esMovil()" [valor]="periodo()" (valorChange)="periodo.set($event)" />
     <div class="botones">
-      <button gmBoton="primario" type="submit" icono="buscar" etiqueta="Consultar"></button>
-      <button gmBoton="neutro" type="button" icono="conciliar" etiqueta="Detalle diferencias" (click)="detalleDiferencias()"></button>
+      <button gmBoton="primario" type="submit" icono="buscar" [etiqueta]="esMovil() ? undefined : 'Consultar'" aria-label="Consultar" title="Consultar"></button>
+      <button gmBoton="neutro" type="button" icono="conciliar" [etiqueta]="esMovil() ? undefined : 'Detalle diferencias'" aria-label="Detalle diferencias" title="Detalle diferencias" (click)="detalleDiferencias()"></button>
     </div>
   </gm-seccion>
 </form>

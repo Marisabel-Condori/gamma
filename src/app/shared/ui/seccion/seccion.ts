@@ -37,7 +37,8 @@ import { Pantalla } from '../pantalla';
 export class GmSeccion {
   readonly titulo = input<string>();
   readonly columnas = input('1fr');
+  readonly columnasMovil = input('1fr');
 
   private readonly esMovil = inject(Pantalla).esMovil;
-  protected readonly grilla = computed(() => (this.esMovil() ? '1fr' : this.columnas()));
+  protected readonly grilla = computed(() => (this.esMovil() ? this.columnasMovil() : this.columnas()));
 }

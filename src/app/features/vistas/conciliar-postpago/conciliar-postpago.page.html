@@ -1,10 +1,10 @@
 <gm-encabezado titulo="Conciliación de facturas postpago" tituloMovil="Postpago" [rutanavegacion]="rutanavegacion" />
 
 <form class="filtros" (submit)="consultar($event)" novalidate>
-  <gm-seccion columnas="150px auto">
-    <gm-texto etiqueta="Periodo" placeholder="AAAAMM" [maxlength]="6" [valor]="periodo()" (valorChange)="periodo.set($event)" />
+  <gm-seccion columnas="150px auto" columnasMovil="minmax(0, 1fr) auto">
+    <gm-fecha etiqueta="Periodo" [soloMes]="true" [ocultarEtiqueta]="esMovil()" [valor]="periodo()" (valorChange)="periodo.set($event)" />
     <div class="botones">
-      <button gmBoton="primario" type="submit" icono="buscar" etiqueta="Consultar"></button>
+      <button gmBoton="primario" type="submit" icono="buscar" [etiqueta]="esMovil() ? undefined : 'Consultar'" aria-label="Consultar" title="Consultar"></button>
     </div>
   </gm-seccion>
 </form>

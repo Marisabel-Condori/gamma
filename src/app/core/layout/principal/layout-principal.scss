@@ -114,7 +114,6 @@ nav a.activo::after,
 
 .submenu a {
   display: flex;
-  cursor: pointer;
   align-items: center;
   gap: 8px;
   padding: 8px 10px;
@@ -289,7 +288,6 @@ nav a.activo::after,
 
   nav a {
     padding: 14px 10px;
-    cursor: pointer;
     border-bottom: 1px solid var(--linea);
   }
 

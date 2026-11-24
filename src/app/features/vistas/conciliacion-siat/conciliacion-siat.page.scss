@@ -1,0 +1,87 @@
+.filtros {
+  margin-bottom: 18px;
+  padding: 4px 18px 18px;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-xl);
+}
+
+.botones {
+  display: flex;
+  align-self: end;
+  gap: 8px;
+}
+
+.marco {
+  overflow-x: auto;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-xl);
+}
+
+table {
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-xs);
+}
+
+th,
+td {
+  padding: 5px 8px;
+  white-space: nowrap;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+thead th {
+  background: var(--tabla-clara);
+  color: var(--tinta);
+  font-weight: var(--peso-negrita);
+}
+
+.sistema {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 120px;
+  background: var(--superficie);
+  font-weight: var(--peso-negrita);
+  text-align: left;
+  box-shadow: 8px 0 10px -10px rgb(20 35 55 / 55%);
+}
+
+thead th.sistema {
+  background: var(--tabla-clara);
+}
+
+tbody tr + tr td,
+tfoot tr + tr td {
+  border-top: 1px solid var(--linea);
+}
+
+tbody tr:hover td {
+  background: var(--marca-tenue);
+}
+
+tfoot td {
+  font-weight: var(--peso-negrita);
+}
+
+tr.total td {
+  background: #e3f3e6;
+  color: #1f6b35;
+}
+
+tr.siat td {
+  background: #e2ecf8;
+  color: #1d4f91;
+}
+
+tfoot tr:first-child td {
+  border-top: 2px solid var(--linea-fuerte);
+}
+
+tr.diferencias td.diferencia {
+  background: var(--peligro);
+  color: #fff;
+}

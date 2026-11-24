@@ -1,20 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { GmBoton, GmCelda, GmColumna, GmEncabezado, GmRutaNavegacion, GmSeccion, GmTabla, GmTexto } from '../../../shared/ui';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { GmBoton, GmCelda, GmColumna, GmEncabezado, GmRutaNavegacion, GmSeccion, Pantalla, GmTabla, GmFecha } from '../../../shared/ui';
 import { ConciliacionSistema, FacturaConciliacion } from './data/conciliacion-postpago.model';
 import { FACTURAS_POSTPAGO, SISTEMAS_POSTPAGO } from './data/conciliar-postpago.ejemplo';
-
-const CANTIDAD = new Intl.NumberFormat('en-US');
-const MONTO = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-const cantidad = (valor: number | null | undefined) => (valor == null ? '' : CANTIDAD.format(valor));
-const monto = (valor: number | null | undefined) => (valor == null ? '' : MONTO.format(valor));
+import { cantidad, monto, redondear } from '../formato';
 
 function diferenciaCantidad(fila: ConciliacionSistema): number | null {
   return fila.cantidadLpt == null ? null : fila.cantidadSfe - fila.cantidadLpt;
 }
 
 function diferenciaMonto(fila: ConciliacionSistema): number | null {
-  return fila.montoLpt == null ? null : Math.round((fila.montoSfe - fila.montoLpt) * 100) / 100;
+  return fila.montoLpt == null ? null : redondear(fila.montoSfe - fila.montoLpt);
 }
 
 const COLUMNAS_SISTEMAS: GmColumna<ConciliacionSistema>[] = [
@@ -28,7 +23,7 @@ const COLUMNAS_SISTEMAS: GmColumna<ConciliacionSistema>[] = [
 ];
 
 const COLUMNAS_FACTURAS: GmColumna<FacturaConciliacion>[] = [
-  { id: 'cuf', titulo: 'CUF', sinSalto: true, movil: 'titulo' },
+  { id: 'cuf', titulo: 'CUF', sinSalto: true, etiquetaMovil: 'CUF' },
   { id: 'sistemaSfe', titulo: 'Sistema SFE', etiquetaMovil: 'Sistema SFE' },
   { id: 'numeroFacturaSfe', titulo: 'Nro. factura SFE', alinear: 'fin', etiquetaMovil: 'Nro. factura SFE' },
   { id: 'fechaSfe', titulo: 'Fecha SFE', sinSalto: true, etiquetaMovil: 'Fecha SFE' },
@@ -41,13 +36,14 @@ const COLUMNAS_FACTURAS: GmColumna<FacturaConciliacion>[] = [
 
 @Component({
   selector: 'gm-conciliar-postpago-page',
-  imports: [GmEncabezado, GmSeccion, GmTexto, GmBoton, GmTabla, GmCelda],
+  imports: [GmEncabezado, GmSeccion, GmFecha, GmBoton, GmTabla, GmCelda],
   templateUrl: './conciliar-postpago.page.html',
   styleUrl: './conciliar-postpago.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },
 })
 export class ConciliarPostpagoPage {
+  readonly esMovil = inject(Pantalla).esMovil;
   readonly columnasSistemas = COLUMNAS_SISTEMAS;
   readonly columnasFacturas = COLUMNAS_FACTURAS;
   readonly rutanavegacion: GmRutaNavegacion[] = [{ etiqueta: 'Vistas' }, { etiqueta: 'Conciliar postpago' }];

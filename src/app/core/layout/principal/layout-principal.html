@@ -35,6 +35,10 @@
         <gm-icono nombre="vistas" />
         Vistas
       </span>
+      <a class="subitem" routerLink="/vistas/conciliacion-siat" routerLinkActive="activo" (click)="cerrar()">
+        <gm-icono nombre="conciliarSiat" />
+        Conciliación SIAT
+      </a>
       <a class="subitem" routerLink="/vistas/conciliar-prepago" routerLinkActive="activo" (click)="cerrar()">
         <gm-icono nombre="conciliar" />
         Conciliar prepago
@@ -42,10 +46,6 @@
       <a class="subitem" routerLink="/vistas/conciliar-postpago" routerLinkActive="activo" (click)="cerrar()">
         <gm-icono nombre="conciliar" />
         Conciliar postpago
-      </a>
-      <a class="subitem" (click)="pendiente('Conciliación SIAT')">
-        <gm-icono nombre="conciliarSiat" />
-        Conciliación SIAT
       </a>
       <span class="grupo" [class.activo]="enAdmin()">
         <gm-icono nombre="admin" />
@@ -69,6 +69,10 @@
       </button>
       <ng-template #menuVistas>
         <div class="submenu" cdkMenu>
+          <a cdkMenuItem routerLink="/vistas/conciliacion-siat" routerLinkActive="activo">
+            <gm-icono nombre="conciliarSiat" />
+            Conciliación SIAT
+          </a>
           <a cdkMenuItem routerLink="/vistas/conciliar-prepago" routerLinkActive="activo">
             <gm-icono nombre="conciliar" />
             Conciliar prepago
@@ -76,10 +80,6 @@
           <a cdkMenuItem routerLink="/vistas/conciliar-postpago" routerLinkActive="activo">
             <gm-icono nombre="conciliar" />
             Conciliar postpago
-          </a>
-          <a cdkMenuItem (cdkMenuItemTriggered)="pendiente('Conciliación SIAT')">
-            <gm-icono nombre="conciliarSiat" />
-            Conciliación SIAT
           </a>
         </div>
       </ng-template>

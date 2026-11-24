@@ -1,22 +1,21 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { GmBoton, GmEncabezado, GmRutaNavegacion, GmSeccion, GmTexto, Toast } from '../../../shared/ui';
+import { GmBoton, GmEncabezado, GmRutaNavegacion, GmSeccion, Pantalla, GmFecha, Toast } from '../../../shared/ui';
 import { ConciliacionDia, ConciliacionOrigen } from './data/conciliacion.model';
 import { CONCILIACION_PREPAGO } from './data/conciliar-prepago.ejemplo';
+import { cantidad, monto, redondear } from '../formato';
 
 const ORIGENES = ['BANCA', 'SICO', 'RECINT'];
 
-const CANTIDAD = new Intl.NumberFormat('en-US');
-const MONTO = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
 @Component({
   selector: 'gm-conciliar-prepago-page',
-  imports: [GmEncabezado, GmSeccion, GmTexto, GmBoton],
+  imports: [GmEncabezado, GmSeccion, GmFecha, GmBoton],
   templateUrl: './conciliar-prepago.page.html',
   styleUrl: './conciliar-prepago.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },
 })
 export class ConciliarPrepagoPage {
+  readonly esMovil = inject(Pantalla).esMovil;
   private readonly toast = inject(Toast);
 
   readonly origenes = ORIGENES;
@@ -34,15 +33,10 @@ export class ConciliarPrepagoPage {
     this.toast.mostrar('Pendiente detalle de diferencias.');
   }
 
-  cantidad(valor: number): string {
-    return CANTIDAD.format(valor);
-  }
-
-  monto(valor: number): string {
-    return MONTO.format(valor);
-  }
+  readonly cantidad = cantidad;
+  readonly monto = monto;
 
   diferencia(origen: ConciliacionOrigen): number {
-    return Math.round((origen.montoSfe - origen.montoLpt) * 100) / 100;
+    return redondear(origen.montoSfe - origen.montoLpt);
   }
 }

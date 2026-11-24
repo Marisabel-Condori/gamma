@@ -31,6 +31,12 @@ export const routes: Routes = [
           import('./features/sistemas-facturadores/sistemas-facturadores.routes').then((m) => m.SISTEMAS_ROUTES),
       },
       {
+        path: 'vistas/conciliacion-siat',
+        data: { paginaAncha: true },
+        loadComponent: () =>
+          import('./features/vistas/conciliacion-siat/conciliacion-siat.page').then((m) => m.ConciliacionSiatPage),
+      },
+      {
         path: 'vistas/conciliar-prepago',
         data: { paginaAncha: true },
         loadComponent: () =>

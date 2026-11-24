@@ -1,0 +1,74 @@
+<gm-encabezado titulo="Conciliación de facturas SIAT" tituloMovil="SIAT" [rutanavegacion]="rutanavegacion" />
+
+<form class="filtros" (submit)="consultar($event)" novalidate>
+  <gm-seccion columnas="150px auto" columnasMovil="minmax(0, 1fr) auto">
+    <gm-fecha etiqueta="Periodo" [soloMes]="true" [ocultarEtiqueta]="esMovil()" [valor]="periodo()" (valorChange)="periodo.set($event)" />
+    <div class="botones">
+      <button gmBoton="primario" type="submit" icono="buscar" [etiqueta]="esMovil() ? undefined : 'Consultar'" aria-label="Consultar" title="Consultar"></button>
+    </div>
+  </gm-seccion>
+</form>
+
+@if (resultado(); as resultado) {
+  <div class="marco">
+    <table>
+      <thead>
+        <tr>
+          <th class="sistema">Sistema</th>
+          <th>Cantidad</th>
+          <th>Monto</th>
+          <th>Descuento</th>
+          @for (dia of dias(); track dia) {
+            <th>{{ dia }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (fila of resultado.datos.sistemas; track fila.sistema) {
+          <tr>
+            <td class="sistema">{{ fila.sistema }}</td>
+            <td>{{ cantidad(fila.cantidad) }}</td>
+            <td>{{ monto(fila.monto) }}</td>
+            <td>{{ monto(fila.descuento) }}</td>
+            @for (dia of dias(); track dia) {
+              <td>{{ monto(fila.dias[dia]) }}</td>
+            }
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        @let total = this.total();
+        <tr class="total">
+          <td class="sistema">TOTAL</td>
+          <td>{{ cantidad(total.cantidad) }}</td>
+          <td>{{ monto(total.monto) }}</td>
+          <td>{{ monto(total.descuento) }}</td>
+          @for (dia of dias(); track dia) {
+            <td>{{ monto(total.dias[dia]) }}</td>
+          }
+        </tr>
+        @let siat = resultado.datos.siat;
+        <tr class="siat">
+          <td class="sistema">SIAT</td>
+          <td>{{ cantidad(siat.cantidad) }}</td>
+          <td>{{ monto(siat.monto) }}</td>
+          <td>{{ monto(siat.descuento) }}</td>
+          @for (dia of dias(); track dia) {
+            <td>{{ monto(siat.dias[dia]) }}</td>
+          }
+        </tr>
+        @if (diferencia(); as dif) {
+          <tr class="diferencias">
+            <td class="sistema">Diferencia</td>
+            <td [class.diferencia]="dif.cantidad">{{ cantidad(dif.cantidad) }}</td>
+            <td [class.diferencia]="dif.monto">{{ monto(dif.monto) }}</td>
+            <td [class.diferencia]="dif.descuento">{{ monto(dif.descuento) }}</td>
+            @for (dia of dias(); track dia) {
+              <td [class.diferencia]="dif.dias[dia]">{{ monto(dif.dias[dia]) }}</td>
+            }
+          </tr>
+        }
+      </tfoot>
+    </table>
+  </div>
+}

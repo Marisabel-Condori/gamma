@@ -15,13 +15,16 @@ const POSICIONES: ConnectedPosition[] = [
 
 let siguienteId = 0;
 
-/** <gm-fecha etiqueta="Periodo" [(valor)]="periodo" />  ej. "20261025". */
+/**
+ * <gm-fecha etiqueta="Fecha" [(valor)]="fecha" />  ej. "20261025".
+ * <gm-fecha etiqueta="Periodo" [soloMes]="true" [(valor)]="periodo" />  ej. "202610".
+ */
 @Component({
   selector: 'gm-fecha',
   imports: [CdkConnectedOverlay, CdkOverlayOrigin, GmIcono],
   template: `
     <div class="gm-campo">
-      <span [id]="id + '-etiqueta'">{{ etiqueta() }}</span>
+      <span [id]="id + '-etiqueta'" [class.oculta]="ocultarEtiqueta()">{{ etiqueta() }}</span>
       <button
         #boton
         type="button"
@@ -34,7 +37,7 @@ let siguienteId = 0;
         [class.vacia]="!valor()"
         (click)="alternar()"
       >
-        <span class="texto">{{ valor() || placeholder() }}</span>
+        <span class="texto">{{ valor() || textoVacio() }}</span>
         <gm-icono nombre="calendario" />
       </button>
     </div>
@@ -51,35 +54,60 @@ let siguienteId = 0;
       (detach)="abierto.set(false)"
     >
       <div class="panel" role="dialog" [attr.aria-labelledby]="id + '-etiqueta'">
-        <div class="cabecera">
-          <button type="button" class="flecha" aria-label="Mes anterior" (click)="moverMes(-1)">
-            <gm-icono nombre="anterior" />
-          </button>
-          <strong>{{ nombreMes() }} {{ anio() }}</strong>
-          <button type="button" class="flecha" aria-label="Mes siguiente" (click)="moverMes(1)">
-            <gm-icono nombre="siguiente" />
-          </button>
-        </div>
-        <div class="dias">
-          @for (dia of diasSemana; track $index) {
-            <span class="dia-semana">{{ dia }}</span>
-          }
-          @for (dia of dias(); track $index) {
-            @if (dia) {
+        @if (soloMes()) {
+          <div class="cabecera">
+            <button type="button" class="flecha" aria-label="Año anterior" (click)="anio.set(anio() - 1)">
+              <gm-icono nombre="anterior" />
+            </button>
+            <strong>{{ anio() }}</strong>
+            <button type="button" class="flecha" aria-label="Año siguiente" (click)="anio.set(anio() + 1)">
+              <gm-icono nombre="siguiente" />
+            </button>
+          </div>
+          <div class="meses">
+            @for (nombre of meses; track $index) {
               <button
                 type="button"
                 class="dia"
-                [class.elegido]="esElegido(dia)"
-                [class.hoy]="esHoy(dia)"
-                (click)="elegir(dia)"
+                [class.elegido]="valor() === formatoMes($index)"
+                [class.hoy]="esMesActual($index)"
+                (click)="elegirMes($index)"
               >
-                {{ dia }}
+                {{ nombre.slice(0, 3) }}
               </button>
-            } @else {
-              <span></span>
             }
-          }
-        </div>
+          </div>
+        } @else {
+          <div class="cabecera">
+            <button type="button" class="flecha" aria-label="Mes anterior" (click)="moverMes(-1)">
+              <gm-icono nombre="anterior" />
+            </button>
+            <strong>{{ nombreMes() }} {{ anio() }}</strong>
+            <button type="button" class="flecha" aria-label="Mes siguiente" (click)="moverMes(1)">
+              <gm-icono nombre="siguiente" />
+            </button>
+          </div>
+          <div class="dias">
+            @for (dia of diasSemana; track $index) {
+              <span class="dia-semana">{{ dia }}</span>
+            }
+            @for (dia of dias(); track $index) {
+              @if (dia) {
+                <button
+                  type="button"
+                  class="dia"
+                  [class.elegido]="esElegido(dia)"
+                  [class.hoy]="esHoy(dia)"
+                  (click)="elegir(dia)"
+                >
+                  {{ dia }}
+                </button>
+              } @else {
+                <span></span>
+              }
+            }
+          </div>
+        }
       </div>
     </ng-template>
   `,
@@ -88,17 +116,23 @@ let siguienteId = 0;
 export class GmFecha {
   readonly etiqueta = input.required<string>();
   readonly valor = model('');
-  readonly placeholder = input('AAAAMMDD');
+  readonly placeholder = input<string>();
+  /** Elige solo mes y año: el valor queda AAAAMM. */
+  readonly soloMes = input(false);
+  /** Oculta la etiqueta a la vista; los lectores de pantalla la siguen leyendo. */
+  readonly ocultarEtiqueta = input(false);
 
   protected readonly id = `gm-fecha-${siguienteId++}`;
   protected readonly posiciones = POSICIONES;
   protected readonly diasSemana = DIAS_SEMANA;
+  protected readonly meses = MESES;
   protected readonly abierto = signal(false);
   protected readonly anio = signal(new Date().getFullYear());
   /** 0 = enero. */
   protected readonly mes = signal(new Date().getMonth());
 
   protected readonly nombreMes = computed(() => MESES[this.mes()]);
+  protected readonly textoVacio = computed(() => this.placeholder() ?? (this.soloMes() ? 'AAAAMM' : 'AAAAMMDD'));
 
   /** Días del mes en la cuadrícula, con huecos (null) para empezar en lunes. */
   protected readonly dias = computed(() => {
@@ -117,8 +151,9 @@ export class GmFecha {
     }
     const valor = this.valor();
     const hoy = new Date();
-    this.anio.set(/^\d{8}$/.test(valor) ? Number(valor.slice(0, 4)) : hoy.getFullYear());
-    this.mes.set(/^\d{8}$/.test(valor) ? Number(valor.slice(4, 6)) - 1 : hoy.getMonth());
+    const valido = /^\d{6}(\d{2})?$/.test(valor);
+    this.anio.set(valido ? Number(valor.slice(0, 4)) : hoy.getFullYear());
+    this.mes.set(valido ? Number(valor.slice(4, 6)) - 1 : hoy.getMonth());
     this.abierto.set(true);
   }
 
@@ -140,6 +175,20 @@ export class GmFecha {
   protected elegir(dia: number): void {
     this.valor.set(this.formato(dia));
     this.cerrar(true);
+  }
+
+  protected esMesActual(mes: number): boolean {
+    const hoy = new Date();
+    return this.anio() === hoy.getFullYear() && mes === hoy.getMonth();
+  }
+
+  protected elegirMes(mes: number): void {
+    this.valor.set(this.formatoMes(mes));
+    this.cerrar(true);
+  }
+
+  protected formatoMes(mes: number): string {
+    return `${this.anio()}${String(mes + 1).padStart(2, '0')}`;
   }
 
   protected cerrar(volverAlCampo = false): void {
