@@ -1,5 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { EMPTY, catchError, of } from 'rxjs';
 import {
@@ -19,7 +27,12 @@ import {
   Toast,
 } from '../../../../shared/ui';
 import { SistemasService } from '../../data/sistemas.service';
-import { HomologacionMulticentro, HomologacionSucursalApiResponse, HomologacionSucursalRequest, HomologacionSucursalUpdateRequest } from './data/multicentros.model';
+import {
+  HomologacionMulticentro,
+  HomologacionSucursalApiResponse,
+  HomologacionSucursalRequest,
+  HomologacionSucursalUpdateRequest,
+} from './data/multicentros.model';
 import { PuntoVentaSucursalApiResponse, SucursalApiResponse } from '../../data/puntos-venta.model';
 import { PuntosVentaService } from '../../data/puntos-venta.service';
 import { SucursalesService } from '../../data/sucursales.service';
@@ -31,19 +44,61 @@ type Multicentro = HomologacionMulticentro;
 const USUARIO = 'ADMIN';
 
 const COLUMNAS: GmColumna<Multicentro>[] = [
-  { id: 'fecha', titulo: 'Fecha Homologación', ancho: '190px', sinSalto: true, movil: 'pie', valor: (m) => formatearFecha(m.fecha) },
-  { id: 'codigoEntel', titulo: 'Cod. Sucursal', grupo: 'SUCURSALES ENTEL', ancho: '130px', etiquetaMovil: 'Código ENTEL' },
-  { id: 'multicentroEntel', titulo: 'Descripción', grupo: 'SUCURSALES ENTEL', destacar: true, movil: 'titulo' },
-  { id: 'codigoSucursalSin', titulo: 'Cod. Sucursal SIN', grupo: 'SUCURSALES SIN', ancho: '140px', etiquetaMovil: 'Sucursal SIN' },
+  {
+    id: 'fecha',
+    titulo: 'Fecha Homologación',
+    ancho: '190px',
+    sinSalto: true,
+    movil: 'pie',
+    valor: (m) => formatearFecha(m.fecha),
+  },
+  {
+    id: 'codigoEntel',
+    titulo: 'Cod. Sucursal',
+    grupo: 'SUCURSALES ENTEL',
+    ancho: '130px',
+    etiquetaMovil: 'Código ENTEL',
+  },
+  {
+    id: 'multicentroEntel',
+    titulo: 'Descripción',
+    grupo: 'SUCURSALES ENTEL',
+    destacar: true,
+    movil: 'titulo',
+  },
+  {
+    id: 'codigoSucursalSin',
+    titulo: 'Cod. Sucursal SIN',
+    grupo: 'SUCURSALES SIN',
+    ancho: '140px',
+    etiquetaMovil: 'Sucursal SIN',
+  },
   { id: 'descripcionSin', titulo: 'Descripción SIN', grupo: 'SUCURSALES SIN', movil: 'subtitulo' },
-  { id: 'codigoPuntoVentaSin', titulo: 'Cod. Punto Venta SIN', grupo: 'SUCURSALES SIN', ancho: '160px', etiquetaMovil: 'Punto de venta SIN' },
+  {
+    id: 'codigoPuntoVentaSin',
+    titulo: 'Cod. Punto Venta SIN',
+    grupo: 'SUCURSALES SIN',
+    ancho: '160px',
+    etiquetaMovil: 'Punto de venta SIN',
+  },
   { id: 'puntoVentaSin', titulo: 'Punto Venta SIN', grupo: 'SUCURSALES SIN' },
   { id: 'acciones', titulo: 'Acciones', ancho: '120px', movil: 'pie-fin' },
 ];
 
 @Component({
   selector: 'gm-multicentros-page',
-  imports: [RouterLink, GmEncabezado, GmBuscar, GmBoton, GmTabla, GmCelda, GmAccionesFila, GmModal, GmSeccion, GmLista],
+  imports: [
+    RouterLink,
+    GmEncabezado,
+    GmBuscar,
+    GmBoton,
+    GmTabla,
+    GmCelda,
+    GmAccionesFila,
+    GmModal,
+    GmSeccion,
+    GmLista,
+  ],
   templateUrl: './multicentros.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'gm-pagina' },
@@ -61,7 +116,14 @@ export class MulticentrosPage implements OnInit {
   readonly query = signal('');
   readonly homologaciones = signal<Multicentro[]>([]);
   readonly editando = signal<string | null>(null);
-  readonly formulario = signal({ codigoEntel: '', multicentroEntel: '', codigoSucursalSin: '', descripcionSin: '', codigoPuntoVentaSin: '', puntoVentaSin: '' });
+  readonly formulario = signal({
+    codigoEntel: '',
+    multicentroEntel: '',
+    codigoSucursalSin: '',
+    descripcionSin: '',
+    codigoPuntoVentaSin: '',
+    puntoVentaSin: '',
+  });
   readonly fechaHomologacion = signal('');
   readonly fechaActual = signal('');
   readonly puntosVentaSin = signal<PuntoVentaSucursalApiResponse[]>([]);
@@ -72,14 +134,21 @@ export class MulticentrosPage implements OnInit {
   readonly guardando = signal(false);
   readonly error = signal('');
 
-  readonly sistema = computed(() => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null);
+  readonly sistema = computed(
+    () => this.sistemas.sistemas().find((s) => s.id === this.sistemaId()) ?? null,
+  );
   readonly fechaTexto = (valor: string): string => formatearFecha(valor);
-  readonly multicentroEditando = computed(() => this.homologaciones().find((m) => m.id === this.editando()) ?? null);
+  readonly multicentroEditando = computed(
+    () => this.homologaciones().find((m) => m.id === this.editando()) ?? null,
+  );
   readonly opcionesSucursales = computed<GmOpcionLista[]>(() =>
     this.sucursalesSin().map((sucursal) => ({
       valor: String(sucursal.codSucursalSin),
-      etiqueta: [sucursal.direccion, sucursal.departamento].map((valor) => valor?.trim()).filter(Boolean).join(' · ')
-        || `Sucursal ${sucursal.codSucursalSin}`,
+      etiqueta:
+        [sucursal.direccion, sucursal.departamento]
+          .map((valor) => valor?.trim())
+          .filter(Boolean)
+          .join(' · ') || `Sucursal ${sucursal.codSucursalSin}`,
     })),
   );
   readonly opcionesPuntoVenta = computed<GmOpcionLista[]>(() =>
@@ -101,9 +170,11 @@ export class MulticentrosPage implements OnInit {
       .filter((m) => !q || Object.values(m).join(' ').toLowerCase().includes(q));
   });
 
-  readonly vacio = computed(() => this.query().trim()
-    ? 'No hay resultados para la búsqueda.'
-    : 'Todavía no hay multicentros homologados.');
+  readonly vacio = computed(() =>
+    this.query().trim()
+      ? 'No hay resultados para la búsqueda.'
+      : 'Todavía no hay multicentros homologados.',
+  );
 
   ngOnInit(): void {
     this.cargarHomologaciones();
@@ -115,23 +186,28 @@ export class MulticentrosPage implements OnInit {
       this.toast.mostrar('No se encontró el sistema facturador seleccionado.');
       return;
     }
-    this.multicentrosApi.listar(sistema.idSistema).pipe(
-      catchError((error: HttpErrorResponse) => {
-        this.toast.mostrar(mensajeError(error, 'No se pudieron cargar las homologaciones.'));
-        return of(null);
-      }),
-    ).subscribe((respuestas) => {
-      if (!respuestas) return;
-      const filas = respuestas
-        .filter((respuesta) => respuesta.idSistema === sistema.idSistema)
-        .map((respuesta) => convertirHomologacion(respuesta, sistema.id));
-      this.homologaciones.set(filas);
-    });
+    this.multicentrosApi
+      .listar(sistema.idSistema)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.toast.mostrar(mensajeError(error, 'No se pudieron cargar las homologaciones.'));
+          return of(null);
+        }),
+      )
+      .subscribe((respuestas) => {
+        if (!respuestas) return;
+        const filas = respuestas
+          .filter((respuesta) => respuesta.idSistema === sistema.idSistema)
+          .map((respuesta) => convertirHomologacion(respuesta, sistema.id));
+        this.homologaciones.set(filas);
+      });
   }
 
   abrir(multicentro?: Multicentro): void {
     if (multicentro && !multicentro.idHomSucursal) {
-      this.toast.mostrar('No se puede editar esta fila porque no tiene idHomSucursal. Recarga la página para traer el ID del backend.');
+      this.toast.mostrar(
+        'No se puede editar esta fila porque no tiene idHomSucursal. Recarga la página para traer el ID del backend.',
+      );
       return;
     }
     this.error.set('');
@@ -152,26 +228,37 @@ export class MulticentrosPage implements OnInit {
     });
 
     this.cargandoSucursales.set(true);
-    this.sucursalesApi.listar<SucursalApiResponse[]>().pipe(
-      catchError((error: HttpErrorResponse) => {
-        this.error.set(mensajeError(error, 'No se pudo cargar el listado de sucursales SIN.'));
-        return of([] as SucursalApiResponse[]);
-      }),
-    ).subscribe((sucursales) => {
-      this.sucursalesSin.set(sucursales);
-      this.cargandoSucursales.set(false);
-      if (multicentro) {
-        const sucursal = sucursales.find((item) => String(item.codSucursalSin) === multicentro.codigoSucursalSin);
-        if (sucursal) {
-          this.sucursalSeleccionada.set(sucursal);
-          this.cargarPuntosVenta(sucursal.codSucursalSin, multicentro.codigoPuntoVentaSin);
+    this.sucursalesApi
+      .listar<SucursalApiResponse[]>()
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.error.set(mensajeError(error, 'No se pudo cargar el listado de sucursales SIN.'));
+          return of([] as SucursalApiResponse[]);
+        }),
+      )
+      .subscribe((sucursales) => {
+        this.sucursalesSin.set(sucursales);
+        this.cargandoSucursales.set(false);
+        if (multicentro) {
+          const sucursal = sucursales.find(
+            (item) => String(item.codSucursalSin) === multicentro.codigoSucursalSin,
+          );
+          if (sucursal) {
+            this.sucursalSeleccionada.set(sucursal);
+            this.cargarPuntosVenta(sucursal.codSucursalSin, multicentro.codigoPuntoVentaSin);
+          }
         }
-      }
-    });
+      });
   }
 
   actualizarCampoEntel(
-    campo: 'codigoEntel' | 'multicentroEntel' | 'codigoSucursalSin' | 'descripcionSin' | 'codigoPuntoVentaSin' | 'puntoVentaSin',
+    campo:
+      | 'codigoEntel'
+      | 'multicentroEntel'
+      | 'codigoSucursalSin'
+      | 'descripcionSin'
+      | 'codigoPuntoVentaSin'
+      | 'puntoVentaSin',
     event: Event,
   ): void {
     const valor = (event.target as HTMLInputElement).value;
@@ -188,7 +275,10 @@ export class MulticentrosPage implements OnInit {
     this.formulario.update((formulario) => ({
       ...formulario,
       codigoSucursalSin: String(sucursal.codSucursalSin),
-      descripcionSin: [sucursal.direccion, sucursal.departamento].map((valor) => valor?.trim()).filter(Boolean).join(' '),
+      descripcionSin: [sucursal.direccion, sucursal.departamento]
+        .map((valor) => valor?.trim())
+        .filter(Boolean)
+        .join(' '),
       codigoPuntoVentaSin: '',
       puntoVentaSin: '',
     }));
@@ -209,16 +299,19 @@ export class MulticentrosPage implements OnInit {
   private cargarPuntosVenta(codigoSucursal: number, codigoSeleccionado = ''): void {
     this.cargandoPuntosVenta.set(true);
     this.error.set('');
-    this.puntosApi.listarPorSucursal<PuntoVentaSucursalApiResponse[]>(codigoSucursal).pipe(
-      catchError((error: HttpErrorResponse) => {
-        this.error.set(mensajeError(error, 'No se pudo cargar el listado de puntos de venta.'));
-        return of([] as PuntoVentaSucursalApiResponse[]);
-      }),
-    ).subscribe((puntos) => {
-      this.puntosVentaSin.set(puntos);
-      this.cargandoPuntosVenta.set(false);
-      if (codigoSeleccionado) this.seleccionarPuntoVenta(codigoSeleccionado);
-    });
+    this.puntosApi
+      .listarPorSucursal<PuntoVentaSucursalApiResponse[]>(codigoSucursal)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.error.set(mensajeError(error, 'No se pudo cargar el listado de puntos de venta.'));
+          return of([] as PuntoVentaSucursalApiResponse[]);
+        }),
+      )
+      .subscribe((puntos) => {
+        this.puntosVentaSin.set(puntos);
+        this.cargandoPuntosVenta.set(false);
+        if (codigoSeleccionado) this.seleccionarPuntoVenta(codigoSeleccionado);
+      });
   }
 
   guardar(event: Event): void {
@@ -229,13 +322,23 @@ export class MulticentrosPage implements OnInit {
     const formulario = this.formulario();
     const sucursal = this.sucursalSeleccionada();
 
-    if (!formulario.codigoEntel.trim() || !formulario.multicentroEntel.trim()
-      || !formulario.codigoSucursalSin.trim() || !formulario.descripcionSin.trim()
-      || !formulario.codigoPuntoVentaSin.trim() || !formulario.puntoVentaSin.trim()) {
-      this.error.set('Completa los datos del multicentro ENTEL y selecciona un punto de venta SIN.');
+    if (
+      !formulario.codigoEntel.trim() ||
+      !formulario.multicentroEntel.trim() ||
+      !formulario.codigoSucursalSin.trim() ||
+      !formulario.descripcionSin.trim() ||
+      !formulario.codigoPuntoVentaSin.trim() ||
+      !formulario.puntoVentaSin.trim()
+    ) {
+      this.error.set(
+        'Completa los datos del multicentro ENTEL y selecciona un punto de venta SIN.',
+      );
       return;
     }
-    if (!Number.isInteger(Number(formulario.codigoPuntoVentaSin)) || Number(formulario.codigoPuntoVentaSin) < 0) {
+    if (
+      !Number.isInteger(Number(formulario.codigoPuntoVentaSin)) ||
+      Number(formulario.codigoPuntoVentaSin) < 0
+    ) {
       this.error.set('El código del punto de venta debe ser un número entero válido.');
       return;
     }
@@ -250,14 +353,18 @@ export class MulticentrosPage implements OnInit {
       return;
     }
     if (existente && !existente.idHomSucursal) {
-      this.error.set('Esta homologación no tiene idHomSucursal. Recarga la página para obtener el ID del backend.');
+      this.error.set(
+        'Esta homologación no tiene idHomSucursal. Recarga la página para obtener el ID del backend.',
+      );
       return;
     }
 
     const sistema = this.sistema();
     const idSistema = sistema?.idSistema;
     if (idSistema === undefined) {
-      this.error.set(`No se encontró el ID del sistema ${sistema?.codigo ?? ''} requerido por el backend.`);
+      this.error.set(
+        `No se encontró el ID del sistema ${sistema?.codigo ?? ''} requerido por el backend.`,
+      );
       return;
     }
 
@@ -291,18 +398,20 @@ export class MulticentrosPage implements OnInit {
     const solicitud = existente
       ? this.multicentrosApi.actualizar(existente.idHomSucursal!, datosActualizacion)
       : this.multicentrosApi.crear(datosCreacion);
-    solicitud.pipe(
-      catchError((error: HttpErrorResponse) => {
-        this.error.set(mensajeError(error, 'No se pudo guardar la homologación.'));
+    solicitud
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.error.set(mensajeError(error, 'No se pudo guardar la homologación.'));
+          this.guardando.set(false);
+          return EMPTY;
+        }),
+      )
+      .subscribe(() => {
         this.guardando.set(false);
-        return EMPTY;
-      }),
-    ).subscribe(() => {
-      this.guardando.set(false);
-      this.toast.mostrar(existente ? 'Multicentro actualizado.' : 'Homologación creada.');
-      this.editando.set(null);
-      this.cargarHomologaciones();
-    });
+        this.toast.mostrar(existente ? 'Multicentro actualizado.' : 'Homologación creada.');
+        this.editando.set(null);
+        this.cargarHomologaciones();
+      });
   }
 
   async eliminar(multicentro: Multicentro): Promise<void> {
@@ -321,7 +430,10 @@ export class MulticentrosPage implements OnInit {
   }
 }
 
-function convertirHomologacion(api: HomologacionSucursalApiResponse, sistemaId: string): Multicentro {
+function convertirHomologacion(
+  api: HomologacionSucursalApiResponse,
+  sistemaId: string,
+): Multicentro {
   return {
     id: String(api.idHomSucursal),
     idHomSucursal: api.idHomSucursal,
@@ -344,6 +456,7 @@ function formatearFecha(valor: string): string {
 }
 
 function mensajeError(error: HttpErrorResponse, predeterminado: string): string {
-  return error.status === 0 ? 'No se pudo conectar con Vortex.'
+  return error.status === 0
+    ? 'No se pudo conectar con Vortex.'
     : error.error?.mensaje || error.error?.message || `${predeterminado} (HTTP ${error.status}).`;
 }

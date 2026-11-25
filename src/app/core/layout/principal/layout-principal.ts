@@ -2,7 +2,14 @@ import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
 import { filter } from 'rxjs';
 import { GmConfirmar, GmIcono, GmToast, Pantalla } from '../../../shared/ui';
 import { AuthService } from '../../auth/auth.service';
@@ -13,7 +20,17 @@ const POSICIONES_MENU: ConnectedPosition[] = [
 
 @Component({
   selector: 'gm-layout-principal',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CdkMenu, CdkMenuItem, CdkMenuTrigger, GmIcono, GmToast, GmConfirmar],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    CdkMenu,
+    CdkMenuItem,
+    CdkMenuTrigger,
+    GmIcono,
+    GmToast,
+    GmConfirmar,
+  ],
   templateUrl: './layout-principal.html',
   styleUrl: './layout-principal.scss',
 })
@@ -25,11 +42,21 @@ export class LayoutPrincipal {
 
   readonly esMovil = inject(Pantalla).esMovil;
   readonly posicionesMenu = POSICIONES_MENU;
-  private readonly navegacion = toSignal(this.router.events.pipe(filter((evento) => evento instanceof NavigationEnd)));
+  private readonly navegacion = toSignal(
+    this.router.events.pipe(filter((evento) => evento instanceof NavigationEnd)),
+  );
 
   readonly enVistas = computed(() => (this.navegacion(), this.router.url.startsWith('/vistas')));
   readonly enAdmin = computed(() => (this.navegacion(), this.router.url.startsWith('/admin')));
-  readonly paginaAncha = computed(() => (this.navegacion(), rutaFinal(this.router.routerState.snapshot.root).data['paginaAncha'] === true));
+  readonly enFacturacion = computed(
+    () => (this.navegacion(), this.router.url.startsWith('/facturacion')),
+  );
+  readonly paginaAncha = computed(
+    () => (
+      this.navegacion(),
+      rutaFinal(this.router.routerState.snapshot.root).data['paginaAncha'] === true
+    ),
+  );
 
   readonly perfil = this.auth.perfil;
   readonly iniciales = this.auth.iniciales;

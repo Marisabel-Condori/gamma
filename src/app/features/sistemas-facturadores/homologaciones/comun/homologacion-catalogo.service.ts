@@ -30,7 +30,10 @@ export class HomologacionCatalogoService {
     );
   }
 
-  actualizar(config: ConfigHomologacion, datos: ActualizarHomologacionCatalogoRequest): Promise<string | null> {
+  actualizar(
+    config: ConfigHomologacion,
+    datos: ActualizarHomologacionCatalogoRequest,
+  ): Promise<string | null> {
     return this.enviar(
       this.http.put<ApiRespuesta<unknown>>(`${url(config)}/actualizar`, datos),
       'No se pudo actualizar la homologación.',
@@ -45,7 +48,10 @@ export class HomologacionCatalogoService {
   }
 
   /** Devuelve null si salió bien o el mensaje de error. */
-  private async enviar(peticion: Observable<ApiRespuesta<unknown>>, errorPorDefecto: string): Promise<string | null> {
+  private async enviar(
+    peticion: Observable<ApiRespuesta<unknown>>,
+    errorPorDefecto: string,
+  ): Promise<string | null> {
     try {
       const respuesta = await firstValueFrom(peticion.pipe(timeout(TIEMPO_ESPERA_API)));
       return respuesta.exito ? null : respuesta.mensaje || errorPorDefecto;

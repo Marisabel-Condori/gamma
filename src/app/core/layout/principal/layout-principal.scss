@@ -173,8 +173,7 @@ nav a.activo::after,
   box-shadow: var(--sombra);
 }
 
-.aviso
-{
+.aviso {
   display: block;
   padding: 8px 10px;
   border-radius: var(--radio-md);
@@ -265,10 +264,13 @@ nav a.activo::after,
     box-shadow: var(--sombra);
     transform: translateX(-100%);
     visibility: hidden;
-    transition: transform 0.22s ease, visibility 0.22s ease;
+    transition:
+      transform 0.22s ease,
+      visibility 0.22s ease;
   }
 
   nav.abierto {
+    overflow-y: scroll;
     transform: translateX(0);
     visibility: visible;
   }

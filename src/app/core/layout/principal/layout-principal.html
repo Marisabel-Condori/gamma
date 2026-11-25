@@ -35,15 +35,30 @@
         <gm-icono nombre="vistas" />
         Vistas
       </span>
-      <a class="subitem" routerLink="/vistas/conciliacion-siat" routerLinkActive="activo" (click)="cerrar()">
+      <a
+        class="subitem"
+        routerLink="/vistas/conciliacion-siat"
+        routerLinkActive="activo"
+        (click)="cerrar()"
+      >
         <gm-icono nombre="conciliarSiat" />
         Conciliación SIAT
       </a>
-      <a class="subitem" routerLink="/vistas/conciliar-prepago" routerLinkActive="activo" (click)="cerrar()">
+      <a
+        class="subitem"
+        routerLink="/vistas/conciliar-prepago"
+        routerLinkActive="activo"
+        (click)="cerrar()"
+      >
         <gm-icono nombre="conciliar" />
         Conciliar prepago
       </a>
-      <a class="subitem" routerLink="/vistas/conciliar-postpago" routerLinkActive="activo" (click)="cerrar()">
+      <a
+        class="subitem"
+        routerLink="/vistas/conciliar-postpago"
+        routerLinkActive="activo"
+        (click)="cerrar()"
+      >
         <gm-icono nombre="conciliar" />
         Conciliar postpago
       </a>
@@ -51,13 +66,67 @@
         <gm-icono nombre="admin" />
         Admin
       </span>
-      <a class="subitem" routerLink="/admin/buscar-factura" routerLinkActive="activo" (click)="cerrar()">
+      <a
+        class="subitem"
+        routerLink="/admin/buscar-factura"
+        routerLinkActive="activo"
+        (click)="cerrar()"
+      >
         <gm-icono nombre="factura" />
         Buscar factura
       </a>
       <a class="subitem" routerLink="/admin/libro-iva" routerLinkActive="activo" (click)="cerrar()">
         <gm-icono nombre="libro" />
         Libro IVA
+      </a>
+      <span class="grupo" [class.activo]="enFacturacion()">
+        <gm-icono nombre="factura" />
+        Facturación a demanda
+      </span>
+      <a
+        class="subitem"
+        routerLink="/facturacion/impuestos"
+        routerLinkActive="activo"
+        (click)="cerrar()"
+      >
+        <gm-icono nombre="impuestos" />
+        Facturación Impuestos
+      </a>
+      <a
+        class="subitem"
+        routerLink="/facturacion/publicidad"
+        routerLinkActive="activo"
+        (click)="cerrar()"
+      >
+        <gm-icono nombre="publicidad" />
+        Factura Publicidad
+      </a>
+      <a
+        class="subitem"
+        routerLink="/facturacion/alquiler"
+        routerLinkActive="activo"
+        (click)="cerrar()"
+      >
+        <gm-icono nombre="alquiler" />
+        Factura Alquiler
+      </a>
+      <a
+        class="subitem"
+        routerLink="/facturacion/telecomunicaciones"
+        routerLinkActive="activo"
+        (click)="cerrar()"
+      >
+        <gm-icono nombre="telecomunicaciones" />
+        Factura Telecom
+      </a>
+      <a
+        class="subitem"
+        routerLink="/facturacion/compra-venta"
+        routerLinkActive="activo"
+        (click)="cerrar()"
+      >
+        <gm-icono nombre="comprayventa" />
+        Factura Compra y Venta
       </a>
     } @else {
       <button
@@ -110,6 +179,41 @@
           </a>
         </div>
       </ng-template>
+      <button
+        type="button"
+        class="desplegable"
+        [class.activo]="enFacturacion()"
+        [cdkMenuTriggerFor]="menuFacturacion"
+        [cdkMenuPosition]="posicionesMenu"
+      >
+        <gm-icono nombre="factura" />
+        Facturación a demanda
+        <gm-icono nombre="desplegar" />
+      </button>
+      <ng-template #menuFacturacion>
+        <div class="submenu" cdkMenu>
+          <a cdkMenuItem routerLink="/facturacion/impuestos" routerLinkActive="activo">
+            <gm-icono nombre="impuestos" />
+            Facturación Impuestos
+          </a>
+          <a cdkMenuItem routerLink="/facturacion/publicidad" routerLinkActive="activo">
+            <gm-icono nombre="publicidad" />
+            Factura Publicidad
+          </a>
+          <a cdkMenuItem routerLink="/facturacion/alquiler" routerLinkActive="activo">
+            <gm-icono nombre="alquiler" />
+            Factura Alquiler
+          </a>
+          <a cdkMenuItem routerLink="/facturacion/telecomunicaciones" routerLinkActive="activo">
+            <gm-icono nombre="telecomunicaciones" />
+            Factura Telecomunicaciones
+          </a>
+          <a cdkMenuItem routerLink="/facturacion/compra-venta" routerLinkActive="activo">
+            <gm-icono nombre="comprayventa" />
+            Factura Compra y Venta
+          </a>
+        </div>
+      </ng-template>
     }
   </nav>
   <div class="perfil">
@@ -118,7 +222,9 @@
       class="avatar"
       [attr.aria-label]="'Sesión de ' + perfil().nombreApellido"
       (click)="abrirCerrarPerfil()"
-    >{{ iniciales() }}</button>
+    >
+      {{ iniciales() }}
+    </button>
     @if (perfilAbierto()) {
       <button
         type="button"

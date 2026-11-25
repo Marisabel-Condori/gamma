@@ -24,3 +24,4 @@ export { GmTabla } from './tabla/tabla';
 export type { GmColumna, GmLugarMovil } from './tabla/tabla.model';
 export { GmTexto } from './texto/texto';
 export { GmToast, Toast } from './toast/toast';
+export { GmOpciones } from './opciones/opciones';

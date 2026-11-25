@@ -29,6 +29,7 @@ import { Pantalla } from '../pantalla';
       font-weight: var(--peso-negrita);
     }
     .campos {
+      align-items: center;
       display: grid;
       gap: 14px 16px;
     }
@@ -40,5 +41,7 @@ export class GmSeccion {
   readonly columnasMovil = input('1fr');
 
   private readonly esMovil = inject(Pantalla).esMovil;
-  protected readonly grilla = computed(() => (this.esMovil() ? this.columnasMovil() : this.columnas()));
+  protected readonly grilla = computed(() =>
+    this.esMovil() ? this.columnasMovil() : this.columnas(),
+  );
 }

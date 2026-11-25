@@ -1,0 +1,138 @@
+<gm-encabezado
+  titulo="Facturas de impuestos"
+  tituloMovil="Impuestos"
+  [rutanavegacion]="rutanavegacion"
+/>
+
+<form (submit)="guardar($event)" novalidate>
+  <gm-seccion titulo="Datos de la factura" columnas="1fr 1fr 1fr">
+    <gm-lista
+      etiqueta="Multicentro"
+      placeholder="{{
+        isLoadingMulticentros() ? 'Cargando los multicentros' : 'Selecciona un multicentro'
+      }}"
+      [opciones]="opcionesMulticentros()"
+      [valor]="formulario().codigoSucursalSin"
+      [deshabilitado]="isLoadingMulticentros() || !opcionesMulticentros().length"
+      (valorChange)="seleccionarSucursal($event)"
+      buscable
+    />
+    <gm-texto
+      etiqueta="Código cliente"
+      placeholder="Ingresa el código cliente"
+      [(valor)]="codigoCliente"
+    />
+    <gm-opciones
+      titulo="Tipo de factura"
+      [opciones]="tiposCasosEspeciales"
+      [(seleccionado)]="tipoCasoEspecialSeleccionado"
+    />
+    <gm-texto
+      etiqueta="Razón social"
+      placeholder="Ingresa la razón social"
+      [(valor)]="razonSocial"
+    />
+    <gm-lista
+      etiqueta="Tipo de documento"
+      placeholder="{{
+        isLoadingTiposDeDocumento()
+          ? 'Cargando los tipos de documento'
+          : 'Selecciona un tipo de documento'
+      }}"
+      [opciones]="opcionesTiposDeDocumento()"
+      [valor]="formulario().codigoTipoDocumentoSin"
+      [deshabilitado]="isLoadingTiposDeDocumento() || !opcionesTiposDeDocumento().length"
+      (valorChange)="seleccionarSucursal($event)"
+      buscable
+    />
+    <gm-texto
+      etiqueta="Número de documento"
+      placeholder="Ingresa el número de documento"
+      [(valor)]="numeroDocumento"
+    />
+    <gm-texto etiqueta="Complemento" placeholder="Ingresa el complemento" [(valor)]="complemento" />
+    <gm-opciones
+      titulo="Autorizar el registro con NIT inválido?"
+      [opciones]="tiposNitInvalido"
+      [(seleccionado)]="tipoNitInvalidoSeleccionado"
+    />
+    <gm-texto etiqueta="Periodo" placeholder="Ingresa el periodo" [(valor)]="periodo" />
+    <gm-texto
+      etiqueta="Correo electrónico"
+      placeholder="Ingresa el correo electrónico"
+      [(valor)]="correoElectronico"
+      tipo="email"
+    />
+    <gm-texto
+      etiqueta="Número celular"
+      placeholder="Ingresa el número de celular"
+      [(valor)]="numeroCelular"
+    />
+  </gm-seccion>
+  <gm-seccion titulo="Detalle de productos" columnas="1fr 1fr 1fr 1fr 1fr 1fr">
+    <gm-lista
+      etiqueta="Selecciona el producto"
+      placeholder="{{
+        isLoadingProductos() ? 'Cargando los productos' : 'Selecciona los productos'
+      }}"
+      [opciones]="opcionesProductos()"
+      [valor]="formulario().codigoProductoSin"
+      [deshabilitado]="isLoadingProductos() || !opcionesProductos().length"
+      (valorChange)="seleccionarProducto($event)"
+      buscable
+    />
+    <gm-lista
+      etiqueta="Unidad de medida"
+      placeholder="{{
+        isLoadingUnidadesDeMedida()
+          ? 'Cargando la unidad de medida'
+          : 'Selecciona la unidad de medida'
+      }}"
+      [opciones]="opcionesUnidadesDeMedida()"
+      [valor]="formulario().codigoUnidadMedidaSin"
+      [deshabilitado]="isLoadingUnidadesDeMedida() || !opcionesUnidadesDeMedida().length"
+      (valorChange)="seleccionarUnidadDeMedida($event)"
+      buscable
+    />
+    <gm-texto etiqueta="Cantidad" placeholder="Ingresa la cantidad" [(valor)]="codigoCliente" />
+    <gm-texto
+      etiqueta="Precio unitario"
+      placeholder="Ingresa el precio unitario"
+      [(valor)]="codigoCliente"
+    />
+    <gm-texto etiqueta="Descuento" placeholder="Ingresa el descuento" [(valor)]="codigoCliente" />
+    <button gmBoton="primario" type="button" (click)="onAddProducto()" [etiqueta]="'Adicionar'">
+      <gm-icono nombre="agregar" />
+    </button>
+  </gm-seccion>
+  <gm-tabla
+    [datos]="periodos()"
+    [columnas]="columnas"
+    clave="codigo"
+    cabecera="clara"
+    [compacta]="true"
+    vacio="Ingrese un detalle para continuar"
+  />
+  <gm-seccion titulo="Datos del pago" columnas="1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr">
+    <gm-lista
+      etiqueta="Tipo moneda"
+      placeholder="{{
+        isLoadingMoneda() ? 'Cargando los tipos de moneda' : 'Selecciona el tipo de moneda'
+      }}"
+      [opciones]="opcionesMonedas()"
+      [valor]="formulario().codigoMonedaSin"
+      [deshabilitado]="isLoadingMoneda() || !opcionesMonedas().length"
+      (valorChange)="seleccionarTipoMoneda($event)"
+      buscable
+    />
+    <gm-texto etiqueta="Tipo cambio" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
+    <gm-texto etiqueta="Método pago" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
+    <gm-texto etiqueta="Número tarjeta" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
+    <gm-texto etiqueta="Subtotal" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
+    <gm-texto etiqueta="Descuento" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
+    <gm-texto etiqueta="Monto total" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
+    <button gmBoton="primario" type="submit" [etiqueta]="'Emitir'">
+      <gm-icono nombre="emitir" />
+    </button>
+  </gm-seccion>
+</form>

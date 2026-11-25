@@ -33,6 +33,12 @@ const ICONOS = {
   limpiar: 'filter_alt_off',
   libro: 'menu_book',
   subir: 'upload_file',
+  impuestos: 'request_quote',
+  publicidad: 'campaign',
+  alquiler: 'real_estate_agent',
+  telecomunicaciones: 'cell_tower',
+  comprayventa: 'shopping_cart',
+  emitir: 'send',
 } as const;
 
 export type GmIconoNombre = keyof typeof ICONOS;
