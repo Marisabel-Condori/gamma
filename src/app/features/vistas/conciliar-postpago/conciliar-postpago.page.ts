@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { GmBoton, GmCelda, GmColumna, GmEncabezado, GmRutaNavegacion, GmSeccion, Pantalla, GmTabla, GmFecha } from '../../../shared/ui';
 import { ConciliacionSistema, FacturaConciliacion } from './data/conciliacion-postpago.model';
 import { FACTURAS_POSTPAGO, SISTEMAS_POSTPAGO } from './data/conciliar-postpago.ejemplo';
-import { cantidad, monto, redondear } from '../formato';
+import { cantidad, monto, redondear } from '../../../shared/utils/numeros';
 
 function diferenciaCantidad(fila: ConciliacionSistema): number | null {
   return fila.cantidadLpt == null ? null : fila.cantidadSfe - fila.cantidadLpt;

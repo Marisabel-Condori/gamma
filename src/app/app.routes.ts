@@ -27,42 +27,39 @@ export const routes: Routes = [
       },
       {
         path: 'sistemas-facturadores',
-        loadChildren: () =>
-          import('./features/sistemas-facturadores/sistemas-facturadores.routes').then((m) => m.SISTEMAS_ROUTES),
+        loadChildren: () => import('./features/sistemas-facturadores/sistemas-facturadores.routes').then((m) => m.SISTEMAS_ROUTES),
       },
       {
         path: 'vistas/conciliacion-siat',
         data: { paginaAncha: true },
-        loadComponent: () =>
-          import('./features/vistas/conciliacion-siat/conciliacion-siat.page').then((m) => m.ConciliacionSiatPage),
+        loadComponent: () => import('./features/vistas/conciliacion-siat/conciliacion-siat.page').then((m) => m.ConciliacionSiatPage),
       },
       {
         path: 'vistas/conciliar-prepago',
         data: { paginaAncha: true },
-        loadComponent: () =>
-          import('./features/vistas/conciliar-prepago/conciliar-prepago.page').then((m) => m.ConciliarPrepagoPage),
+        loadComponent: () => import('./features/vistas/conciliar-prepago/conciliar-prepago.page').then((m) => m.ConciliarPrepagoPage),
       },
       {
         path: 'vistas/conciliar-postpago',
         data: { paginaAncha: true },
-        loadComponent: () =>
-          import('./features/vistas/conciliar-postpago/conciliar-postpago.page').then((m) => m.ConciliarPostpagoPage),
+        loadComponent: () => import('./features/vistas/conciliar-postpago/conciliar-postpago.page').then((m) => m.ConciliarPostpagoPage),
       },
       {
         path: 'admin/buscar-factura',
         data: { paginaAncha: true },
-        loadComponent: () =>
-          import('./features/admin/buscar-factura/buscar-factura.page').then((m) => m.BuscarFacturaPage),
+        loadComponent: () => import('./features/admin/buscar-factura/buscar-factura.page').then((m) => m.BuscarFacturaPage),
+      },
+      {
+        path: 'admin/libro-iva',
+        loadComponent: () => import('./features/admin/libro-iva/libro-iva.page').then((m) => m.LibroIvaPage),
       },
       {
         path: 'puntos-de-venta',
-        loadComponent: () =>
-          import('./features/sistemas-facturadores/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
+        loadComponent: () => import('./features/sistemas-facturadores/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
       },
       {
         path: 'puntos-de-venta/:codigoSucursal',
-        loadComponent: () =>
-          import('./features/sistemas-facturadores/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
+        loadComponent: () => import('./features/sistemas-facturadores/puntos-venta/puntos-venta-sistemas.page').then((m) => m.PuntosVentaSistemasPage),
       },
     ],
   },

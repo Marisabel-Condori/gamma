@@ -1,0 +1,19 @@
+<gm-encabezado titulo="Libro de ventas IVA" tituloMovil="Libro IVA" [rutanavegacion]="rutanavegacion" />
+
+<section
+  class="carga"
+  [class.arrastrando]="arrastrando()"
+  (dragover)="arrastrar($event)"
+  (dragleave)="salirArrastre($event)"
+  (drop)="soltar($event)"
+>
+  <div>
+    <h3>Cargar libro de ventas SIAT</h3>
+    <p>Arrastra aquí el archivo .csv del periodo o elígelo con el botón.</p>
+  </div>
+  <input #archivo type="file" accept=".csv,text/csv" hidden (change)="elegirArchivo($event)" />
+  <button gmBoton="primario" type="button" icono="subir" etiqueta="Cargar CSV" (click)="archivo.click()"></button>
+</section>
+
+<h3>Periodos cargados</h3>
+<gm-tabla [datos]="periodos()" [columnas]="columnas" clave="periodo" vacio="Aún no se cargó ningún periodo." />

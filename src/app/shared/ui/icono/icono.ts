@@ -31,6 +31,8 @@ const ICONOS = {
   bitacora: 'history',
   calendario: 'calendar_month',
   limpiar: 'filter_alt_off',
+  libro: 'menu_book',
+  subir: 'upload_file',
 } as const;
 
 export type GmIconoNombre = keyof typeof ICONOS;

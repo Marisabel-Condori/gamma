@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { GmBoton, GmEncabezado, GmRutaNavegacion, GmSeccion, Pantalla, GmFecha, Toast } from '../../../shared/ui';
 import { ConciliacionDia, ConciliacionOrigen } from './data/conciliacion.model';
 import { CONCILIACION_PREPAGO } from './data/conciliar-prepago.ejemplo';
-import { cantidad, monto, redondear } from '../formato';
+import { cantidad, monto, redondear } from '../../../shared/utils/numeros';
 
 const ORIGENES = ['BANCA', 'SICO', 'RECINT'];
 

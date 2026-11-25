@@ -1,0 +1,29 @@
+.carga {
+  display: flex;
+  // align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-bottom: 20px;
+  padding: 18px;
+  background: var(--superficie);
+  border: 2px dashed var(--linea-fuerte);
+  border-radius: var(--radio-xl);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.carga.arrastrando {
+  border: 2px dashed var(--marca);
+  background: var(--marca-tenue);
+}
+
+h3 {
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-semi);
+}
+
+.carga p {
+  margin-top: 4px;
+  color: var(--tinta-3);
+  font-size: var(--texto-sm);
+}

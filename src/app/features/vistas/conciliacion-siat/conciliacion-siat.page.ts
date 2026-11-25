@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { GmBoton, GmEncabezado, GmRutaNavegacion, GmSeccion, Pantalla, GmFecha } from '../../../shared/ui';
-import { cantidad, monto, redondear } from '../formato';
+import { cantidad, monto, redondear } from '../../../shared/utils/numeros';
 import { ConciliacionSiatFila, ConciliacionSiatResponse } from './data/conciliacion-siat.model';
 import { CONCILIACION_SIAT } from './data/conciliacion-siat.ejemplo';
 
