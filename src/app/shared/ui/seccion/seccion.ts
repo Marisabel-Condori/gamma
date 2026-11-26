@@ -29,7 +29,7 @@ import { Pantalla } from '../pantalla';
       font-weight: var(--peso-negrita);
     }
     .campos {
-      align-items: center;
+      align-items: end;
       display: grid;
       gap: 14px 16px;
     }

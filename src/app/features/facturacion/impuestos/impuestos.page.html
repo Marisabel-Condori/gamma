@@ -4,7 +4,7 @@
   [rutanavegacion]="rutanavegacion"
 />
 
-<form (submit)="guardar($event)" novalidate>
+<form (submit)="onEmitir($event)" novalidate>
   <gm-seccion titulo="Datos de la factura" columnas="1fr 1fr 1fr">
     <gm-lista
       etiqueta="Multicentro"
@@ -42,7 +42,7 @@
       [opciones]="opcionesTiposDeDocumento()"
       [valor]="formulario().codigoTipoDocumentoSin"
       [deshabilitado]="isLoadingTiposDeDocumento() || !opcionesTiposDeDocumento().length"
-      (valorChange)="seleccionarSucursal($event)"
+      (valorChange)="seleccionarTipoDocumento($event)"
       buscable
     />
     <gm-texto
@@ -67,6 +67,7 @@
       etiqueta="Número celular"
       placeholder="Ingresa el número de celular"
       [(valor)]="numeroCelular"
+      tipo="number"
     />
   </gm-seccion>
   <gm-seccion titulo="Detalle de productos" columnas="1fr 1fr 1fr 1fr 1fr 1fr">
@@ -76,7 +77,7 @@
         isLoadingProductos() ? 'Cargando los productos' : 'Selecciona los productos'
       }}"
       [opciones]="opcionesProductos()"
-      [valor]="formulario().codigoProductoSin"
+      [valor]="formularioProductos().codigoProductoSin"
       [deshabilitado]="isLoadingProductos() || !opcionesProductos().length"
       (valorChange)="seleccionarProducto($event)"
       buscable
@@ -89,31 +90,47 @@
           : 'Selecciona la unidad de medida'
       }}"
       [opciones]="opcionesUnidadesDeMedida()"
-      [valor]="formulario().codigoUnidadMedidaSin"
+      [valor]="formularioProductos().codigoUnidadMedidaSin"
       [deshabilitado]="isLoadingUnidadesDeMedida() || !opcionesUnidadesDeMedida().length"
       (valorChange)="seleccionarUnidadDeMedida($event)"
       buscable
     />
-    <gm-texto etiqueta="Cantidad" placeholder="Ingresa la cantidad" [(valor)]="codigoCliente" />
+    <gm-texto etiqueta="Cantidad" placeholder="Ingresa la cantidad" [(valor)]="cantidad" tipo="number" />
     <gm-texto
       etiqueta="Precio unitario"
       placeholder="Ingresa el precio unitario"
-      [(valor)]="codigoCliente"
+      [(valor)]="precioUnitario"
+      tipo="number"
     />
-    <gm-texto etiqueta="Descuento" placeholder="Ingresa el descuento" [(valor)]="codigoCliente" />
+    <gm-texto etiqueta="Descuento" placeholder="Ingresa el descuento" [(valor)]="descuento" tipo="number" />
     <button gmBoton="primario" type="button" (click)="onAddProducto()" [etiqueta]="'Adicionar'">
       <gm-icono nombre="agregar" />
     </button>
   </gm-seccion>
+  @if (errorProducto()) {
+    <p class="gm-error" role="alert">{{ errorProducto() }}</p>
+  }
+  <div style="height: 20px"></div>
   <gm-tabla
-    [datos]="periodos()"
+    [datos]="filasProductos()"
     [columnas]="columnas"
     clave="codigo"
     cabecera="clara"
     [compacta]="true"
-    vacio="Ingrese un detalle para continuar"
-  />
-  <gm-seccion titulo="Datos del pago" columnas="1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr">
+    vacio="Seleccione un producto para continuar"
+  >
+    <ng-template gmCelda="acciones" let-producto>
+      <button
+        gmBoton="peligro"
+        chico
+        type="button"
+        icono="eliminar"
+        [attr.aria-label]="'Quitar producto ' + producto.codigo"
+        (click)="onRemoveProducto(producto)"
+      ></button>
+    </ng-template>
+  </gm-tabla>
+  <gm-seccion titulo="Datos del pago" columnas="1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr">
     <gm-lista
       etiqueta="Tipo moneda"
       placeholder="{{
@@ -125,14 +142,36 @@
       (valorChange)="seleccionarTipoMoneda($event)"
       buscable
     />
-    <gm-texto etiqueta="Tipo cambio" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
-    <gm-texto etiqueta="Método pago" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
-    <gm-texto etiqueta="Número tarjeta" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
-    <gm-texto etiqueta="Subtotal" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
-    <gm-texto etiqueta="Descuento" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
-    <gm-texto etiqueta="Monto total" placeholder="Ingresa el código" [(valor)]="codigoCliente" />
+    <gm-texto etiqueta="Tipo cambio" placeholder="Ingresa el tipo de cambio" [(valor)]="tipoCambio" tipo="number" />
+    <gm-lista
+      etiqueta="Método pago"
+      placeholder="{{
+        isLoadingMetodoPago() ? 'Cargando los métodos de pago' : 'Selecciona el método de pago'
+      }}"
+      [opciones]="opcionesMetodosPago()"
+      [valor]="formulario().codigoMetodoPagoSin"
+      [deshabilitado]="isLoadingMetodoPago() || !opcionesMetodosPago().length"
+      (valorChange)="seleccionarMetodoPago($event)"
+      buscable
+    />
+    <gm-texto
+      etiqueta="Número tarjeta"
+      placeholder="Ingresa un número de tarjeta"
+      [(valor)]="numeroTarjeta"
+    />
+    <gm-texto etiqueta="Subtotal" placeholder="Ingresa el subtotal" [(valor)]="subTotal" tipo="number" />
+    <gm-texto
+      etiqueta="Descuento"
+      placeholder="Ingresa el descuento"
+      [(valor)]="descuentoMetodoPago"
+      tipo="number"
+    />
+    <gm-texto etiqueta="Monto total" placeholder="Ingresa el monto total" [(valor)]="montoTotal" tipo="number" />
     <button gmBoton="primario" type="submit" [etiqueta]="'Emitir'">
       <gm-icono nombre="emitir" />
     </button>
   </gm-seccion>
+  @if (error()) {
+    <p class="gm-error" role="alert">{{ error() }}</p>
+  }
 </form>
