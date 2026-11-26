@@ -4,7 +4,7 @@ import { ControlValueAccessor, NgControl, ValidationErrors, Validators } from '@
 const MENSAJES: Record<string, (error: any) => string> = {
   required: () => 'El campo es obligatorio',
   email: () => 'El correo no es válido',
-  pattern: () => 'Formato no válido',
+  pattern: () => 'El formato es inválido',
   min: (e) => `Debe ser mayor o igual a ${e.min}`,
   max: (e) => `Debe ser menor o igual a ${e.max}`,
   minlength: (e) => `El campo debe tener un mínimo de ${e.requiredLength} caracteres`,

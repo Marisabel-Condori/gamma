@@ -42,7 +42,13 @@
       </thead>
       <tbody>
         @for (fila of visibles(); track claveDe(fila)) {
-          <tr>
+          <tr
+            [class.seleccionable]="seleccionable()"
+            [attr.tabindex]="seleccionable() ? 0 : null"
+            (click)="alSeleccionar(fila)"
+            (keydown.enter)="alSeleccionar(fila, $event)"
+            (keydown.space)="alSeleccionar(fila, $event)"
+          >
             @for (columna of columnas(); track columna.id) {
               <td
                 [class]="columna.alinear"
@@ -68,7 +74,14 @@
   }
   <div class="tarjetas">
     @for (fila of visibles(); track claveDe(fila)) {
-      <article class="tarjeta">
+      <article
+        class="tarjeta"
+        [class.seleccionable]="seleccionable()"
+        [attr.tabindex]="seleccionable() ? 0 : null"
+        (click)="alSeleccionar(fila)"
+        (keydown.enter)="alSeleccionar(fila, $event)"
+        (keydown.space)="alSeleccionar(fila, $event)"
+      >
         <div class="cuerpo">
           <div class="secciones">
             @for (seccion of tarjeta().secciones; track $index) {

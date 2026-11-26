@@ -30,7 +30,6 @@ export class GmBoton {
   readonly icono = input<GmIconoNombre>();
   readonly etiqueta = input<string>();
   readonly compacto = input(false, { transform: booleanAttribute });
-  /** Botón para tablas. */
   readonly chico = input(false, { transform: booleanAttribute });
 
   protected readonly clases = computed(() => {

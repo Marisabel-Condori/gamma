@@ -14,7 +14,7 @@ import { GmTexto } from '../texto/texto';
   },
   template: `
     <gm-texto
-      [etiqueta]="conAsterisco(etiqueta())"
+      [etiqueta]="etiqueta()"
       [placeholder]="placeholder()"
       [tipo]="tipo()"
       [maxlength]="maxlength()"

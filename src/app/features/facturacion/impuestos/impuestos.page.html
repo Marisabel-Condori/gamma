@@ -5,7 +5,7 @@
 />
 
 <form [formGroup]="formulario" (ngSubmit)="onEmitir()" novalidate>
-  <gm-seccion titulo="Datos de la factura" columnas="1fr 1fr 2fr">
+  <gm-seccion titulo="Datos de la factura" columnas="1fr 1fr 3fr">
     <gm-lista-control
       etiqueta="Multicentro"
       placeholder="{{
@@ -16,22 +16,15 @@
       formControlName="codigoSucursal"
       buscable
     />
-    <gm-texto-control
-      etiqueta="Código cliente"
-      placeholder="Ingresa el código cliente"
-      formControlName="codigoCliente"
-    />
+    <gm-texto-control etiqueta="Código cliente *" placeholder="" formControlName="codigoCliente" />
     <gm-opciones-control
-      titulo="Tipo de factura"
+      titulo="Casos especiales *"
       [opciones]="tiposCasosEspeciales"
       formControlName="tipoCasoEspecial"
     />
   </gm-seccion>
-  <gm-seccion titulo="" columnas="1fr 1fr 1fr 1fr">
-    <gm-texto-control
-      etiqueta="Razón social"
-      placeholder="Ingresa la razón social"
-      formControlName="razonSocial" />
+  <gm-seccion titulo="" columnas="1fr 1fr 1fr 0.6fr 2fr">
+    <gm-texto-control etiqueta="Razón social *" placeholder="" formControlName="razonSocial" />
     <gm-lista-control
       etiqueta="Tipo de documento"
       placeholder="{{
@@ -42,39 +35,42 @@
       [opciones]="opcionesTiposDeDocumento()"
       [deshabilitado]="isLoadingTiposDeDocumento() || !opcionesTiposDeDocumento().length"
       formControlName="codigoTipoDocumento"
-      buscable />
+      buscable
+    />
     <gm-texto-control
-      etiqueta="Número de documento"
-      placeholder="Ingresa el número de documento"
-      formControlName="numeroDocumento" />
+      etiqueta="Número de documento *"
+      placeholder=""
+      formControlName="numeroDocumento"
+    />
     <gm-texto-control
       etiqueta="Complemento"
-      placeholder="Ingresa el complemento"
-      formControlName="complemento" />
+      placeholder=""
+      [maxlength]="2"
+      formControlName="complemento"
+    />
     <gm-opciones-control
-      titulo="Autorizar el registro con NIT inválido?"
+      titulo="Autorizar el registro con NIT inválido? *"
       [opciones]="tiposNitInvalido"
-      formControlName="tipoNitInvalido" />
-    <gm-texto-control
-      etiqueta="Periodo"
-      placeholder="Ingresa el periodo"
-      formControlName="periodo" />
+      formControlName="tipoNitInvalido"
+    />
+  </gm-seccion>
+  <gm-seccion titulo="" columnas="1fr 1fr 1fr">
+    <gm-texto-control etiqueta="Periodo *" placeholder="" formControlName="periodo" />
     <gm-texto-control
       etiqueta="Correo electrónico"
-      placeholder="Ingresa el correo electrónico"
+      placeholder=""
       tipo="email"
       formControlName="correoElectronico" />
     <gm-texto-control
       etiqueta="Número celular"
-      placeholder="Ingresa el número de celular"
+      placeholder=""
       tipo="number"
       [mensajes]="mensajeDigitos"
       formControlName="numeroCelular"
   /></gm-seccion>
-
-  <gm-seccion titulo="Detalle de productos" columnas="1fr 1fr 1fr 1fr 1fr 1fr">
+  <gm-seccion titulo="Detalle de productos" columnas="1fr 1fr 0.6fr 0.6fr 0.6fr 1fr">
     <gm-lista-control
-      etiqueta="Selecciona el producto"
+      etiqueta="Producto"
       placeholder="{{
         isLoadingProductos() ? 'Cargando los productos' : 'Selecciona los productos'
       }}"
@@ -96,22 +92,22 @@
       buscable
     />
     <gm-texto-control
-      etiqueta="Cantidad"
-      placeholder="Ingresa la cantidad"
+      etiqueta="Cantidad *"
+      placeholder=""
       tipo="number"
       [mensajes]="mensajeMayorACero"
       [formControl]="formularioProducto.controls.cantidad"
     />
     <gm-texto-control
-      etiqueta="Precio unitario"
-      placeholder="Ingresa el precio unitario"
+      etiqueta="Precio unitario *"
+      placeholder=""
       tipo="number"
       [mensajes]="mensajeMayorACero"
       [formControl]="formularioProducto.controls.precioUnitario"
     />
     <gm-texto-control
       etiqueta="Descuento"
-      placeholder="Ingresa el descuento"
+      placeholder=""
       tipo="number"
       [mensajes]="mensajeMonto"
       [formControl]="formularioProducto.controls.descuento"
@@ -148,8 +144,7 @@
   @if (intentoEmitir() && productos.invalid) {
     <p class="gm-error" role="alert">Adiciona al menos un producto al detalle.</p>
   }
-
-  <gm-seccion titulo="Datos del pago" columnas="1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr">
+  <gm-seccion titulo="Datos del pago" columnas="1fr 0.6fr 1fr 1.2fr 0fr 0.6fr 0.6fr 0.6fr 1fr">
     <gm-lista-control
       etiqueta="Tipo moneda"
       placeholder="{{
@@ -161,8 +156,8 @@
       buscable
     />
     <gm-texto-control
-      etiqueta="Tipo cambio"
-      placeholder="Ingresa el tipo de cambio"
+      etiqueta="Tipo cambio *"
+      placeholder=""
       tipo="number"
       [mensajes]="mensajeMayorACero"
       formControlName="tipoCambio"
@@ -177,29 +172,25 @@
       formControlName="codigoMetodoPago"
       buscable
     />
+    <gm-tarjeta-control etiqueta="Número tarjeta" formControlName="numeroTarjeta" />
+    <div class="divisor" aria-hidden="true"></div>
     <gm-texto-control
-      etiqueta="Número tarjeta"
-      placeholder="Ingresa un número de tarjeta"
-      [mensajes]="mensajeDigitos"
-      formControlName="numeroTarjeta"
-    />
-    <gm-texto-control
-      etiqueta="Subtotal"
-      placeholder="Ingresa el subtotal"
+      etiqueta="Subtotal *"
+      placeholder=""
       tipo="number"
       [mensajes]="mensajeMonto"
       formControlName="subTotal"
     />
     <gm-texto-control
       etiqueta="Descuento"
-      placeholder="Ingresa el descuento"
+      placeholder=""
       tipo="number"
       [mensajes]="mensajeMonto"
       formControlName="descuento"
     />
     <gm-texto-control
-      etiqueta="Monto total"
-      placeholder="Ingresa el monto total"
+      etiqueta="Monto total *"
+      placeholder=""
       tipo="number"
       [mensajes]="mensajeMonto"
       formControlName="montoTotal"

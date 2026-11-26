@@ -8,3 +8,23 @@
   flex-direction: row;
   align-items: center;
 }
+
+.divisor {
+  width: 1px;
+  align-self: stretch;
+  background-color: #d1d5db;
+  margin: 4px 8px;
+}
+
+.tarjeta-enmascarada {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.mascara-fija {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  user-select: none;
+  padding-top: 18px;
+}

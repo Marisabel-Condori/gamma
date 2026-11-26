@@ -1,0 +1,36 @@
+.section-buscador {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.contenedor-buscador {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: start;
+}
+.contenedor-datos {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.contenedor-textos {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+.errores-emision .gm-error {
+  margin: 0;
+}
+.errores-emision {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+gm-texto.invalido ::ng-deep input {
+  border-color: var(--peligro);
+}

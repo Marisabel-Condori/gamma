@@ -1,5 +1,5 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   GmRutaNavegacion,
   GmEncabezado,
@@ -14,6 +14,7 @@ import {
   GmTextoControl,
   GmListaControl,
   GmOpcionesControl,
+  GmTarjetaControl,
 } from '../../../shared/ui';
 import {
   AbstractControl,
@@ -24,7 +25,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MulticentrosService } from '../../sistemas-facturadores/homologaciones/multicentros/data/multicentros.service';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, combineLatest, finalize, of, startWith } from 'rxjs';
 import { HomologacionSucursalApiResponse } from '../../sistemas-facturadores/homologaciones/multicentros/data/multicentros.model';
 import { GmOpcion } from '../../../shared/ui/opciones/opciones';
 import { HomologacionCatalogoService } from '../../sistemas-facturadores/homologaciones/comun/homologacion-catalogo.service';
@@ -75,7 +76,6 @@ const COLUMNAS: GmColumna<ProductosTableModel>[] = [
   },
   { id: 'acciones', titulo: 'Acciones', ancho: '90px', alinear: 'centro', movil: 'pie-fin' },
 ];
-
 const NUMERO = /^\d+(\.\d{1,2})?$/;
 const SOLO_DIGITOS = /^\d+$/;
 const MENSAJE_MONTO = { pattern: 'Número con hasta 2 decimales' };
@@ -95,16 +95,17 @@ const descuentoDentroDelSubtotal: ValidatorFn = (
 @Component({
   selector: 'gm-impuestos.page',
   imports: [
+    ReactiveFormsModule,
     GmEncabezado,
     GmSeccion,
     GmBoton,
-    ReactiveFormsModule,
     GmIcono,
     GmTabla,
     GmCelda,
     GmTextoControl,
     GmListaControl,
     GmOpcionesControl,
+    GmTarjetaControl,
   ],
   templateUrl: './impuestos.page.html',
   styleUrl: './impuestos.page.scss',
@@ -135,7 +136,7 @@ export class ImpuestosPage implements OnInit {
     razonSocial: ['', Validators.required],
     codigoTipoDocumento: ['', Validators.required],
     numeroDocumento: ['', Validators.required],
-    complemento: [''],
+    complemento: ['', Validators.maxLength(2)],
     tipoNitInvalido: ['POR_DEFECTO', Validators.required],
     periodo: ['', Validators.required],
     correoElectronico: ['', Validators.email],
@@ -149,7 +150,6 @@ export class ImpuestosPage implements OnInit {
     descuento: ['', Validators.pattern(NUMERO)],
     montoTotal: ['', [Validators.required, Validators.pattern(NUMERO)]],
   });
-
   readonly formularioProducto = this.fb.group(
     {
       codigoProducto: ['', Validators.required],
@@ -178,7 +178,11 @@ export class ImpuestosPage implements OnInit {
   readonly tiposNitInvalido: GmOpcion[] = tiposNitInvalido;
 
   readonly isLoadingMulticentros = signal<boolean>(true);
-  private readonly multicentrosHomologados = signal<HomologacionSucursalApiResponse[]>([]);
+  readonly isLoadingTiposDeDocumento = computed(() => this.listadoTiposDeDocumento.isLoading());
+  readonly isLoadingProductos = computed(() => this.listadoProductosHomologados.isLoading());
+  readonly isLoadingUnidadesDeMedida = computed(() => this.listadoUnidadDeMedida.isLoading());
+  readonly isLoadingMoneda = computed(() => this.listadoMoneda.isLoading());
+  readonly isLoadingMetodoPago = computed(() => this.listadoMetodosDePago.isLoading());
 
   private readonly listadoTiposDeDocumento = this.homologacionesCatalogosService.listar(
     DOCUMENTO_IDENTIFICACION,
@@ -199,12 +203,7 @@ export class ImpuestosPage implements OnInit {
     () => this.sistemaFacturador(),
   );
 
-  readonly isLoadingTiposDeDocumento = computed(() => this.listadoTiposDeDocumento.isLoading());
-  readonly isLoadingProductos = computed(() => this.listadoProductosHomologados.isLoading());
-  readonly isLoadingUnidadesDeMedida = computed(() => this.listadoUnidadDeMedida.isLoading());
-  readonly isLoadingMoneda = computed(() => this.listadoMoneda.isLoading());
-  readonly isLoadingMetodoPago = computed(() => this.listadoMetodosDePago.isLoading());
-
+  private readonly multicentrosHomologados = signal<HomologacionSucursalApiResponse[]>([]);
   private readonly tiposDeDocumentoHomologados = computed(() =>
     this.listadoTiposDeDocumento.hasValue()
       ? (this.listadoTiposDeDocumento.value()?.data ?? [])
@@ -229,50 +228,60 @@ export class ImpuestosPage implements OnInit {
     this.multicentrosHomologados().map((sucursal) => ({
       valor: String(sucursal.idHomSucursal),
       etiqueta:
-        [sucursal.codigoMulticentro, sucursal.descripcion]
+        [sucursal.descripcion]
           .map((valor) => valor?.trim())
           .filter(Boolean)
           .join(' · ') || `Sucursal ${sucursal.descripcion}`,
     })),
   );
-
   readonly opcionesTiposDeDocumento = computed<GmOpcionLista[]>(() =>
     this.tiposDeDocumentoHomologados().map((tipo) => ({
       valor: String(tipo.idHomologacion),
       etiqueta: etiquetaDe(tipo.codigo, tipo.descripcion),
     })),
   );
-
   readonly opcionesProductos = computed<GmOpcionLista[]>(() =>
     this.productosHomologados().map((producto) => ({
       valor: String(producto.idHomologacionProducto),
       etiqueta: etiquetaDe(producto.codigo, producto.descripcion),
     })),
   );
-
   readonly opcionesUnidadesDeMedida = computed<GmOpcionLista[]>(() =>
     this.unidadesDeMedidaHomologados().map((unidad) => ({
       valor: String(unidad.idHomologacion),
       etiqueta: etiquetaDe(unidad.codigo, unidad.descripcion),
     })),
   );
-
   readonly opcionesMonedas = computed<GmOpcionLista[]>(() =>
     this.monedasHomologados().map((moneda) => ({
       valor: String(moneda.idHomologacion),
-      etiqueta: etiquetaDe(moneda.codigo, moneda.descripcion),
+      etiqueta: etiquetaDe(moneda.descripcion, undefined),
     })),
   );
-
   readonly opcionesMetodosPago = computed<GmOpcionLista[]>(() =>
     this.metodosDePagoHomologados().map((metodo) => ({
       valor: String(metodo.idHomologacion),
       etiqueta: etiquetaDe(metodo.codigo, metodo.descripcion),
     })),
   );
-
+  private destroyRef = inject(DestroyRef);
   ngOnInit(): void {
+    this.loadListeners();
     this.loadData();
+  }
+
+  loadListeners() {
+    this.formulario
+      .get('codigoMoneda')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((nuevoTipoCambio) => {
+        const moneda = this.monedasHomologados().find(
+          (e) => e.idHomologacion === Number(nuevoTipoCambio),
+        );
+        const tipoCambio = moneda?.codigo;
+        if (!tipoCambio) return;
+        this.formulario.get('tipoCambio')?.setValue(tipoCambio);
+      });
   }
 
   loadData() {
@@ -338,10 +347,12 @@ export class ImpuestosPage implements OnInit {
       (item) => String(item.idHomologacion) === valores.codigoUnidadMedida,
     );
     if (!producto || !unidad) return;
+    //Para validar que solo un tipo de producto se pueda ingresar en la tabla de detalle de productos
+    /*
     if (this.productos.getRawValue().some((fila) => fila.codigo === producto.codigo)) {
       this.errorProducto.set('El producto ya fue adicionado al detalle.');
       return;
-    }
+    }*/
 
     this.productos.push(
       this.fb.control<ProductosTableModel>({

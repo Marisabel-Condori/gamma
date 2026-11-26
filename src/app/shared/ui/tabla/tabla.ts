@@ -1,5 +1,15 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, TemplateRef, computed, contentChildren, inject, input, linkedSignal } from '@angular/core';
+import {
+  Component,
+  TemplateRef,
+  booleanAttribute,
+  computed,
+  contentChildren,
+  inject,
+  input,
+  linkedSignal,
+  output,
+} from '@angular/core';
 import { GmEstadoVacio } from '../estado-vacio/estado-vacio';
 import { GmPaginador, rangoTexto } from '../paginador/paginador';
 import { Pantalla } from '../pantalla';
@@ -47,6 +57,9 @@ export class GmTabla<T extends object> {
   /** 0 = sin paginación. */
   readonly porPagina = input(0);
   readonly vacio = input('No hay resultados.');
+  /** Filas clicables (y con Enter/Espacio): emiten (seleccionarFila) con la fila. */
+  readonly seleccionable = input(false, { transform: booleanAttribute });
+  readonly seleccionarFila = output<T>();
 
   protected readonly esMovil = inject(Pantalla).esMovil;
   private readonly celdas = contentChildren(GmCelda);
@@ -117,6 +130,12 @@ export class GmTabla<T extends object> {
     }
     return { secciones, esquina: de('esquina'), pie: de('pie'), pieFin: de('pie-fin') };
   });
+
+  protected alSeleccionar(fila: T, evento?: Event): void {
+    if (!this.seleccionable()) return;
+    evento?.preventDefault();
+    this.seleccionarFila.emit(fila);
+  }
 
   protected claveDe(fila: T): unknown {
     return (fila as Record<string, unknown>)[this.clave()];

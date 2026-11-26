@@ -39,6 +39,7 @@ const ICONOS = {
   telecomunicaciones: 'cell_tower',
   comprayventa: 'shopping_cart',
   emitir: 'send',
+  reiniciar: 'restart_alt',
 } as const;
 
 export type GmIconoNombre = keyof typeof ICONOS;

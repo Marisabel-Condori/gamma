@@ -82,6 +82,20 @@ tbody tr:hover td {
   background: var(--marca-tenue);
 }
 
+// Filas clicables ([seleccionable])
+tbody tr.seleccionable {
+  cursor: pointer;
+}
+
+tbody tr.seleccionable:focus-visible {
+  outline: 2px solid var(--marca);
+  outline-offset: -2px;
+}
+
+tbody tr.seleccionable:focus-visible td {
+  background: var(--marca-tenue);
+}
+
 .centro {
   text-align: center;
 }
@@ -205,4 +219,14 @@ tbody tr:hover td {
 
 .pie strong {
   font-size: var(--texto-sm);
+}
+
+.tarjeta.seleccionable {
+  cursor: pointer;
+}
+
+.tarjeta.seleccionable:hover,
+.tarjeta.seleccionable:focus-visible {
+  border-color: var(--marca);
+  outline: none;
 }

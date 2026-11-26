@@ -3,3 +3,98 @@
   tituloMovil="Publicidad"
   [rutanavegacion]="rutanavegacion"
 />
+<form [formGroup]="formulario" (ngSubmit)="onSubmit()" novalidate>
+  <div class="section-buscador">
+    <div class="contenedor-buscador">
+      <gm-opciones-control
+        titulo=""
+        [opciones]="tiposOpcionesBusqueda"
+        formControlName="tipoBusqueda"
+      />
+      <gm-texto-control
+        etiqueta=""
+        placeholder="Ingrese una cuenta o documento"
+        tipo="text"
+        formControlName="busqueda"
+      />
+      <button
+        gmBoton="primario"
+        type="submit"
+        [etiqueta]="buscando() ? 'Buscando...' : 'Buscar'"
+        [disabled]="buscando()"
+      >
+        <gm-icono nombre="buscar" />
+      </button>
+      <button gmBoton="neutro" type="button" [etiqueta]="'Limpiar'" (click)="onLimpiar()">
+        <gm-icono nombre="reiniciar" />
+      </button>
+    </div>
+    <div class="contenedor-datos">
+      <div class="contenedor-textos">
+        <span>Razón Social: <span></span>{{ cliente()?.razonSocial }}</span>
+      </div>
+      <div class="contenedor-textos">
+        <span>Cod. Cliente: <span></span>{{ cliente()?.codigoCliente }}</span>
+      </div>
+      <div class="contenedor-textos">
+        <span>Cod. Cuenta: <span></span>{{ cliente()?.codigoCuenta }}</span>
+      </div>
+      <div class="contenedor-textos">
+        <span
+          >Documento: <span></span>
+          @if (cliente(); as c) {
+            {{ c.tipoDocumento }} {{ c.numeroDocumento
+            }}{{ c.complemento ? '-' + c.complemento : '' }}
+          }
+        </span>
+      </div>
+    </div>
+    <gm-tabla
+      [datos]="filasProductos()"
+      [columnas]="columnas"
+      clave="idServicio"
+      cabecera="clara"
+      [compacta]="true"
+      vacio="Seleccione un producto para continuar"
+    >
+      <ng-template gmCelda="descripcion" let-fila>
+        <gm-texto
+          etiqueta=""
+          placeholder="Descripción"
+          [class.invalido]="campoInvalido(fila, 'descripcion')"
+          [valor]="fila.descripcion"
+          (valorChange)="actualizarFila(fila.idServicio, { descripcion: $event })"
+        />
+      </ng-template>
+      <ng-template gmCelda="monto" let-fila>
+        <gm-texto
+          etiqueta=""
+          tipo="number"
+          placeholder="0.00"
+          [class.invalido]="campoInvalido(fila, 'monto')"
+          [valor]="fila.monto"
+          (valorChange)="actualizarFila(fila.idServicio, { monto: $event })"
+        />
+      </ng-template>
+    </gm-tabla>
+    @if (intentoEmitir() && erroresEmision().length) {
+      <div class="errores-emision" role="alert">
+        @for (error of erroresEmision(); track error) {
+          <p class="gm-error">{{ error }}</p>
+        }
+      </div>
+    }
+    <div>
+      <button gmBoton="primario" type="button" [etiqueta]="'Emitir'" (click)="onEmitir()">
+        <gm-icono nombre="emitir" />
+      </button>
+    </div>
+  </div>
+</form>
+@if (cuentasEncontradas(); as cuentas) {
+  <gm-seleccionar-cuenta
+    [cuentas]="cuentas"
+    (seleccionar)="elegirCuenta($event)"
+    (cerrar)="cuentasEncontradas.set(null)"
+  />
+}
