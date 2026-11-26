@@ -1,25 +1,30 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   GmRutaNavegacion,
   GmEncabezado,
   GmSeccion,
-  GmTexto,
-  GmLista,
   Toast,
-  Confirmar,
   GmBoton,
   GmIcono,
   GmOpcionLista,
-  GmOpciones,
   GmTabla,
   GmColumna,
   GmCelda,
+  GmTextoControl,
+  GmListaControl,
+  GmOpcionesControl,
 } from '../../../shared/ui';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import {
+  AbstractControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { MulticentrosService } from '../../sistemas-facturadores/homologaciones/multicentros/data/multicentros.service';
 import { catchError, finalize, of } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
 import { HomologacionSucursalApiResponse } from '../../sistemas-facturadores/homologaciones/multicentros/data/multicentros.model';
 import { GmOpcion } from '../../../shared/ui/opciones/opciones';
 import { HomologacionCatalogoService } from '../../sistemas-facturadores/homologaciones/comun/homologacion-catalogo.service';
@@ -72,22 +77,34 @@ const COLUMNAS: GmColumna<ProductosTableModel>[] = [
 ];
 
 const NUMERO = /^\d+(\.\d{1,2})?$/;
-const CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SOLO_DIGITOS = /^\d+$/;
+const MENSAJE_MONTO = { pattern: 'Número con hasta 2 decimales' };
+const MENSAJE_DIGITOS = { pattern: 'Solo dígitos' };
+const mayorACero: ValidatorFn = (control: AbstractControl): ValidationErrors | null =>
+  control.value === '' || Number(control.value) > 0 ? null : { mayorACero: true };
+const descuentoDentroDelSubtotal: ValidatorFn = (
+  grupo: AbstractControl,
+): ValidationErrors | null => {
+  const { cantidad, precioUnitario, descuento } = grupo.value;
+  if (!cantidad || !precioUnitario || !descuento) return null;
+  return Number(descuento) > Number(cantidad) * Number(precioUnitario)
+    ? { descuentoExcede: true }
+    : null;
+};
+
 @Component({
   selector: 'gm-impuestos.page',
   imports: [
     GmEncabezado,
     GmSeccion,
-    GmTexto,
     GmBoton,
-    FormsModule,
     ReactiveFormsModule,
     GmIcono,
-    GmLista,
-    GmOpciones,
     GmTabla,
     GmCelda,
+    GmTextoControl,
+    GmListaControl,
+    GmOpcionesControl,
   ],
   templateUrl: './impuestos.page.html',
   styleUrl: './impuestos.page.scss',
@@ -97,100 +114,96 @@ export class ImpuestosPage implements OnInit {
   readonly sistemaFacturador = signal(8);
 
   private readonly toast = inject(Toast);
-  private readonly confirmar = inject(Confirmar);
-  private readonly router = inject(Router);
-  readonly codigoCliente = signal('');
-  readonly razonSocial = signal('');
-  readonly numeroDocumento = signal('');
-  readonly complemento = signal('');
-  readonly periodo = signal('');
-  readonly correoElectronico = signal('');
-  readonly numeroCelular = signal('');
-  readonly cantidad = signal('');
-  readonly precioUnitario = signal('');
-  readonly descuento = signal('');
-  //metodos de pago
-  readonly tipoCambio = signal('');
-  readonly numeroTarjeta = signal('');
-  readonly subTotal = signal('');
-  readonly descuentoMetodoPago = signal('');
-  readonly montoTotal = signal('');
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly multicentrosService = inject(MulticentrosService);
+  private readonly homologacionesCatalogosService = inject(HomologacionCatalogoService);
+  private readonly homologacionProductosService = inject(HomologacionProductosService);
 
-  readonly guardando = signal(false);
-  readonly error = signal<string | null>(null);
-  readonly errorProducto = signal<string | null>(null);
+  readonly mensajeMonto = MENSAJE_MONTO;
+  readonly mensajeDigitos = MENSAJE_DIGITOS;
+  readonly mensajeMayorACero = { ...MENSAJE_MONTO, mayorACero: 'Debe ser mayor a 0' };
 
   readonly rutanavegacion: GmRutaNavegacion[] = [
     { etiqueta: 'Facturación' },
     { etiqueta: 'Impuestos' },
   ];
 
-  readonly isLoadingMulticentros = signal<boolean>(true);
-  readonly isLoadingTiposDeDocumento = computed(() => {
-    return this.listadoTiposDeDocumento.isLoading();
-  });
-  readonly isLoadingProductos = computed(() => {
-    return this.listadoProductosHomologados.isLoading();
-  });
-  readonly isLoadingUnidadesDeMedida = computed(() => {
-    return this.listadoUnidadDeMedida.isLoading();
-  });
-  readonly isLoadingMoneda = computed(() => {
-    return this.listadoMoneda.isLoading();
-  });
-  readonly isLoadingMetodoPago = computed(() => {
-    return this.listadoMetodosDePago.isLoading();
-  });
-
-  private readonly multicentrosService = inject(MulticentrosService);
-  private readonly homologacionesCatalogosService = inject(HomologacionCatalogoService);
-  private readonly multicentrosHomologados = signal<HomologacionSucursalApiResponse[]>([]);
-  private readonly homologacionProductosService = inject(HomologacionProductosService);
-
-  readonly formulario = signal({
-    codigoSucursalSin: '',
-    codigoTipoDocumentoSin: '',
-    tipoDocumentoSin: '',
-    codigoMonedaSin: '',
-    tipoMonedaSin: '',
-    codigoMetodoPagoSin: '',
-    tipoMetodoPagoSin: '',
+  readonly formulario = this.fb.group({
+    codigoSucursal: ['', Validators.required],
+    codigoCliente: ['', Validators.required],
+    tipoCasoEspecial: ['NINGUNO', Validators.required],
+    razonSocial: ['', Validators.required],
+    codigoTipoDocumento: ['', Validators.required],
+    numeroDocumento: ['', Validators.required],
+    complemento: [''],
+    tipoNitInvalido: ['POR_DEFECTO', Validators.required],
+    periodo: ['', Validators.required],
+    correoElectronico: ['', Validators.email],
+    numeroCelular: ['', Validators.pattern(SOLO_DIGITOS)],
+    productos: this.fb.array<ProductosTableModel>([], Validators.required),
+    codigoMoneda: ['', Validators.required],
+    tipoCambio: ['', [Validators.required, Validators.pattern(NUMERO), mayorACero]],
+    codigoMetodoPago: ['', Validators.required],
+    numeroTarjeta: ['', Validators.pattern(SOLO_DIGITOS)],
+    subTotal: ['', [Validators.required, Validators.pattern(NUMERO)]],
+    descuento: ['', Validators.pattern(NUMERO)],
+    montoTotal: ['', [Validators.required, Validators.pattern(NUMERO)]],
   });
 
-  readonly formularioProductos = signal({
-    codigoProductoSin: '',
-    tipoProductoSin: '',
-    codigoUnidadMedidaSin: '',
-    tipoUnidadMedidaSin: '',
+  readonly formularioProducto = this.fb.group(
+    {
+      codigoProducto: ['', Validators.required],
+      codigoUnidadMedida: ['', Validators.required],
+      cantidad: ['', [Validators.required, Validators.pattern(NUMERO), mayorACero]],
+      precioUnitario: ['', [Validators.required, Validators.pattern(NUMERO), mayorACero]],
+      descuento: ['', Validators.pattern(NUMERO)],
+    },
+    { validators: descuentoDentroDelSubtotal },
+  );
+
+  get productos() {
+    return this.formulario.controls.productos;
+  }
+
+  readonly filasProductos = toSignal(this.productos.valueChanges, {
+    initialValue: this.productos.getRawValue(),
   });
+  readonly columnas = COLUMNAS;
+
+  readonly guardando = signal(false);
+  readonly intentoEmitir = signal(false);
+  readonly errorProducto = signal<string | null>(null);
 
   readonly tiposCasosEspeciales: GmOpcion[] = casosEspeciales;
   readonly tiposNitInvalido: GmOpcion[] = tiposNitInvalido;
-  readonly tipoCasoEspecialSeleccionado = signal<string | null>('NINGUNO');
-  readonly tipoNitInvalidoSeleccionado = signal<string | null>('POR_DEFECTO');
+
+  readonly isLoadingMulticentros = signal<boolean>(true);
+  private readonly multicentrosHomologados = signal<HomologacionSucursalApiResponse[]>([]);
 
   private readonly listadoTiposDeDocumento = this.homologacionesCatalogosService.listar(
     DOCUMENTO_IDENTIFICACION,
     () => this.sistemaFacturador(),
   );
-
   private readonly listadoProductosHomologados = this.homologacionProductosService.listar(() =>
     this.sistemaFacturador(),
   );
-
   private readonly listadoUnidadDeMedida = this.homologacionesCatalogosService.listar(
     UNIDADES_MEDIDA,
     () => this.sistemaFacturador(),
   );
-
   private readonly listadoMoneda = this.homologacionesCatalogosService.listar(MONEDAS, () =>
     this.sistemaFacturador(),
   );
-
   private readonly listadoMetodosDePago = this.homologacionesCatalogosService.listar(
     METODOS_PAGO,
     () => this.sistemaFacturador(),
   );
+
+  readonly isLoadingTiposDeDocumento = computed(() => this.listadoTiposDeDocumento.isLoading());
+  readonly isLoadingProductos = computed(() => this.listadoProductosHomologados.isLoading());
+  readonly isLoadingUnidadesDeMedida = computed(() => this.listadoUnidadDeMedida.isLoading());
+  readonly isLoadingMoneda = computed(() => this.listadoMoneda.isLoading());
+  readonly isLoadingMetodoPago = computed(() => this.listadoMetodosDePago.isLoading());
 
   private readonly tiposDeDocumentoHomologados = computed(() =>
     this.listadoTiposDeDocumento.hasValue()
@@ -202,27 +215,14 @@ export class ImpuestosPage implements OnInit {
       ? (this.listadoProductosHomologados.value()?.data ?? [])
       : [],
   );
-
   private readonly monedasHomologados = computed(() =>
     this.listadoMoneda.hasValue() ? (this.listadoMoneda.value()?.data ?? []) : [],
   );
-
   private readonly metodosDePagoHomologados = computed(() =>
     this.listadoMetodosDePago.hasValue() ? (this.listadoMetodosDePago.value()?.data ?? []) : [],
   );
-
   private readonly unidadesDeMedidaHomologados = computed(() =>
     this.listadoUnidadDeMedida.hasValue() ? (this.listadoUnidadDeMedida.value()?.data ?? []) : [],
-  );
-  readonly opcionesTiposDeDocumento = computed<GmOpcionLista[]>(() =>
-    this.tiposDeDocumentoHomologados().map((sucursal) => ({
-      valor: String(sucursal.idHomologacion),
-      etiqueta:
-        [sucursal.codigo, sucursal.descripcion]
-          .map((valor) => valor?.trim())
-          .filter(Boolean)
-          .join(' · ') || `${sucursal.descripcion}`,
-    })),
   );
 
   readonly opcionesMulticentros = computed<GmOpcionLista[]>(() =>
@@ -236,112 +236,40 @@ export class ImpuestosPage implements OnInit {
     })),
   );
 
+  readonly opcionesTiposDeDocumento = computed<GmOpcionLista[]>(() =>
+    this.tiposDeDocumentoHomologados().map((tipo) => ({
+      valor: String(tipo.idHomologacion),
+      etiqueta: etiquetaDe(tipo.codigo, tipo.descripcion),
+    })),
+  );
+
   readonly opcionesProductos = computed<GmOpcionLista[]>(() =>
-    this.productosHomologados().map((sucursal) => ({
-      valor: String(sucursal.idHomologacionProducto),
-      etiqueta:
-        [sucursal.codigo, sucursal.descripcion]
-          .map((valor) => valor?.trim())
-          .filter(Boolean)
-          .join(' · ') || `${sucursal.descripcion}`,
+    this.productosHomologados().map((producto) => ({
+      valor: String(producto.idHomologacionProducto),
+      etiqueta: etiquetaDe(producto.codigo, producto.descripcion),
     })),
   );
 
   readonly opcionesUnidadesDeMedida = computed<GmOpcionLista[]>(() =>
-    this.unidadesDeMedidaHomologados().map((sucursal) => ({
-      valor: String(sucursal.idHomologacion),
-      etiqueta:
-        [sucursal.codigo, sucursal.descripcion]
-          .map((valor) => valor?.trim())
-          .filter(Boolean)
-          .join(' · ') || `${sucursal.descripcion}`,
+    this.unidadesDeMedidaHomologados().map((unidad) => ({
+      valor: String(unidad.idHomologacion),
+      etiqueta: etiquetaDe(unidad.codigo, unidad.descripcion),
     })),
   );
 
   readonly opcionesMonedas = computed<GmOpcionLista[]>(() =>
-    this.monedasHomologados().map((sucursal) => ({
-      valor: String(sucursal.idHomologacion),
-      etiqueta:
-        [sucursal.codigo, sucursal.descripcion]
-          .map((valor) => valor?.trim())
-          .filter(Boolean)
-          .join(' · ') || `${sucursal.descripcion}`,
+    this.monedasHomologados().map((moneda) => ({
+      valor: String(moneda.idHomologacion),
+      etiqueta: etiquetaDe(moneda.codigo, moneda.descripcion),
     })),
   );
 
   readonly opcionesMetodosPago = computed<GmOpcionLista[]>(() =>
-    this.metodosDePagoHomologados().map((sucursal) => ({
-      valor: String(sucursal.idHomologacion),
-      etiqueta:
-        [sucursal.codigo, sucursal.descripcion]
-          .map((valor) => valor?.trim())
-          .filter(Boolean)
-          .join(' · ') || `${sucursal.descripcion}`,
+    this.metodosDePagoHomologados().map((metodo) => ({
+      valor: String(metodo.idHomologacion),
+      etiqueta: etiquetaDe(metodo.codigo, metodo.descripcion),
     })),
   );
-
-  seleccionarSucursal(codigo: string): void {
-    this.formulario.update((formulario) => ({
-      ...formulario,
-      codigoSucursalSin: codigo,
-    }));
-  }
-
-  seleccionarTipoDocumento(codigo: string): void {
-    const punto = this.tiposDeDocumentoHomologados().find(
-      (item) => String(item.idHomologacion) === codigo,
-    );
-    this.formulario.update((formulario) => ({
-      ...formulario,
-      codigoTipoDocumentoSin: codigo,
-      tipoDocumentoSin: punto?.descripcion ?? '',
-    }));
-  }
-
-  seleccionarProducto(codigo: string): void {
-    const punto = this.productosHomologados().find(
-      (item) => String(item.idHomologacionProducto) === codigo,
-    );
-    this.formularioProductos.update((formulario) => ({
-      ...formulario,
-      codigoProductoSin: codigo,
-      tipoProductoSin: punto?.descripcion ?? '',
-    }));
-  }
-
-  seleccionarUnidadDeMedida(codigo: string): void {
-    const punto = this.unidadesDeMedidaHomologados().find(
-      (item) => String(item.idHomologacion) === codigo,
-    );
-    this.formularioProductos.update((formulario) => ({
-      ...formulario,
-      codigoUnidadMedidaSin: codigo,
-      tipoUnidadMedidaSin: punto?.descripcion ?? '',
-    }));
-  }
-
-  seleccionarTipoMoneda(codigo: string): void {
-    const punto = this.monedasHomologados().find((item) => String(item.idHomologacion) === codigo);
-    this.formulario.update((formulario) => ({
-      ...formulario,
-      codigoMonedaSin: codigo,
-      tipoMonedaSin: punto?.descripcion ?? '',
-    }));
-  }
-
-  seleccionarMetodoPago(codigo: string): void {
-    const punto = this.metodosDePagoHomologados().find(
-      (item) => String(item.idHomologacion) === codigo,
-    );
-    this.formulario.update((formulario) => ({
-      ...formulario,
-      codigoMetodoPagoSin: codigo,
-      tipoMetodoPagoSin: punto?.descripcion ?? '',
-    }));
-  }
-
-  readonly filasProductos = signal<ProductosTableModel[]>([]);
-  readonly columnas = COLUMNAS;
 
   ngOnInit(): void {
     this.loadData();
@@ -354,7 +282,7 @@ export class ImpuestosPage implements OnInit {
         finalize(() => {
           this.isLoadingMulticentros.set(false);
         }),
-        catchError((error: HttpErrorResponse) => {
+        catchError(() => {
           this.toast.mostrar('No se pudieron cargar las homologaciones.');
           return of(null);
         }),
@@ -368,119 +296,82 @@ export class ImpuestosPage implements OnInit {
       });
   }
 
-  async onEmitir(event: Event): Promise<void> {
-    event.preventDefault();
+  onEmitir(): void {
     if (this.guardando()) return;
+    this.intentoEmitir.set(true);
+    this.formulario.markAllAsTouched();
+    if (this.formulario.invalid) return;
 
-    const error = this.validarFactura();
-    this.error.set(error);
-    if (error) return;
+    const valores = this.formulario.getRawValue();
+    const etiqueta = (opciones: GmOpcionLista[], valor: string) =>
+      opciones.find((opcion) => opcion.valor === valor)?.etiqueta ?? '';
+    const factura = {
+      ...valores,
+      sucursal: etiqueta(this.opcionesMulticentros(), valores.codigoSucursal),
+      tipoDocumento: etiqueta(this.opcionesTiposDeDocumento(), valores.codigoTipoDocumento),
+      moneda: etiqueta(this.opcionesMonedas(), valores.codigoMoneda),
+      metodoPago: etiqueta(this.opcionesMetodosPago(), valores.codigoMetodoPago),
+    };
+    console.log('Factura de impuestos a emitir:', factura);
 
     //todo enviar la factura al backend cuando exista el servicio de emisión
     this.toast.mostrar('Pendiente emitir factura.');
   }
 
-  private validarFactura(): string | null {
-    const formulario = this.formulario();
-    const requeridos: [string, string][] = [
-      ['Multicentro', formulario.codigoSucursalSin],
-      ['Código cliente', this.codigoCliente().trim()],
-      ['Razón social', this.razonSocial().trim()],
-      ['Tipo de documento', formulario.codigoTipoDocumentoSin],
-      ['Número de documento', this.numeroDocumento().trim()],
-      ['Periodo', this.periodo().trim()],
-      ['Correo electrónico', this.correoElectronico().trim()],
-      ['Tipo moneda', formulario.codigoMonedaSin],
-      ['Tipo cambio', this.tipoCambio().trim()],
-      ['Método pago', formulario.codigoMetodoPagoSin],
-      ['Subtotal', this.subTotal().trim()],
-      ['Monto total', this.montoTotal().trim()],
-    ];
-    const faltantes = requeridos.filter(([, valor]) => !valor).map(([campo]) => campo);
-    if (faltantes.length) return `Completa los campos: ${faltantes.join(', ')}.`;
+  onAddProducto(): void {
+    const grupo = this.formularioProducto;
+    grupo.markAllAsTouched();
+    if (grupo.hasError('descuentoExcede')) {
+      this.errorProducto.set('El descuento no puede ser mayor a cantidad × precio unitario.');
+      return;
+    }
+    if (grupo.invalid) {
+      this.errorProducto.set(null);
+      return;
+    }
 
-    if (!CORREO.test(this.correoElectronico().trim()))
-      return 'Ingresa un correo electrónico válido.';
-    const celular = this.numeroCelular().trim();
-    if (celular && !SOLO_DIGITOS.test(celular))
-      return 'El número celular solo debe contener dígitos.';
-    const tarjeta = this.numeroTarjeta().trim();
-    if (tarjeta && !SOLO_DIGITOS.test(tarjeta))
-      return 'El número de tarjeta solo debe contener dígitos.';
-
-    const numericos: [string, string][] = [
-      ['Tipo cambio', this.tipoCambio().trim()],
-      ['Subtotal', this.subTotal().trim()],
-      ['Descuento', this.descuentoMetodoPago().trim() || '0'],
-      ['Monto total', this.montoTotal().trim()],
-    ];
-    const invalidos = numericos.filter(([, valor]) => !NUMERO.test(valor)).map(([campo]) => campo);
-    if (invalidos.length) return `Ingresa montos válidos en: ${invalidos.join(', ')}.`;
-    if (Number(this.tipoCambio()) <= 0) return 'El tipo de cambio debe ser mayor a 0.';
-
-    if (!this.filasProductos().length) return 'Adiciona al menos un producto al detalle.';
-    return null;
-  }
-
-  onRemoveProducto(producto: ProductosTableModel) {
-    this.filasProductos.update((filas) => filas.filter((fila) => fila.codigo !== producto.codigo));
-  }
-
-  onAddProducto() {
-    const formulario = this.formularioProductos();
+    const valores = grupo.getRawValue();
     const producto = this.productosHomologados().find(
-      (item) => String(item.idHomologacionProducto) === formulario.codigoProductoSin,
+      (item) => String(item.idHomologacionProducto) === valores.codigoProducto,
     );
     const unidad = this.unidadesDeMedidaHomologados().find(
-      (item) => String(item.idHomologacion) === formulario.codigoUnidadMedidaSin,
+      (item) => String(item.idHomologacion) === valores.codigoUnidadMedida,
     );
-    const cantidad = this.cantidad().trim();
-    const precioUnitario = this.precioUnitario().trim();
-    const descuento = this.descuento().trim() || '0';
-
-    if (!producto || !unidad || !cantidad || !precioUnitario) {
-      this.errorProducto.set(
-        'Selecciona un producto, una unidad de medida e ingresa la cantidad y el precio unitario.',
-      );
-      return;
-    }
-    if (!NUMERO.test(cantidad) || Number(cantidad) <= 0) {
-      this.errorProducto.set('La cantidad debe ser un número mayor a 0.');
-      return;
-    }
-    if (!NUMERO.test(precioUnitario) || Number(precioUnitario) <= 0) {
-      this.errorProducto.set('El precio unitario debe ser un número mayor a 0.');
-      return;
-    }
-    if (!NUMERO.test(descuento) || Number(descuento) > Number(cantidad) * Number(precioUnitario)) {
-      this.errorProducto.set('El descuento debe ser un número entre 0 y el subtotal del producto.');
-      return;
-    }
-    if (this.filasProductos().some((fila) => fila.codigo === producto.codigo)) {
+    if (!producto || !unidad) return;
+    if (this.productos.getRawValue().some((fila) => fila.codigo === producto.codigo)) {
       this.errorProducto.set('El producto ya fue adicionado al detalle.');
       return;
     }
 
-    this.filasProductos.update((filas) => [
-      ...filas,
-      {
+    this.productos.push(
+      this.fb.control<ProductosTableModel>({
+        idHomologacionProducto: producto.idHomologacionProducto,
         codigo: producto.codigo,
         descripcion: producto.descripcion,
+        idUnidadMedida: unidad.idHomologacion,
         unidadDeMedida: unidad.descripcion,
-        cantidad,
-        precioUnitario,
-        descuento,
-      },
-    ]);
+        cantidad: valores.cantidad,
+        precioUnitario: valores.precioUnitario,
+        descuento: valores.descuento || '0',
+      }),
+    );
     this.errorProducto.set(null);
-    this.formularioProductos.set({
-      codigoProductoSin: '',
-      tipoProductoSin: '',
-      codigoUnidadMedidaSin: '',
-      tipoUnidadMedidaSin: '',
-    });
-    this.cantidad.set('');
-    this.precioUnitario.set('');
-    this.descuento.set('');
+    grupo.reset();
   }
+
+  onRemoveProducto(producto: ProductosTableModel): void {
+    const indice = this.productos
+      .getRawValue()
+      .findIndex((fila) => fila.codigo === producto.codigo);
+    if (indice >= 0) this.productos.removeAt(indice);
+  }
+}
+
+function etiquetaDe(codigo: string | undefined, descripcion: string | undefined): string {
+  return (
+    [codigo, descripcion]
+      .map((valor) => valor?.trim())
+      .filter(Boolean)
+      .join(' · ') || `${descripcion}`
+  );
 }

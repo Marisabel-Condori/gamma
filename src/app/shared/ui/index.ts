@@ -25,3 +25,7 @@ export type { GmColumna, GmLugarMovil } from './tabla/tabla.model';
 export { GmTexto } from './texto/texto';
 export { GmToast, Toast } from './toast/toast';
 export { GmOpciones } from './opciones/opciones';
+// Versiones para formularios reactivos (formControlName / [formControl]).
+export { GmTextoControl } from './texto-control/texto-control';
+export { GmListaControl } from './lista-control/lista-control';
+export { GmOpcionesControl } from './opciones-control/opciones-control';
